@@ -1,0 +1,47 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Jul 10, 2016, 10:41:39 PM
+    Author     : nhats
+*/
+
+.root {
+     -fx-background-image: url("../images/background.jpg");
+     -fx-background-size: cover;
+}
+
+.btnCus{
+     -fx-background-image: url("../images/button.png");
+     -fx-background-size: cover;
+     -fx-background-color : transparent;
+     -fx-text-fill: #fff;
+     
+}
+
+.btnCus:hover{
+    -fx-background-image: url("../images/buttonHover.png");
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, blue 50%);
+    -fx-text-stroke: #002aff;
+    -fx-text-stroke-width: 1;
+}
+.btnNor{
+    -fx-effect: innershadow(three-pass-box, #002aff, 12 , 0.5, 1, 1);
+    -fx-background-color: rgba(255, 255, 255, 0.35);
+    -fx-text-fill: #FFF;
+}
+.btnNor:hover{
+    -fx-effect: dropshadow(three-pass-box, #fff, 12 , 0.5, 1, 1);;
+    -fx-background-color: rgba(255, 255, 255, 0.35);
+    -fx-text-fill: #000;
+}
+.txtField{
+    -fx-background-color: rgba(255, 255, 255, 0.35);
+    
+}    
+.txtField:hover,.txtField:focused,.txtField:focused:hover{
+    -fx-effect: dropshadow(three-pass-box, #002aff, 12 , 0.5, 1, 1);
+    -fx-text-fill: #FFF;
+} 
