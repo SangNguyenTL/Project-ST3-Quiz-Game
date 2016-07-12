@@ -21,7 +21,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 
@@ -106,8 +105,8 @@ public class login{
 
             @Override
             public void handle(ActionEvent e) {
-                actiontarget.setFill(Color.FIREBRICK);
-                actiontarget.setText("Sign in button pressed");
+                root.getChildren().clear();
+                new frAdmin(root);
             }
         });
         back.setOnMouseClicked(new EventHandler<MouseEvent>
