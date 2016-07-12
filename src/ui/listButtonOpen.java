@@ -12,7 +12,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.GridPane;
 import lib.openSound;
@@ -78,6 +77,18 @@ public class listButtonOpen {
             }
         });
         
+        //Luật
+        btnRule.setOnMouseClicked(new EventHandler<MouseEvent>
+        () {
+
+            @Override
+            public void handle(MouseEvent t) {
+                root.getChildren().clear();
+                new Help(root);
+                
+            }
+        });
+        
         
         //out
         btnExit.setOnMouseClicked(new EventHandler<MouseEvent>
@@ -88,7 +99,16 @@ public class listButtonOpen {
                 new AlertGame("Ai là triệu phú", "Bạn thực sự muốn thoát");
             }
         });
-        
+        //top 
+         btnTop.setOnMouseClicked(new EventHandler<MouseEvent>
+        () {
+
+            @Override
+            public void handle(MouseEvent t) {
+                root.getChildren().clear();
+                new TopTen(root);
+            }
+        });
     }
     
 }
