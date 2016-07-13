@@ -21,6 +21,50 @@ and open the template in the editor.
      
 }
 
+#btnA{
+     -fx-background-image: url("../images/btnA.png");
+     -fx-background-size: cover;
+     -fx-background-color : transparent;
+     -fx-text-fill: #0054ff;
+}
+
+#btnA:hover{
+     -fx-background-image: url("../images/btnA-Active.png");
+}
+
+#btnB{
+     -fx-background-image: url("../images/btnB.png");
+     -fx-background-size: cover;
+     -fx-background-color : transparent;
+     -fx-text-fill: #0054ff;
+}
+
+#btnB:hover{
+     -fx-background-image: url("../images/btnB-Active.png");
+}
+
+#btnC{
+     -fx-background-image: url("../images/btnC.png");
+     -fx-background-size: cover;
+     -fx-background-color : transparent;
+     -fx-text-fill: #0054ff;
+}
+
+#btnC:hover{
+     -fx-background-image: url("../images/btnC-Active.png");
+}
+
+#btnD{
+     -fx-background-image: url("../images/btnD.png");
+     -fx-background-size: cover;
+     -fx-background-color : transparent;
+     -fx-text-fill: #0054ff;
+}
+
+#btnD:hover{
+     -fx-background-image: url("../images/btnD-Active.png");
+}
+
 .btnCus:hover{
     -fx-background-image: url("../images/buttonHover.png");
     -fx-text-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, blue 50%);
@@ -86,10 +130,15 @@ and open the template in the editor.
     -fx-text-fill: #FBFF00;
 }
 #boxTextQuest{
-    -fx-effect: dropshadow(three-pass-box, #002aff, 12 , 0.5, 1, 1);
-    -fx-text-effect: 0;
-    -fx-background-color: rgba(220, 220, 220, 0.35);
-    -fx-text-stroke: #002aff;
-    -fx-text-stroke-width: 1;
-    -fx-text-fill: #FBFF00;
+    -fx-background-image: url("../images/boxQuest.png");
+    -fx-background-size: cover;
+    -fx-background-color: transparent;
+}
+
+#boxtCountTime{
+    -fx-padding: 10;
+    -fx-border-radius: 50px;
+    -fx-background-radius: 5em; 
+    -fx-border-color: #002aff;
+    -fx-border-width: 2;
 }
