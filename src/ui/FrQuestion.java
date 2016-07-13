@@ -5,30 +5,20 @@
  */
 package ui;
 
-import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
+
 
 /**
  *
@@ -38,26 +28,13 @@ public class FrQuestion{
 
     private TableView table = new TableView();
     public FrQuestion(HBox root) {
-        GridPane gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER_LEFT);
-        gridPane.setHgap(20);
-        gridPane.setVgap(10);
-        Label lblCategory = new Label();
-        
-        lblCategory.setText("Chủ đề: ");
+        Pane main = new Pane();
+ 
+        Label lblCategory = new Label("Chủ đề: ");
         lblCategory.setFont(new Font("Arial",20));
         lblCategory.setTextFill(Color.web("#fff"));
-        gridPane.add(lblCategory,0,1);
-        
-        Label lblQuestion = new Label();
-        lblQuestion.setText("Câu hỏi: ");
-        lblQuestion.setFont(new Font("Arial",20));
-        lblQuestion.setTextFill(Color.web("#fff"));
-        gridPane.add(lblQuestion,0,2);
-        
-        DropShadow ds = new DropShadow();
-        ds.setOffsetY(3.0f);
-        ds.setColor(Color.web("#00A1FF"));
+        lblCategory.setLayoutX(10);
+        lblCategory.setLayoutY(10);
         
         ComboBox cbbCategory = new ComboBox();
         cbbCategory.getItems().addAll(
@@ -67,90 +44,122 @@ public class FrQuestion{
             "Geographic"
         );
         cbbCategory.getSelectionModel().selectFirst();
-        gridPane.add(cbbCategory, 1, 1);
-        TextArea txtQuestion = new TextArea();        
-        txtQuestion.setPrefSize(500, 150);
-        gridPane.add(txtQuestion, 1, 2);
+        cbbCategory.setLayoutX(100);
+        cbbCategory.setLayoutY(10);
         
-        //button search
-        VBox vbBox = new VBox(10);
-        Label lb = new Label("");
-        Label lb1 = new Label("");
+        Label lblLevel = new Label();
+        lblLevel.setText("Độ khó: ");
+        lblLevel.setFont(new Font("Arial",20));
+        lblLevel.setTextFill(Color.web("#fff"));
+        lblLevel.setLayoutX(280);
+        lblLevel.setLayoutY(10);
+        
+        ComboBox cbbLevel = new ComboBox();
+        cbbLevel.getItems().addAll(
+            "1",
+            "2",
+            "3",
+            "4"
+        );
+        cbbLevel.getSelectionModel().selectFirst();
+        cbbLevel.setLayoutX(360);
+        cbbLevel.setLayoutY(10);
+        
+        Button btnSearch = new Button("Tìm kiếm");
+        btnSearch.setMaxWidth(Double.MAX_VALUE);
+        btnSearch.getStyleClass().add("btnNor");
+        btnSearch.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        btnSearch.setLayoutX(500);
+        btnSearch.setLayoutY(10);
+        btnSearch.setPrefSize(90, 30);
+        
+        Label lblQuestion = new Label();
+        lblQuestion.setText("Nhập Câu hỏi: ");
+        lblQuestion.setFont(new Font("Arial",20));
+        lblQuestion.setTextFill(Color.web("#fff"));
+        lblQuestion.setLayoutX(10);
+        lblQuestion.setLayoutY(58);
+        
+        
         
         Button btnViewAll = new Button("Xem tất cả");        
-        HBox.setHgrow(btnViewAll, Priority.ALWAYS); 
         btnViewAll.setMaxWidth(Double.MAX_VALUE);
         btnViewAll.getStyleClass().add("btnNor");
         btnViewAll.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        btnViewAll.setLayoutX(500);
+        btnViewAll.setLayoutY(55);
+        btnViewAll.setPrefSize(90, 30);
         
-        Button btnSearchAll = new Button("Tìm kiếm");
-        HBox.setHgrow(btnSearchAll, Priority.ALWAYS);
-        btnSearchAll.setMaxWidth(Double.MAX_VALUE);
-        btnSearchAll.getStyleClass().add("btnNor");
-        btnSearchAll.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-   
-        vbBox.getChildren().addAll(lb,lb1,btnViewAll,btnSearchAll);     
-        gridPane.add(vbBox, 2, 2, 1, 3);
+        TextArea txatQuestion = new TextArea();        
+        txatQuestion.setPrefSize(600, 100);
+        txatQuestion.setLayoutX(20);
+        txatQuestion.setLayoutY(100);
+        
         
         //table
-        table.setPrefSize(600, 300);
-        TableColumn QuesID = new TableColumn("Question ID");
-        TableColumn QuesContent = new TableColumn("Question Content");
-        TableColumn CateID = new TableColumn("Category ID");    
-        QuesID.prefWidthProperty().bind(table.widthProperty().divide(5)); // w * 1/5
-        QuesContent.prefWidthProperty().bind(table.widthProperty().divide(1.67)); // w * 3/5
+        table.setPrefSize(600, 320);
+        TableColumn QuesID = new TableColumn("Nội dung câu hỏi");
+        TableColumn QuesContent = new TableColumn("Độ khó");
+        TableColumn CateID = new TableColumn("Chủ đề");    
+        QuesID.prefWidthProperty().bind(table.widthProperty().divide(1.55)); // w * 1/5
+        QuesContent.prefWidthProperty().bind(table.widthProperty().divide(6)); // w * 3/5
         CateID.prefWidthProperty().bind(table.widthProperty().divide(5)); // w * 1/5
-
         table.getColumns().addAll(QuesID, CateID, QuesContent);
+        table.setLayoutX(20);
+        table.setLayoutY(230);
 
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.getChildren().addAll(table);    
-        gridPane.add(vbox, 1, 3);
-        // button list
-        VBox vbbtn = new VBox(10);
-        vbbtn.setPrefWidth(100);
-        Label lb2 = new Label("");
-        Label lb3 = new Label("");
-        Label lb4 = new Label("");
+
         Button btnAdd = new Button("Thêm");
-        Button btnUpdate = new Button("Cập nhật");
-        Button btnDelete = new Button("Xóa");
-        Button btnCancel = new Button("Thoát");
-        
-        HBox.setHgrow(btnAdd, Priority.ALWAYS);
         btnAdd.setMaxWidth(Double.MAX_VALUE);
         btnAdd.getStyleClass().add("btnNor");
         btnAdd.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-        
-        HBox.setHgrow(btnUpdate, Priority.ALWAYS);
+        btnAdd.setLayoutX(50);
+        btnAdd.setLayoutY(570);
+        btnAdd.setPrefSize(90, 30);
+            
+        Button btnUpdate = new Button("Cập nhật");
         btnUpdate.setMaxWidth(Double.MAX_VALUE);
         btnUpdate.getStyleClass().add("btnNor");
         btnUpdate.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        btnUpdate.setLayoutX(200);
+        btnUpdate.setLayoutY(570);
+        btnUpdate.setPrefSize(90, 30);
         
-        HBox.setHgrow(btnUpdate, Priority.ALWAYS);
+        Button btnDelete = new Button("Xóa");
         btnDelete.setMaxWidth(Double.MAX_VALUE);
         btnDelete.getStyleClass().add("btnNor");
         btnDelete.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        btnDelete.setLayoutX(360);
+        btnDelete.setLayoutY(570);
+        btnDelete.setPrefSize(90, 30);
         
-        HBox.setHgrow(btnUpdate, Priority.ALWAYS);
-        btnCancel.setMaxWidth(Double.MAX_VALUE);
-        btnCancel.getStyleClass().add("btnNor");
-        btnCancel.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        Button btnExit = new Button("Thoát");
+        btnExit.setMaxWidth(Double.MAX_VALUE);
+        btnExit.getStyleClass().add("btnNor");
+        btnExit.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        btnExit.setLayoutX(500);
+        btnExit.setLayoutY(570);
+        btnExit.setPrefSize(90, 30);
+
+        main.getChildren().addAll(lblCategory,cbbCategory,lblLevel,cbbLevel,lblQuestion,btnSearch,btnViewAll,txatQuestion,table,btnAdd,btnUpdate,btnDelete,btnExit);
+        root.getChildren().add(main);
         
-        vbbtn.getChildren().addAll(lb2,lb3,lb4,btnAdd,btnUpdate,btnDelete,btnCancel);
-        gridPane.add(vbbtn, 2, 3);
-        
-        root.getChildren().add(gridPane);
-        
-        btnCancel.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        btnAdd.setOnMouseClicked(new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent event) {
-                new FrCheckQuestion();
+                root.getChildren().clear();
+                new FrCheckQuestion(root);
             }
             
         });
-    }
+        btnExit.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+                System.exit(0);
+            }
+            
+        });
+  }
 
 
     

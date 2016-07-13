@@ -45,3 +45,9 @@ and open the template in the editor.
     -fx-effect: dropshadow(three-pass-box, #002aff, 12 , 0.5, 1, 1);
     -fx-text-fill: #FFF;
 } 
+.combo-box {
+    -fx-pref-width: 100;
+}
+.txtDisable{
+  -fx-background-color: rgba(220, 220, 220, 0.35);
+}

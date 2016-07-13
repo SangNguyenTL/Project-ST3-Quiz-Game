@@ -56,7 +56,8 @@ public class frAdmin{
         ds.setColor(Color.web("#00A1FF"));
         
         Text scenetitle = new Text("Quản lý");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        
+        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 35));
         scenetitle.setEffect(ds);
         scenetitle.setFill(Color.WHITE);
         
@@ -64,6 +65,10 @@ public class frAdmin{
         boxTitle.setAlignment(Pos.CENTER);
         boxTitle.getChildren().add(scenetitle);
         
+        Text blank1 = new Text("");
+        Text blank2 = new Text("");
+        Text blank3 = new Text("");
+
         
         ArrayList<Button> btnGroup = new ArrayList();
         
@@ -71,7 +76,7 @@ public class frAdmin{
         Button btnQuest = new Button("Câu hỏi");
         Button btnMoney = new Button("Tiền thưởng");
         Button btnPass = new Button("Password");
-        Button btnExit = new Button("Thoát");
+        Button btnExit = new Button("Quay lại");
         
         btnGroup.add(btnUsers);
         btnGroup.add(btnQuest);
@@ -105,7 +110,8 @@ public class frAdmin{
         {
             @Override
             public void handle(MouseEvent event) {
-                System.exit(0);
+               root.getChildren().clear();
+               new login(root);
             }
             
         });
@@ -119,7 +125,7 @@ public class frAdmin{
             
         });
         root.getChildren().add(border);
-        slideBar.getChildren().addAll(boxTitle,listButton);
+        slideBar.getChildren().addAll(boxTitle,blank1,blank2,blank3,listButton);
         border.setTop(banner);
         border.setLeft(slideBar);
         border.setRight(content);
