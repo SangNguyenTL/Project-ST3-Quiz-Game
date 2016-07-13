@@ -111,7 +111,7 @@ public class frAdmin{
             @Override
             public void handle(MouseEvent event) {
                root.getChildren().clear();
-               new login(root);
+               new listButtonLogged(root);
             }
             
         });

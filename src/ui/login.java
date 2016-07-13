@@ -106,7 +106,7 @@ public class login{
             @Override
             public void handle(ActionEvent e) {
                 root.getChildren().clear();
-                new frAdmin(root);
+                new listButtonLogged(root);
             }
         });
         back.setOnMouseClicked(new EventHandler<MouseEvent>
