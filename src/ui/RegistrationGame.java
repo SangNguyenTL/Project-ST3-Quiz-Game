@@ -73,11 +73,17 @@ public class RegistrationGame {
         grid.add(emailfield, 1, 2);
         emailfield.setFont(new Font("Arial",20));
         
-        Label pw = new Label("Mật khẩu:");
-        pw.setEffect(ds);
-        pw.setTextFill(Color.WHITE);
-        grid.add(pw, 0, 3);
-        pw.setFont(new Font("Arial",20));
+        Label lbPw = new Label("Mật khẩu:");
+        lbPw.setEffect(ds);
+        lbPw.setTextFill(Color.WHITE);
+        grid.add(lbPw, 0, 3);
+        lbPw.setFont(new Font("Arial",20));
+        
+        Label lbRepw = new Label("Nhập lại mật khẩu:");
+        lbRepw.setEffect(ds);
+        lbRepw.setTextFill(Color.WHITE);
+        grid.add(lbRepw, 0, 4);
+        lbRepw.setFont(new Font("Arial",20));
         
         PasswordField pwBox = new PasswordField();
         pwBox.getStyleClass().add("txtField");
@@ -85,17 +91,23 @@ public class RegistrationGame {
         grid.add(pwBox, 1, 3);
         pwBox.setFont(new Font("Arial",20));
         
+        PasswordField rePwBox = new PasswordField();
+        rePwBox.getStyleClass().add("txtField");
+        rePwBox.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        grid.add(rePwBox, 1, 4);
+        rePwBox.setFont(new Font("Arial",20));
+        
         Label year = new Label("Năm sinh:");
         year.setEffect(ds);
         year.setTextFill(Color.WHITE);
-        grid.add(year, 0, 4);
+        grid.add(year, 0, 5);
         year.setFont(new Font("Arial",20));
         
         
         TextField yearfield = new TextField();
         yearfield.getStyleClass().add("txtField");
         yearfield.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-        grid.add(yearfield, 1, 4);
+        grid.add(yearfield, 1, 5);
         yearfield.setFont(new Font("Arial",20));
         
         Button btnOK = new Button("Đồng ý");
