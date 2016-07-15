@@ -59,32 +59,13 @@ public class FrPrizeMoney {
         title.setLayoutX(130);
         title.setLayoutY(10);
         
-        Label lblnumber = new Label("Vị trí câu hỏi");
-        lblnumber.setFont(new Font("Arial",18));
-        lblnumber.setTextFill(Color.web("#fff"));
-        lblnumber.setLayoutX(20);
-        lblnumber.setLayoutY(80);
-        
-        txtnumber = new TextField();
-        txtnumber.setLayoutX(140);
-        txtnumber.setLayoutY(80);
-        
-        Label lblRight = new Label("Trả lời đúng");
-        lblRight.setFont(new Font("Arial",18));
-        lblRight.setTextFill(Color.web("#fff"));
-        lblRight.setLayoutX(380);
-        lblRight.setLayoutY(80);
-        
-        txtRight = new TextField();
-        txtRight.setLayoutX(520);
-        txtRight.setLayoutY(80);
         
         data = FXCollections.observableArrayList(new DBModel.PrizeMoney().getData());
        
         VBox box = new VBox();
         table.setPrefSize(600, 400);
         table.setLayoutX(50);
-        table.setLayoutY(140);
+        table.setLayoutY(100);
         table.setEditable(true);
         
         Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
@@ -103,7 +84,6 @@ public class FrPrizeMoney {
         TableColumn money = new TableColumn("Mức thưởng");
         money.setCellValueFactory(
             new PropertyValueFactory<DBModel.PrizeMoney, String>("Money"));
-        money.setEditable(true);
         money.setCellFactory(cellFactory);
         money.setOnEditCommit(
                 new EventHandler<CellEditEvent<DBModel.PrizeMoney, String>>() {
@@ -130,27 +110,25 @@ public class FrPrizeMoney {
         
         boxTable.getChildren().add(box);
         boxTable.setLayoutX(50);
-        boxTable.setLayoutY(140);
+        boxTable.setLayoutY(100);
 
         Button btnUpdate = new Button("Cập nhật");
         btnUpdate.setMaxWidth(Double.MAX_VALUE);
         btnUpdate.getStyleClass().add("btnNor");
-        btnUpdate.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         btnUpdate.setLayoutX(240);
-        btnUpdate.setLayoutY(550);
+        btnUpdate.setLayoutY(520);
         btnUpdate.setPrefSize(90, 30);
         
         Button btnExit = new Button("Thoát");
         btnExit.setMaxWidth(Double.MAX_VALUE);
         btnExit.getStyleClass().add("btnNor");
-        btnExit.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         btnExit.setLayoutX(350);
-        btnExit.setLayoutY(550);
+        btnExit.setLayoutY(520);
         btnExit.setPrefSize(90, 30);
         
         table.setEditable(true);
        
-        main.getChildren().addAll(title,lblnumber,txtnumber,lblRight,txtRight,boxTable,btnUpdate,btnExit);
+        main.getChildren().addAll(title,boxTable,btnUpdate,btnExit);
         root.getChildren().add(main);
         
     }

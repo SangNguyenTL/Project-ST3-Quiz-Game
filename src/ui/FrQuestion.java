@@ -6,17 +6,12 @@
 package ui;
 
 
-import DBModel.MyConnect;
 import DBModel.Question;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -37,7 +32,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Callback;
-import javax.swing.JOptionPane;
 
 
 
@@ -186,16 +180,22 @@ public class FrQuestion{
             public void handle(MouseEvent event) {
                 Question ques = (Question)table.getSelectionModel().getSelectedItem();
                 int i = ques.getQuesId();
-                System.out.println(i);
-               ques.deleteQ(i);
-               if(ques.deleteQ(i)==true){
-                    buildData();
-               }
-                    
-               
-              
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Xác nhận");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure to delete?");
+                Optional <ButtonType> action = alert.showAndWait();          
+                if(action.get() == ButtonType.OK){
+                if(ques.delete()==true){
+                  buildData();
+                  Alert alert2 = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Thông báo");
+                alert.setHeaderText(null);
+                alert.setContentText("Xóa thành công");
+                alert.showAndWait();
+                }
+                }
             }
-            
         });
   }
    
@@ -232,7 +232,7 @@ public class FrQuestion{
     }
   
     public void buildData(){
-        
+        boxTable.getChildren().clear();
         pagination = new Pagination(totalRow, 0);
         pagination.setPageFactory(new Callback<Integer, Node>() {
             @Override

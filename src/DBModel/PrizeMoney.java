@@ -71,8 +71,8 @@ public class PrizeMoney {
        return true;
    }
 
-    public int getMoney() {
-        return money;
+    public String getMoney() {
+        return Integer.toString(money);
     }
 
     public int getPriId() {
