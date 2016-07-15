@@ -6,11 +6,15 @@
 
 package ui;
 
+import DBModel.Question;
 import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,7 +36,10 @@ import lib.openSound;
  * @author nhats
  */
 public class frAdmin{
-    HBox content = new HBox(10);
+    HBox content = new HBox(10);  
+    private ObservableList<DBModel.Question> data = FXCollections.observableArrayList() ;
+    
+    private int countP,countQ;
     public frAdmin(Pane root) {
         final BorderPane border = new BorderPane();
         HBox banner = new HBox();
@@ -106,6 +113,14 @@ public class frAdmin{
             }
         });
         }
+        btnUsers.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+               content.getChildren().clear();
+               new FrPlayer(content);
+            }
+            
+        });
         btnExit.setOnMouseClicked(new EventHandler<MouseEvent>()
         {
             @Override
@@ -124,8 +139,42 @@ public class frAdmin{
             }
             
         });
+        btnPass.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+                content.getChildren().clear();
+                new FrChangePass(content);
+            }
+        
+        });
+        btnMoney.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+                content.getChildren().clear();
+                new FrPrizeMoney(content);
+            }
+            
+        });
         root.getChildren().add(border);
-        slideBar.getChildren().addAll(boxTitle,blank1,blank2,blank3,listButton);
+        
+        Label blank = new Label("");
+        countQ = new DBModel.Question().getNumAllRow();
+        //data = Question.class.;
+        
+        Label lblCountQ = new Label("Số câu hỏi: "+countQ);
+        lblCountQ.setFont(new Font("Arial",20));
+        lblCountQ.setTextFill(Color.web("#fff"));
+        
+        Label lblCountP = new Label("Số người chơi: ");
+        lblCountP.setFont(new Font("Arial",20));
+        lblCountP.setTextFill(Color.web("#fff"));
+        
+        
+        VBox boxCount = new VBox(10);
+        boxCount.setAlignment(Pos.CENTER);     
+        boxCount.getChildren().addAll(blank,lblCountQ,lblCountP);
+
+        slideBar.getChildren().addAll(boxTitle,blank1,blank2,blank3,listButton,boxCount);
         border.setTop(banner);
         border.setLeft(slideBar);
         border.setRight(content);

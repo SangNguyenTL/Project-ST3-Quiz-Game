@@ -78,5 +78,13 @@ public class PrizeMoney {
     public int getPriId() {
         return priId;
     }
+
+    public void setPriId(int priId) {
+        this.priId = priId;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
      
 }

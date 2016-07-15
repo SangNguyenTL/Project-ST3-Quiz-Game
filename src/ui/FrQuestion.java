@@ -6,13 +6,22 @@
 package ui;
 
 
+import DBModel.MyConnect;
+import DBModel.Question;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
@@ -28,6 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Callback;
+import javax.swing.JOptionPane;
 
 
 
@@ -39,8 +49,10 @@ public class FrQuestion{
     private ObservableList<DBModel.Question> data = FXCollections.observableArrayList() ;
     private Pagination pagination;
     private HBox boxTable = new HBox();
+    int count = 0;
     int totalRow = Math.round(new DBModel.Question().getNumAllRow()/itemsPerPage());
-    
+    TableView table = new TableView();
+            
     public int itemsPerPage() {
         return 10;
     }
@@ -148,7 +160,9 @@ public class FrQuestion{
         btnExit.setLayoutX(500);
         btnExit.setLayoutY(570);
         btnExit.setPrefSize(90, 30);
-
+        
+   
+        
         main.getChildren().addAll(lblCategory,cbbCategory,lblLevel,cbbLevel,lblQuestion,btnSearch,btnViewAll,txatQuestion,boxTable,btnAdd,btnUpdate,btnDelete,btnExit);
         root.getChildren().add(main);
         
@@ -167,11 +181,29 @@ public class FrQuestion{
             }
             
         });
+        btnDelete.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+                Question ques = (Question)table.getSelectionModel().getSelectedItem();
+                int i = ques.getQuesId();
+                System.out.println(i);
+               ques.deleteQ(i);
+               if(ques.deleteQ(i)==true){
+                    buildData();
+               }
+                    
+               
+              
+            }
+            
+        });
   }
+   
   public VBox createPage(int pageIndex) {
-        TableView table = new TableView();
+
         data = FXCollections.observableArrayList(new DBModel.Question().getData(pageIndex,this.itemsPerPage()));
         VBox box = new VBox();
+        table.setEditable(true);
         table.setPrefSize(600, 300);
         TableColumn category = new TableColumn("Thể loại");
         category.setCellValueFactory(
@@ -186,12 +218,19 @@ public class FrQuestion{
         status.setCellValueFactory(
             new PropertyValueFactory<DBModel.Question, String>("Active"));
         
+        category.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
+        level.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
+        content.prefWidthProperty().bind(table.widthProperty().multiply(0.58));
+        status.prefWidthProperty().bind(table.widthProperty().multiply(0.12));
         table.getColumns().addAll(category, level, content, status);
         
         table.setItems(data);
+        
+        
         box.getChildren().add(table);
         return box;
     }
+  
     public void buildData(){
         
         pagination = new Pagination(totalRow, 0);

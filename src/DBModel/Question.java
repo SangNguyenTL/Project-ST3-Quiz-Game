@@ -7,8 +7,12 @@ package DBModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Optional;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javax.swing.JOptionPane;
 
 /**
@@ -35,6 +39,11 @@ public class Question {
             return "Không khả dụng";
         }
     }
+
+    public int getQuesId() {
+        return quesId;
+    }
+    
     public int getLevel() {
         return level;
     }
@@ -224,6 +233,61 @@ public class Question {
         }
         return true;
     }
+     public boolean deleteQ(int i){
+       
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Xác nhận");
+                alert.setHeaderText(null);
+                alert.setContentText("Xóa dữ liệu?");
+                Optional <ButtonType> action = alert.showAndWait();
+            if(MyConnect.checkData()){
+                if(action.get() == ButtonType.OK){
+                    if(deleteA(i)){
+                        try {
 
+                            String query = "delete from tb_Question where quesID = ?";
+                            Connection con = MyConnect.getConnect();                 
+                            PreparedStatement pst = con.prepareStatement(query);
+                            pst.setString(1, String.valueOf(i));
+                            pst.executeUpdate();
+
+                            pst.close();
+                            con.close();
+                       
+                        } catch (SQLException ex) {
+                            JOptionPane.showMessageDialog(null, ex.getMessage());
+                            ex.printStackTrace();
+                        }
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "K ton tai");
+                    }
+                }
+         }
+          
+        return true;
+    }
+    public boolean deleteA(int i){
+        if(MyConnect.checkData()){
+         try {
+                        
+                        String query = "delete from tb_Answer where quesID = ?";
+                        Connection con = MyConnect.getConnect();
+                    
+                        PreparedStatement pst = con.prepareStatement(query);
+                        pst.setString(1, String.valueOf(i));
+                        pst.executeUpdate();
+                        
+                        pst.close();
+                        con.close();
+            
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage());
+                        ex.printStackTrace();
+                    }
+        }
+          return true;
+    }
+   
 }
 
