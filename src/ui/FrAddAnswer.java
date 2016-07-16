@@ -5,6 +5,14 @@
  */
 package ui;
 
+import DBModel.Answer;
+import DBModel.Question;
+import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -17,13 +25,24 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Mattias
  */
 public class FrAddAnswer {
-
-    public FrAddAnswer(HBox root) {
+    TextArea txtQues;
+    Question ques = new Question();
+    Answer ans =  new Answer();
+    TextField txtA;
+    TextField txtB;
+    TextField txtC;
+    TextField txtD;
+    ComboBox cbAns;
+    ComboBox cbLv;
+    ComboBox cbCat;
+    CheckBox ckActive;
+    public FrAddAnswer(HBox root,String text) {
         Pane main = new Pane();
         main.setPrefSize(600, 450);
        
@@ -33,13 +52,10 @@ public class FrAddAnswer {
         lblCat.setLayoutX(10);
         lblCat.setLayoutY(20);
         
-        ComboBox cbCat = new ComboBox();
-        cbCat.getItems().addAll(
-            "History",
-            "Generality",
-            "Sports",
-            "Geographic"
-        );
+        cbCat = new ComboBox();
+        ObservableList<DBModel.Category> listCategory = FXCollections.observableArrayList(new DBModel.Category().getData()) ;
+        cbCat.getItems().addAll(listCategory);
+
         cbCat.getSelectionModel().selectFirst();
         cbCat.setLayoutX(100);
         cbCat.setLayoutY(20);
@@ -50,7 +66,7 @@ public class FrAddAnswer {
         lblLv.setLayoutX(350);
         lblLv.setLayoutY(20);
         
-        ComboBox cbLv = new ComboBox();
+        cbLv = new ComboBox();
         cbLv.getItems().addAll(
             "1",
             "2",
@@ -67,7 +83,9 @@ public class FrAddAnswer {
         lblQues.setLayoutX(10);
         lblQues.setLayoutY(70);
         
-        TextArea txtQues = new TextArea();
+        txtQues = new TextArea();
+        txtQues.setText(text);
+        txtQues.setFont(new Font("Tahoma",20));
         txtQues.setLayoutX(20);
         txtQues.setLayoutY(100);
         txtQues.setPrefSize(650, 100);
@@ -87,7 +105,7 @@ public class FrAddAnswer {
         lblAnsB.setLayoutX(350);
         lblAnsB.setLayoutY(220);
         
-        TextField txtA = new TextField();
+        txtA = new TextField();
         txtA.getStyleClass().add("txtField");
         txtA.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         txtA.setFont(new Font("Arial",25));
@@ -95,7 +113,7 @@ public class FrAddAnswer {
         txtA.setLayoutY(250);
         
         
-        TextField txtB = new TextField();
+        txtB = new TextField();
         txtB.getStyleClass().add("txtField");
         txtB.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         txtB.setFont(new Font("Arial",25));
@@ -114,14 +132,14 @@ public class FrAddAnswer {
         lblAnsD.setLayoutX(350);
         lblAnsD.setLayoutY(320);
         
-        TextField txtC = new TextField();
+        txtC = new TextField();
         txtC.getStyleClass().add("txtField");
         txtC.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         txtC.setFont(new Font("Arial",25));
         txtC.setLayoutX(20);
         txtC.setLayoutY(350);
         
-        TextField txtD = new TextField();
+        txtD = new TextField();
         txtD.getStyleClass().add("txtField");
         txtD.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         txtD.setFont(new Font("Arial",25));
@@ -134,7 +152,7 @@ public class FrAddAnswer {
         lblRightAns.setLayoutX(10);
         lblRightAns.setLayoutY(420);
         
-        ComboBox cbAns = new ComboBox();
+        cbAns = new ComboBox();
         cbAns.getItems().addAll(
             "A",
             "B",
@@ -151,7 +169,7 @@ public class FrAddAnswer {
         lblActive.setLayoutX(350);
         lblActive.setLayoutY(420);
         
-        CheckBox ckActive = new CheckBox();
+        ckActive = new CheckBox();
         ckActive.setSelected(true);
         ckActive.setLayoutX(445);
         ckActive.setLayoutY(427);
@@ -182,6 +200,159 @@ public class FrAddAnswer {
             }
         
         });
+        btnSubmit.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+            if (checkAddQuestion()) {
+                System.out.println(cbCat.getSelectionModel().getSelectedIndex());
+                DBModel.Category cate = (DBModel.Category) cbCat.getSelectionModel().getSelectedItem();
+                System.out.println(cate.getId());
+                ques.catId = cate.getId();
+      
+
+            ques.level = (cbLv.getSelectionModel().getSelectedIndex());
+            ques.quesContent = txtQues.getText();
+  
+            if(ckActive.isSelected())
+            {
+                ques.isActive = true;
+            }
+            else{
+                ques.isActive = false;
+            }
+           
+            String qu = txtQues.getText();
+            
+            if (ques.insert()) {
+                TreeMap<Integer, String> tmAddAns = new TreeMap<>();
+                tmAddAns.put(0, txtA.getText());
+                tmAddAns.put(1, txtB.getText());
+                tmAddAns.put(2, txtC.getText());
+                tmAddAns.put(3, txtD.getText());
+                
+                for (Question item : ques.getData(ques.getQuesId())) {
+                    if (qu.equals(item.quesContent)) {
+                        ques.quesId = item.quesId;
+                        ques.catId = item.catId;
+                        
+                        for (int i = 0; i < tmAddAns.size(); i++) {
+                            ans.quesID = item.quesId;
+                            if (cbAns.getSelectionModel().getSelectedIndex() == i) {
+                                ans.isCorrect = true;
+                            } else {
+                                ans.isCorrect = false;
+                            }
+                            ans.ansContent = tmAddAns.get(i);
+                            ans.insert();
+                        }
+                    }
+                }
+                   JOptionPane.showMessageDialog(null, "Inserted Successful!");
+ 
+            }
+
+
+        }
+            }
+            
+        });
     }
     
+    public boolean checkAddQuestion() {
+        boolean check = true;
+        String ansA = txtA.getText();
+        String ansB = txtB.getText();
+        String ansC = txtC.getText();
+        String ansD = txtD.getText();
+        if (txtA.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Đáp án A trống");
+            txtA.requestFocus();
+            return check = false;
+        }
+        if (txtB.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Đáp án B trống");
+            txtB.requestFocus();
+            return check = false;
+        }
+        if (txtC.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Đáp án C trống");
+            txtC.requestFocus();
+            return check = false;
+        }
+        if (txtD.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Đáp án D trống");
+            txtD.requestFocus();
+            return check = false;
+        }
+        if (ansA.equals(ansB) || ansA.equals(ansC) || ansA.equals(ansD) || ansB.equals(ansC) || ansB.equals(ansD) || ansC.equals(ansD)) {
+            JOptionPane.showMessageDialog(null, "Đáp án không được giống nhau");
+            txtA.requestFocus();
+            return check = false;
+        }
+
+        Pattern p2 = Pattern.compile("^\\w.*\\.$");
+        Matcher m5 = p2.matcher(txtA.getText());
+        Matcher m6 = p2.matcher(txtB.getText());
+        Matcher m7 = p2.matcher(txtC.getText());
+        Matcher m8 = p2.matcher(txtD.getText());
+        //JOptionPane.showMessageDialog(this,m1.matches());
+        if (m5.matches() == false) {
+            JOptionPane.showMessageDialog(null, "Vui lòng kết thúc đáp án A với dấu chấm");
+            txtA.setText(null);
+           // txtA.setSelectionStart(0);
+            txtA.requestFocus();
+            return check = false;
+        }
+        if (m6.matches() == false) {
+            JOptionPane.showMessageDialog(null, "Vui lòng kết thúc đáp án B với dấu chấm");
+            txtB.setText(null);
+          //  txtB.setSelectionStart(0);
+            txtB.requestFocus();
+            return check = false;
+        }
+        if (m7.matches() == false) {
+            JOptionPane.showMessageDialog(null, "Vui lòng kết thúc đáp án C với dấu chấm");
+            txtC.setText(null);
+         //   txtC.setSelectionStart(0);
+            txtC.requestFocus();
+            return check = false;
+        }
+        if (m8.matches() == false) {
+            JOptionPane.showMessageDialog(null, "Vui lòng kết thúc đáp án D với dấu chấm");
+            txtD.setText(null);
+        //    txtD.setSelectionStart(0);
+            txtD.requestFocus();
+            return check = false;
+        }
+        Pattern p3 = Pattern.compile("\\s{2,}");
+        Matcher m9 = p3.matcher(txtA.getText());
+        Matcher m10 = p3.matcher(txtB.getText());
+        Matcher m11 = p3.matcher(txtC.getText());
+        Matcher m12 = p3.matcher(txtD.getText());
+        //JOptionPane.showMessageDialog(this,m1.matches());
+
+        if (m9.find() == true) {
+            JOptionPane.showMessageDialog(null, "Đáp án A không thể chứa 2 khoảng trắng liền nhau");
+            txtA.requestFocus();
+            return check = false;
+        }
+        if (m10.find() == true) {
+            JOptionPane.showMessageDialog(null, "Đáp án B không thể chứa 2 khoảng trắng liền nhau");
+            txtB.requestFocus();
+            return check = false;
+        }
+        if (m11.find() == true) {
+            JOptionPane.showMessageDialog(null, "Đáp án C không thể chứa 2 khoảng trắng liền nhau");
+            txtC.requestFocus();
+            return check = false;
+        }
+        if (m12.find() == true) {
+            JOptionPane.showMessageDialog(null, "Đáp án D không thể chứa 2 khoảng trắng liền nhau");
+            txtD.requestFocus();
+            return check = false;
+        }
+
+
+        return check;
+    }
 }

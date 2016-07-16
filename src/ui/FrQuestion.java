@@ -9,6 +9,8 @@ package ui;
 import DBModel.Question;
 import java.util.ArrayList;
 import java.util.Optional;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -23,7 +25,9 @@ import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.BlurType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -39,14 +43,18 @@ import javafx.util.Callback;
  *
  * @author Mattias
  */
-public class FrQuestion{
-    private ObservableList<DBModel.Question> data = FXCollections.observableArrayList() ;
+public class FrQuestion {
+    private ObservableList<DBModel.Question> data = FXCollections.observableList(new DBModel.Question().getData()); ;
     private Pagination pagination;
     private HBox boxTable = new HBox();
     int count = 0;
-    int totalRow = Math.round(new DBModel.Question().getNumAllRow()/itemsPerPage());
-    TableView table = new TableView();
-            
+    double totalRow = Math.ceil((double) new DBModel.Question().getNumAllRow()/itemsPerPage());
+    TableView<Question> table = new TableView();
+    TextField txtQuestion;
+    ComboBox cbbLevel;
+    ComboBox cbbCategory;
+    String cat;
+    
     public int itemsPerPage() {
         return 10;
     }
@@ -60,10 +68,10 @@ public class FrQuestion{
         lblCategory.setLayoutX(10);
         lblCategory.setLayoutY(10);
         
-        ComboBox cbbCategory = new ComboBox();
+        cbbCategory = new ComboBox();
         ArrayList<DBModel.Category> listCategory = new DBModel.Category().getData();
-        for(int i = 0; i < listCategory.size(); i++){
-            cbbCategory.getItems().add(listCategory.get(i).getName());
+        for(int i = 0; i < listCategory.size(); i++){          
+                cbbCategory.getItems().add(listCategory.get(i).getName());      
         }
         cbbCategory.getSelectionModel().selectFirst();
         cbbCategory.setLayoutX(100);
@@ -76,13 +84,14 @@ public class FrQuestion{
         lblLevel.setLayoutX(280);
         lblLevel.setLayoutY(10);
         
-        ComboBox cbbLevel = new ComboBox();
+        cbbLevel = new ComboBox();
         cbbLevel.getItems().addAll(
-            "1",
-            "2",
-            "3",
-            "4"
+            1,
+            2,
+            3,
+            4
         );
+        
         cbbLevel.getSelectionModel().selectFirst();
         cbbLevel.setLayoutX(360);
         cbbLevel.setLayoutY(10);
@@ -112,12 +121,12 @@ public class FrQuestion{
         btnViewAll.setLayoutY(55);
         btnViewAll.setPrefSize(90, 30);
         
-        TextArea txatQuestion = new TextArea();        
-        txatQuestion.setPrefSize(600, 100);
-        txatQuestion.setLayoutX(20);
-        txatQuestion.setLayoutY(100);
+        txtQuestion = new TextField();    
         
-        
+        txtQuestion.setPrefSize(600, 50);
+        txtQuestion.setLayoutX(20);
+        txtQuestion.setLayoutY(100);
+  
         //table
         this.buildData();
         boxTable.setLayoutX(20);
@@ -157,7 +166,7 @@ public class FrQuestion{
         
    
         
-        main.getChildren().addAll(lblCategory,cbbCategory,lblLevel,cbbLevel,lblQuestion,btnSearch,btnViewAll,txatQuestion,boxTable,btnAdd,btnUpdate,btnDelete,btnExit);
+        main.getChildren().addAll(lblCategory,cbbCategory,lblLevel,cbbLevel,lblQuestion,btnSearch,btnViewAll,txtQuestion,boxTable,btnAdd,btnUpdate,btnDelete,btnExit);
         root.getChildren().add(main);
         
         btnAdd.setOnMouseClicked(new EventHandler<MouseEvent>(){
@@ -197,11 +206,49 @@ public class FrQuestion{
                 }
             }
         });
+        // 1. Wrap the ObservableList in a FilteredList (initially display all data).
+       
+        btnSearch.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+                
+                if(cbbCategory.getSelectionModel().isSelected(0)){
+                    cat = "1";
+                }
+                if(cbbCategory.getSelectionModel().isSelected(1)){
+                    cat = "2";
+                }
+                if(cbbCategory.getSelectionModel().isSelected(2)){
+                    cat = "3";
+                }
+                if(cbbCategory.getSelectionModel().isSelected(3)){
+                    cat = "4";
+                }
+               String level = cbbLevel.getSelectionModel().getSelectedItem().toString();
+               
+         
+                
+            }
+            
+        });
+      
+        txtQuestion.textProperty().addListener(new ChangeListener() {
+             @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                
+            }
+     
+        });  
   }
-   
-  public VBox createPage(int pageIndex) {
-
-        data = FXCollections.observableArrayList(new DBModel.Question().getData(pageIndex,this.itemsPerPage()));
+    
+    public VBox createPage(int pageIndex) {
+        ArrayList<Question> newdata = new ArrayList<>();
+        for(int i = (pageIndex+1-1)*this.itemsPerPage(); i < (pageIndex+1-1)*this.itemsPerPage()+this.itemsPerPage(); i++)
+        {
+            if(data.size() == i) break;
+            newdata.add(data.get(i));
+        }
+        data =  FXCollections.observableList(newdata);
         VBox box = new VBox();
         table.setEditable(true);
         table.setPrefSize(600, 300);
@@ -225,20 +272,18 @@ public class FrQuestion{
         table.getColumns().addAll(category, level, content, status);
         
         table.setItems(data);
-        
-        
         box.getChildren().add(table);
         return box;
     }
   
     public void buildData(){
         boxTable.getChildren().clear();
-        pagination = new Pagination(totalRow, 0);
+        pagination = new Pagination((int) totalRow, 0);
         pagination.setPageFactory(new Callback<Integer, Node>() {
             @Override
             public Node call(Integer pageIndex) {
-                totalRow = Math.round(new DBModel.Question().getNumAllRow()/itemsPerPage());
-                pagination.setMaxPageIndicatorCount(totalRow);
+                totalRow = Math.ceil((double) new DBModel.Question().getNumAllRow()/itemsPerPage());
+                pagination.setMaxPageIndicatorCount((int) totalRow);
                 if (pageIndex >= totalRow) {
                     return null;
                 } else {
@@ -255,5 +300,5 @@ public class FrQuestion{
         boxTable.getChildren().add(anchor);
    }
 
-    
 }
+

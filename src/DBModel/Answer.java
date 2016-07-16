@@ -17,12 +17,13 @@ import javax.swing.JOptionPane;
  * @author Mattias
  */
 public class Answer {
-    private  int ansID,quesID,isCorrect;
-    private String ansContent;
+    public  int ansID,quesID;
+    public boolean isCorrect;
+    public String ansContent;
     public Answer() {
     }
 
-    public Answer(int ansID, int quesID, String ansContent, int isCorrect) {
+    public Answer(int ansID, int quesID, String ansContent, boolean isCorrect) {
         this.ansID = ansID;
         this.quesID = quesID;
         this.ansContent = ansContent;
@@ -41,7 +42,7 @@ public class Answer {
         return ansContent;
     }
 
-    public int getIsCorrect() {
+    public boolean getIsCorrect() {
         return isCorrect;
     }
 
@@ -53,7 +54,7 @@ public class Answer {
         this.quesID = quesID;
     }
 
-    public void setIsCorrect(int isCorrect) {
+    public void setIsCorrect(boolean isCorrect) {
         this.isCorrect = isCorrect;
     }
 
@@ -73,7 +74,7 @@ public class Answer {
                     a.ansID = rs.getInt(1);
                     a.quesID = rs.getInt(2);
                     a.ansContent = rs.getString(3);
-                    a.isCorrect = rs.getInt(4);
+                    a.isCorrect = rs.getBoolean(4);
 
                     list.add(a);
                 }
@@ -99,7 +100,7 @@ public class Answer {
                     a.ansID = rs.getInt(1);
                     a.quesID = rs.getInt(2);
                     a.ansContent = rs.getString(3);
-                    a.isCorrect = rs.getInt(4);
+                    a.isCorrect = rs.getBoolean(4);
 
                     list.add(a);
                 }
@@ -124,6 +125,24 @@ public class Answer {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        return true;
+    }
+      public boolean insert() {
+        try {
+            if (MyConnect.checkData()) {
+                Connection con = MyConnect.getConnect();
+                PreparedStatement pst = con.prepareStatement("insert tb_Answer values (?,?,?)");
+                pst.setInt(1, quesID);
+                pst.setString(2, ansContent);
+                pst.setBoolean(3, isCorrect);
+                pst.executeUpdate();
+                pst.close();
+                con.close();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return false;
         }
         return true;
     }

@@ -28,6 +28,11 @@ public class Question {
     public String getCat() {
         return new Category().getData(catId).get(0).getName();
     }
+
+    public int getCatId() {
+        return catId;
+    }
+    
     public String getActive() {
         if (isActive == true) {
             return "Khả dụng";
@@ -48,6 +53,10 @@ public class Question {
     public Question() {
     }
 
+    public void setQuesContent(String quesContent) {
+        this.quesContent = quesContent;
+    }
+    
     public Question(int quesId, int catId, int level, String quesContent, boolean isActive) {
         this.quesId = quesId;
         this.catId = catId;
@@ -57,60 +66,17 @@ public class Question {
     }
     
     public int getNumAllRow(){
-        int allnum = 0;
-        if (MyConnect.checkData()) {
-            try {
-                Connection con = MyConnect.getConnect();
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("select count(quesID) from tb_Question ");
-                while (rs.next()) {
-                    allnum = rs.getInt(1);
-                }
-                rs.close();
-                st.close();
-                con.close();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
-            }
-        }
+        int allnum = this.getData().size();
         return allnum;
     }
     
-    public ArrayList<Question> getData() {
+    public ArrayList<Question> getData(int id) {
         ArrayList<Question> list = new ArrayList<>();
         if (MyConnect.checkData()) {
             try {
                 Connection con = MyConnect.getConnect();
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("select * from tb_Question ");
-                while (rs.next()) {
-                    Question q = new Question();
-                    q.quesId = rs.getInt(1);
-                    q.catId = rs.getInt(2);
-                    q.quesContent = rs.getString(3);
-                    q.isActive = rs.getBoolean(4);
-                    q.level = rs.getInt(5);
-                    list.add(q);
-                }
-                rs.close();
-                st.close();
-                con.close();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
-            }
-        }
-        return list;
-    }
-
-    public ArrayList<Question> getData(int page, int row) {
-        ArrayList<Question> list = new ArrayList<>();
-        if (MyConnect.checkData()) {
-            try {
-                Connection con = MyConnect.getConnect();
-                PreparedStatement pst = con.prepareStatement("Select * from tb_Question Order By quesID OFFSET (?-1)*? ROWS FETCH NEXT ? ROWS ONLY");
-                pst.setInt(1, page+1);
-                pst.setInt(2, row);
-                pst.setInt(3, row);
+                PreparedStatement pst = con.prepareStatement("select * from tb_Question where quesID = ?");
+                pst.setInt(1, id);
                 ResultSet rs = pst.executeQuery();
                 while (rs.next()) {
                     Question q = new Question();
@@ -123,6 +89,32 @@ public class Question {
                 }
                 rs.close();
                 pst.close();
+                con.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        return list;
+    }
+    
+    public ArrayList<Question> getData(){
+        ArrayList<Question> list = new ArrayList<>();
+        if (MyConnect.checkData()) {
+            try {
+                Connection con = MyConnect.getConnect();
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery("Select * from tb_Question");
+                while (rs.next()) {
+                    Question q = new Question();
+                    q.quesId = rs.getInt(1);
+                    q.catId = rs.getInt(2);
+                    q.quesContent = rs.getString(3);
+                    q.isActive = rs.getBoolean(4);
+                    q.level = rs.getInt(5);
+                    list.add(q);
+                }
+                rs.close();
+                st.close();
                 con.close();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
@@ -233,5 +225,6 @@ public class Question {
             return true;
         }else return false;
     }
+    
 }
 

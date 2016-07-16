@@ -16,6 +16,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -43,7 +45,7 @@ public class FrPrizeMoney {
     private ObservableList<DBModel.PrizeMoney> data = FXCollections.observableArrayList() ;
     TableView table = new TableView();
     private HBox boxTable = new HBox();
-
+    
     ResultSet rs=null;
     PreparedStatement preparedStatement=null;
     Connection connection=MyConnect.getConnect();
@@ -68,6 +70,7 @@ public class FrPrizeMoney {
         table.setLayoutY(100);
         table.setEditable(true);
         
+        //???
         Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
             @Override
             public TableCell call(TableColumn p) {
@@ -79,11 +82,11 @@ public class FrPrizeMoney {
         loca.setCellValueFactory(
             new PropertyValueFactory<DBModel.PrizeMoney, String>("PriId"));
        
-        
-           
         TableColumn money = new TableColumn("Mức thưởng");
         money.setCellValueFactory(
             new PropertyValueFactory<DBModel.PrizeMoney, String>("Money"));
+        
+        // xu ly su kien tren cot Moeny
         money.setCellFactory(cellFactory);
         money.setOnEditCommit(
                 new EventHandler<CellEditEvent<DBModel.PrizeMoney, String>>() {
@@ -95,6 +98,7 @@ public class FrPrizeMoney {
                 ).setMoney(Integer.parseInt(t.getNewValue()));
             DBModel.PrizeMoney updatePrize  = (DBModel.PrizeMoney)table.getSelectionModel().getSelectedItem();
             updatePrize.update();
+        
         }
     }
 );

@@ -5,6 +5,9 @@
  */
 package ui;
 
+import DBModel.Question;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -16,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javax.swing.JOptionPane;
 
 
 
@@ -24,7 +28,8 @@ import javafx.scene.text.Font;
  * @author Mattias
  */
 public class FrCheckQuestion {
-
+    TextArea txtQues;
+    Question ques;
 public FrCheckQuestion(HBox root) {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER_LEFT);
@@ -36,7 +41,7 @@ public FrCheckQuestion(HBox root) {
         lb.setTextFill(Color.web("#fff"));
         grid.add(lb, 0, 0);
         
-        TextArea txtQues = new TextArea();
+        txtQues = new TextArea();
         txtQues.setPrefSize(600, 150);
         txtQues.setFont(new Font("Tahoma",20));
         grid.add(txtQues, 0, 1);
@@ -65,8 +70,12 @@ public FrCheckQuestion(HBox root) {
         btnCheck.setOnMouseClicked(new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent event) {
-                root.getChildren().clear();
-                new FrAddAnswer(root);
+                if(checkQuestion()){
+                    String text = String.valueOf(txtQues.getText());
+                //    ques.setQuesContent(text);         
+                    root.getChildren().clear();
+                    new FrAddAnswer(root,text);
+                }
             }     
         });
         
@@ -78,5 +87,39 @@ public FrCheckQuestion(HBox root) {
             
         });
     }
-    
+    public boolean checkQuestion() {
+        boolean check = true;
+        Pattern p1 = Pattern.compile("\\s{2,}");
+        Matcher m1 = p1.matcher(txtQues.getText());
+        if (m1.find() == true) {
+            JOptionPane.showMessageDialog(null, "Vui lòng không có 2 khoảng trắng trong câu hỏi");
+        //    txtQues.setText(null);
+            txtQues.requestFocus();
+            return check = false;
+        }
+        
+        Pattern p2 = Pattern.compile("^\\w.{10,}\\?$");
+        Matcher m2 = p2.matcher(txtQues.getText());
+        if (m2.matches() == false) {
+            JOptionPane.showMessageDialog(null, "Câu hỏi phải có nhiều hơn 10 kí tự và kết thúc bằng dấu ?");
+            txtQues.requestFocus();
+            return check = false;
+        }
+
+//        for (Question item : ques.getData()) {
+//            if (txtQues.getText().equals(item.quesContent)) {
+//                JOptionPane.showMessageDialog(null, "Câu hỏi này đã tồn tại");
+//                txtQues.requestFocus();
+//                return check = false;
+//            }
+//        }
+
+        if (txtQues.getText().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin");
+            txtQues.requestFocus();
+            return check = false;
+        }
+
+        return check;
+    }
 }

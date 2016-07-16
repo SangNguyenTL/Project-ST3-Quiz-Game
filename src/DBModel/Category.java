@@ -27,7 +27,9 @@ public class Category {
     public String getName() {
         return name;
     }
-
+    public int getId() {
+        return id;
+    }
     public ArrayList<Category> getData() {
         ArrayList<Category> list = new ArrayList<>();
         try {
@@ -72,5 +74,10 @@ public class Category {
             e.printStackTrace();
         }
         return list;
+    }
+
+    @Override
+    public String toString() {
+        return name.toString(); //To change body of generated methods, choose Tools | Templates.
     }
 }
