@@ -171,7 +171,7 @@ public class frPlaygame {
         boxListLevel.setAlignment(Pos.CENTER);
         for(DBModel.PrizeMoney one : new DBModel.PrizeMoney().getData()){
             Label oneLevel = new Label();
-            oneLevel.setText(Integer.toString(one.getMoney()));
+            oneLevel.setText(one.getMoney());
             oneLevel.getStyleClass().addAll("btnCus","text-warning");
             oneLevel.setMinWidth(162);
             oneLevel.setMinHeight(42);
