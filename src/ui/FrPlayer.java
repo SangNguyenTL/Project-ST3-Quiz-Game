@@ -5,20 +5,27 @@
  */
 package ui;
 
+import DBModel.Player;
+import java.util.TreeMap;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 /**
@@ -27,103 +34,235 @@ import javafx.scene.text.Font;
  */
 public class FrPlayer {
 
-    private TableView table = new TableView();
-
+    private TableView<Player> table = new TableView<Player>();
+    private ObservableList<DBModel.Player> masterData;
+    private ObservableList<DBModel.Player> filteredData;
+    private HBox boxTable;
+    private TextField txtSearch;
+    private TextField txtYear;
+    private TextField txtEmail;
+    private TextField txtPrize;
+    private TextField txtTime;
+    private TreeMap<Integer,TextField> txtText;
+    
     public FrPlayer(HBox root) {
-        GridPane gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER_LEFT);
-        gridPane.setHgap(20);
-        gridPane.setVgap(10);
-        Label lblCategory = new Label();
+        GridPane main = new GridPane();
+        main.setHgap(10);
+        main.setVgap(10);
+        // BIến gốc
+        masterData = FXCollections.observableArrayList(new Player().getData());
+        //BIến dùng để lọc dữ liệu
+        filteredData = FXCollections.observableArrayList();
+        filteredData.addAll(masterData);
+        masterData.addListener(new ListChangeListener<Player>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Player> change) {
+                updateFilteredData();
+            }
+        });
+        initializeTable();
+        boxTable = new HBox(new TablePlayer().init(table, filteredData));
+        
+        
+        txtSearch = new TextField();
+        txtSearch.setPromptText("Nhập tên");
+        txtEmail = new TextField();
+        txtEmail.setPromptText("Nhập email");
+        txtYear = new TextField();
+        txtYear.setPromptText("Nhập năm sinh");
+        txtPrize = new TextField();
+        txtPrize.setPromptText("Nhập tiền thưởng");
+        txtTime = new TextField();
+        txtTime.setPromptText("Nhập thời gian");
+        
+        txtText = new TreeMap<>();
+        txtText.put(0, txtSearch);
+        txtText.put(1, txtEmail);
+        txtText.put(2, txtYear);
+        txtText.put(3, txtPrize);
+        txtText.put(4, txtTime);
+        
+        for(int i = 0; i <txtText.size(); i++){
+            txtText.get(i).getStyleClass().add("txtField");
+            txtText.get(i).setFont(new Font("Arial", 15));
+            txtText.get(i).setPrefWidth(100);
+            txtText.get(i).textProperty().addListener(new InvalidationListener() {
 
-        lblCategory.setText("Nhập tên: ");
-        lblCategory.setFont(new Font("Arial", 20));
-        lblCategory.setTextFill(Color.web("#fff"));
-        gridPane.add(lblCategory, 0, 1);
-
-        Label lblQuestion = new Label();
-        lblQuestion.setText("Thành viên: ");
-        lblQuestion.setFont(new Font("Arial", 20));
-        lblQuestion.setTextFill(Color.web("#fff"));
-        gridPane.add(lblQuestion, 0, 3);
-
-        Label lbTotal = new Label();
-        lbTotal.setText("Tổng số thành viên: ");
-        lbTotal.setFont(new Font("Arial", 15));
-        lbTotal.setTextFill(Color.web("#fff"));
-        gridPane.add(lbTotal, 1, 4);
-
-        DropShadow ds = new DropShadow();
-        ds.setOffsetY(3.0f);
-        ds.setColor(Color.web("#00A1FF"));
-
-        TextField userTextField = new TextField();
-        userTextField.getStyleClass().add("txtField");
-        userTextField.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-        gridPane.add(userTextField, 1, 1);
-        userTextField.setFont(new Font("Arial", 15));
-
-        //button search
-        VBox vbBox = new VBox(10);
-        Button btnSearch = new Button("Tìm kiếm");
-        HBox.setHgrow(btnSearch, Priority.ALWAYS);
-        btnSearch.setMaxWidth(Double.MAX_VALUE);
-        btnSearch.getStyleClass().add("btnNor");
-        btnSearch.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-        vbBox.getChildren().addAll(btnSearch);
-        btnSearch.setFont(new Font("Arial", 20));
-        gridPane.add(vbBox, 2, 1);
+            @Override
+            public void invalidated(Observable o) {
+                // Sleep một 0.5 giây để đợi kết thúc ấn nội dung lọc thì mới bắt đầu lọc tránh nặng xử lý
+                Task<Void> sleeper = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            //Đặt thời gian
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                        }
+                        return null;
+                    }
+                };
+                // KHi sleep hết thời gian sẽ chạy đoạn code trong handle
+                sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                    @Override
+                    public void handle(WorkerStateEvent event) {
+                        updateFilteredData();
+                    }
+                });
+                new Thread(sleeper).start();
+            }
+        });
+            main.add(txtText.get(i),i,0);
+        }
+       
 
         //table
-        table.setPrefSize(600, 300);
-        TableColumn username = new TableColumn("Tên người chơi");
-        TableColumn userlogin = new TableColumn("Tên đăng nhập");
-        TableColumn pass = new TableColumn("Mật khẩu");
-        TableColumn year = new TableColumn("Năm sinh");
+        boxTable.setLayoutX(100);
+        boxTable.setLayoutY(50);
+        main.add(boxTable, 0, 1, 5, 2);
 
-        username.prefWidthProperty().bind(table.widthProperty().divide(3)); // w * 1/5
-        userlogin.prefWidthProperty().bind(table.widthProperty().divide(4)); // w * 3/5
-        pass.prefWidthProperty().bind(table.widthProperty().divide(5)); // w * 1/5
-        year.prefWidthProperty().bind(table.widthProperty().divide(4)); // w * 1/5
-
-        table.getColumns().addAll(username, userlogin, pass, year);
-
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.getChildren().addAll(table);
-        gridPane.add(vbox, 1, 3);
         // button list
-        VBox vbbtn = new VBox(10);
-        vbbtn.setPrefWidth(100);
-        Button btnPrint = new Button("In");
-        btnPrint.getStyleClass().add("btnNor");
-        btnPrint.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-        btnPrint.setFont(new Font("Arial",15));
-        
-        Button btnExit = new Button("Thoát");
-        btnExit.getStyleClass().add("btnNor");
-        btnExit.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-        btnExit.setFont(new Font("Arial",15));
-        
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(btnPrint);
-        hbBtn.getChildren().add(btnExit);
-        
-        gridPane.add(hbBtn, 1, 4);
-        
+        Button btnDelete = new Button("Xóa");
+        btnDelete.getStyleClass().add("btnNor");
+        btnDelete.setPrefSize(90, 30);
+        main.add(btnDelete,6,1);
 
-        
+        Button btnUpdate = new Button("Cập nhật");
+        btnUpdate.getStyleClass().add("btnNor");
+        btnUpdate.setPrefSize(90, 30);
+        main.add(btnUpdate,6,2);
 
-        root.getChildren().add(gridPane);
+        root.getChildren().add(main);
 
-        btnExit.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        btnUpdate.setOnAction(new EventHandler<ActionEvent>() {
+
             @Override
-            public void handle(MouseEvent event) {
-                System.exit(0);
+            public void handle(ActionEvent t) {
+                if (table.getSelectionModel().isEmpty()) {
+                    new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
+
+                        @Override
+                        public void processResult() {
+                        }
+                    };
+                    return;
+                }
+                Player player = (Player) table.getSelectionModel().getSelectedItem();
+                root.getChildren().clear();
+                new frNewUpdateUser(root, player);
             }
         });
 
+        // Khi ấn nút delete
+        btnDelete.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (table.getSelectionModel().isEmpty()) {
+                    new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
+
+                        @Override
+                        public void processResult() {
+                        }
+                    };
+                    return;
+                }
+                Player player = (Player) table.getSelectionModel().getSelectedItem();
+                new AlertGame("Xóa đối tượng", "Bạn chắc chắn muốn xóa?", AlertType.CONFIRMATION) {
+                    @Override
+                    public void processResult() {
+                        if(result.get()==ButtonType.OK){
+                            String textStatus;
+                            if (player.delete()){
+                                masterData.clear();
+                                masterData.addAll(new Player().getData());
+                                textStatus = "Thành công";
+                            }
+                            else{
+                                textStatus = "Thất bại";
+                            }
+                            new AlertGame("Trạng thái", "Xóa "+textStatus, AlertType.INFORMATION) {
+
+                                @Override
+                                public void processResult() {
+                                }
+                            };
+                        }
+                    }
+                };
+            }
+        });
+}
+    private void initializeTable() {
+        table.setPrefSize(620, 300);
+        TableColumn userName = new TableColumn("Tên người chơi");
+        userName.setCellValueFactory(
+                new PropertyValueFactory<DBModel.Player, String>("userName"));
+        TableColumn email = new TableColumn("Tên đăng nhập");
+        email.setCellValueFactory(
+                new PropertyValueFactory<DBModel.Player, String>("Email"));
+        TableColumn year = new TableColumn("Năm sinh");
+        year.setCellValueFactory(
+                new PropertyValueFactory<DBModel.Player, String>("year"));
+        TableColumn money = new TableColumn("Tiền thưởng");
+        money.setCellValueFactory(
+                new PropertyValueFactory<DBModel.Player, String>("Money"));
+        TableColumn time = new TableColumn("Thời gian");
+        time.setCellValueFactory(
+                new PropertyValueFactory<DBModel.Player, String>("TotalTime"));
+        
+        userName.prefWidthProperty().bind(table.widthProperty().divide(5)); 
+        email.prefWidthProperty().bind(table.widthProperty().divide(5)); 
+        year.prefWidthProperty().bind(table.widthProperty().divide(5)); 
+        money.prefWidthProperty().bind(table.widthProperty().divide(5)); 
+        time.prefWidthProperty().bind(table.widthProperty().divide(5)); 
+        
+        table.getColumns().addAll(userName, email, year, money,time);
     }
 
+    private void updateFilteredData() {
+        filteredData.clear();
+
+        for (Player p : masterData) {
+            if (matchesFilter(p)) {
+                filteredData.add(p);
+            }
+        }
+        reapplyTableSortOrder();
+    }
+
+    private boolean matchesFilter(Player q) {
+        String filterString = txtSearch.getText().toLowerCase();
+        
+        String filterEmail = txtEmail.getText().toLowerCase();
+        
+        String filterYear = txtYear.getText().toLowerCase();
+        
+        String filterPrize = txtPrize.getText().toLowerCase();
+        
+        String filterTime = txtTime.getText().toLowerCase();
+        
+        Boolean filter = true;
+        if (filterString != null || !filterString.isEmpty()) {
+            filter = filter && (q.getUserName().toLowerCase().indexOf(filterString) != -1);
+        }
+        if (filterEmail != null || !filterEmail.isEmpty()) {
+            filter = filter && (q.getEmail().toLowerCase().indexOf(filterEmail) != -1);
+        }
+        if (filterYear != null || !filterYear.isEmpty()) {
+            filter = filter && (String.valueOf(q.getYear()).toLowerCase().indexOf(filterYear) != -1);
+        }
+        if (filterPrize != null || !filterPrize.isEmpty()) {
+            filter = filter && (String.valueOf(q.getMoney()).toLowerCase().indexOf(filterPrize) != -1);
+        }
+        if (filterTime != null || !filterTime.isEmpty()) {
+            filter = filter && (String.valueOf(q.getTotalTime()).toLowerCase().indexOf(filterTime) != -1);
+        }
+        
+        return filter; 
+    }
+
+    private void reapplyTableSortOrder() {
+        boxTable.getChildren().clear();
+        boxTable.getChildren().add(new TablePlayer().init(table, filteredData));
+    }
 }
