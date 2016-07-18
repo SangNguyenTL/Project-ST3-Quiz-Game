@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.GridPane;
@@ -96,7 +98,17 @@ public class listButtonOpen {
 
             @Override
             public void handle(MouseEvent t) {
-                new AlertGame("Ai là triệu phú", "Bạn thực sự muốn thoát");
+                new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Thôi' để quay lại", Alert.AlertType.CONFIRMATION) {
+                    
+                    @Override
+                    public void processResult() {
+                        if(result.get() == ButtonType.OK){
+                            System.exit(0);
+                        }else{
+                            alert.close();
+                        }
+                    }
+                };
             }
         });
         //top 

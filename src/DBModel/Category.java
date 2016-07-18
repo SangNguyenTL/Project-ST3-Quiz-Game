@@ -11,6 +11,10 @@ package DBModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.sql.PreparedStatement;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import ui.AlertGame;
+
 public class Category {
 
     public int id;
@@ -27,9 +31,22 @@ public class Category {
     public String getName() {
         return name;
     }
+
     public int getId() {
         return id;
     }
+    public void error(Exception e) {
+        new AlertGame("Lỗi", e.getMessage(), Alert.AlertType.ERROR) {
+
+            @Override
+            public void processResult() {
+                if(getResult().get()==ButtonType.OK){
+                    System.exit(0);
+                }
+            }
+        };
+    }
+
     public ArrayList<Category> getData() {
         ArrayList<Category> list = new ArrayList<>();
         try {
@@ -49,31 +66,31 @@ public class Category {
                 con.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            error(e);
         }
         return list;
     }
-    public ArrayList<Category> getData(int id) {
-        ArrayList<Category> list = new ArrayList<>();
+
+    public Category getData(int id) {
+        Category obCat = new Category();
         try {
             if (MyConnect.checkData()) {
                 Connection con = MyConnect.getConnect();
                 PreparedStatement pst = con.prepareStatement("select * from tb_Category WHERE catID = ?");
                 pst.setInt(1, id);
-                ResultSet rs =  pst.executeQuery();
+                ResultSet rs = pst.executeQuery();
                 if(rs.next()){
-                    int catId = rs.getInt(1);
-                    String catName = rs.getString(2);
-                    list.add(new Category(catId, catName));
+                    obCat.id = rs.getInt(1);
+                    obCat.name = rs.getString(2);
                 }
                 rs.close();
                 pst.close();
                 con.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
-        return list;
+        return obCat;
     }
 
     @Override

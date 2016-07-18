@@ -6,13 +6,18 @@
 package ui;
 
 import DBModel.Question;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.InputMethodEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -21,103 +26,143 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javax.swing.JOptionPane;
 
-
-
 /**
  *
  * @author Mattias
  */
 public class FrCheckQuestion {
+
     TextArea txtQues;
-    Question ques;
-public FrCheckQuestion(HBox root) {
+    Question ques = new Question();
+    Label lbCount;
+    public FrCheckQuestion(HBox root) {
         GridPane grid = new GridPane();
+
         grid.setAlignment(Pos.CENTER_LEFT);
-        grid.setHgap(20);
         grid.setVgap(10);
-        
+        grid.setHgap(20);
+
         Label lb = new Label("Đặt câu hỏi!!");
-        lb.setFont(new Font("Arial",20));
+        lb.setFont(new Font("Arial", 20));
         lb.setTextFill(Color.web("#fff"));
         grid.add(lb, 0, 0);
+
+        lbCount = new Label("0");
+        lbCount.setFont(new Font("Arial", 20));
+        lbCount.setTextFill(Color.web("#fff"));
+        grid.add(lbCount, 1, 0);
         
         txtQues = new TextArea();
+        txtQues.setWrapText(true);
         txtQues.setPrefSize(600, 150);
-        txtQues.setFont(new Font("Tahoma",20));
-        grid.add(txtQues, 0, 1);
-        
-        HBox hbbtn = new HBox(10);
-        hbbtn.setPrefWidth(100);
-        
-        Label blank = new Label("                                                                 ");
-        Button btnCheck = new Button("Thêm câu trả lời");
-        HBox.setHgrow(hbbtn, Priority.ALWAYS); 
-        btnCheck.setMaxWidth(Double.MAX_VALUE);
-        btnCheck.getStyleClass().add("btnNor");
-        btnCheck.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-        
-        Button btnReset = new Button("Xóa trắng");
-        HBox.setHgrow(hbbtn, Priority.ALWAYS); 
-        btnReset.setMaxWidth(Double.MAX_VALUE);
-        btnReset.getStyleClass().add("btnNor");
-        btnReset.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
-        
-        hbbtn.getChildren().addAll(blank,btnCheck,btnReset);    
-        grid.add(hbbtn, 0, 2);
+        txtQues.setFont(new Font("Tahoma", 20));
+        grid.add(txtQues, 0, 1, 2, 1);
 
-        root.getChildren().add(grid);
-        
-        btnCheck.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        txtQues.setOnKeyPressed(new EventHandler<KeyEvent>(){
+
             @Override
-            public void handle(MouseEvent event) {
-                if(checkQuestion()){
-                    String text = String.valueOf(txtQues.getText());
-                //    ques.setQuesContent(text);         
-                    root.getChildren().clear();
-                    new FrAddAnswer(root,text);
+            public void handle(KeyEvent t) {
+                lbCount.setText(String.valueOf(txtQues.getText().length()));
+                if(txtQues.getText().length()<10 || txtQues.getText().length()>270){
+                    lbCount.setTextFill(Color.RED);
+                }else{
+                    lbCount.setTextFill(Color.WHITE);
                 }
-            }     
+            }
+       
         });
         
-        btnReset.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        
+        HBox hbbtn = new HBox(10);
+        
+        Button btnCheck = new Button("Thêm câu trả lời");
+        HBox.setHgrow(hbbtn, Priority.ALWAYS);
+        btnCheck.setMaxWidth(100);
+        btnCheck.getStyleClass().add("btnNor");
+        btnCheck.setAlignment(Pos.BOTTOM_LEFT);
+
+        Button btnReset = new Button("Xóa trắng");
+        HBox.setHgrow(hbbtn, Priority.ALWAYS);
+        btnReset.setMaxWidth(100);
+        btnReset.getStyleClass().add("btnNor");
+        btnReset.setAlignment(Pos.BOTTOM_RIGHT);
+
+        hbbtn.getChildren().addAll(btnCheck, btnReset);
+        grid.add(hbbtn, 0, 2 , 2, 1);
+
+        root.getChildren().add(grid);
+
+        btnCheck.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (checkQuestion()) { 
+                    root.getChildren().clear();
+                    new FrAddAnswer(root, ques,false);
+                }
+            }
+        });
+
+        btnReset.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 txtQues.setText("");
             }
-            
+
         });
     }
+
     public boolean checkQuestion() {
         boolean check = true;
+        if (txtQues.getText().isEmpty()) {
+            new AlertGame("Lỗi", "Bạn chưa nhập câu hỏi", Alert.AlertType.WARNING) {
+
+                @Override
+                public void processResult() {
+
+                }
+            };
+        }
         Pattern p1 = Pattern.compile("\\s{2,}");
+        ques.setQuesContent(txtQues.getText());
         Matcher m1 = p1.matcher(txtQues.getText());
         if (m1.find() == true) {
-            JOptionPane.showMessageDialog(null, "Vui lòng không có 2 khoảng trắng trong câu hỏi");
-        //    txtQues.setText(null);
+            new AlertGame("Lỗi", "Trong câu hỏi của bạn không được có hơn hai khoảng trắng sát nhau", Alert.AlertType.WARNING) {
+
+                @Override
+                public void processResult() {
+
+                }
+            };
+            //    txtQues.setText(null);
             txtQues.requestFocus();
             return check = false;
         }
-        
-        Pattern p2 = Pattern.compile("^\\w.{10,}\\?$");
-        Matcher m2 = p2.matcher(txtQues.getText());
+
+        Pattern p2 = Pattern.compile("^\\S.{9,269}\\?$");
+        Matcher m2 = p2.matcher(txtQues.getText().toString());
+        System.out.println(txtQues.getText());
         if (m2.matches() == false) {
-            JOptionPane.showMessageDialog(null, "Câu hỏi phải có nhiều hơn 10 kí tự và kết thúc bằng dấu ?");
+            new AlertGame("Lỗi", "Câu hỏi phải có dấu hỏi khi kết thúc câu và có từ 10 đến 270 ký tự", Alert.AlertType.WARNING) {
+
+                @Override
+                public void processResult() {
+
+                }
+            };
             txtQues.requestFocus();
             return check = false;
         }
+        ArrayList a = ques.getData(ques.getQuesContent());
+        System.out.println(a.size());
+        if (!a.isEmpty()) {
+            new AlertGame("Lỗi", "Câu hỏi đã tồn tại", Alert.AlertType.WARNING) {
 
-//        for (Question item : ques.getData()) {
-//            if (txtQues.getText().equals(item.quesContent)) {
-//                JOptionPane.showMessageDialog(null, "Câu hỏi này đã tồn tại");
-//                txtQues.requestFocus();
-//                return check = false;
-//            }
-//        }
-
-        if (txtQues.getText().length() == 0) {
-            JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin");
+                @Override
+                public void processResult() {
+                }
+            };
             txtQues.requestFocus();
-            return check = false;
+            check = false;
         }
 
         return check;

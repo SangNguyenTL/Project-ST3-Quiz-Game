@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ui;
 
 import java.util.Optional;
@@ -17,20 +16,24 @@ import javafx.stage.Stage;
  *
  * @author nhats
  */
-public class AlertGame {
+public abstract class AlertGame {
 
-    public AlertGame(String title, String text) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
+    Alert alert;
+    Optional<ButtonType> result;
+
+    public AlertGame(String title, String text, AlertType typeAlert) {
+        alert = new Alert(typeAlert);
         alert.setHeaderText(text);
         alert.setTitle(title);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(new Image(this.getClass().getResource("/images/icon.png").toString()));
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            System.exit(0);
-        } else {
-            alert.close();
-        }
+        result = alert.showAndWait();
+        processResult();
     }
-    
+
+    public Optional<ButtonType> getResult() {
+        return result;
+    }
+
+    public abstract void processResult();
 }

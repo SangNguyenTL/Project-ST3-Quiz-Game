@@ -37,29 +37,31 @@ import lib.openSound;
  */
 public class frPlaygame {
     private VBox listLevel;
-    openSound hoverButton  = new openSound("sounds/hoverButton.mp3",500);
+    private openSound hoverButton  = new openSound("sounds/hoverButton.mp3",500);
+    private Double sizeRoot;
     public frPlaygame(Pane root) {
+        sizeRoot = root.getWidth();
         listLevel = new VBox();
-        listLevel.setPrefWidth(250);
+        listLevel.setMaxWidth(root.getWidth()*0.3);
         listLevel.getChildren().addAll(listBtnHelp(),listLevel());
         BorderPane border = new BorderPane();
         VBox boxQuest = new VBox();
         boxQuest.setPadding(new Insets(50,0,50,0));
-        boxQuest.setPrefWidth(root.getWidth()-250);
+        boxQuest.setMaxWidth(root.getWidth()*0.7);
         border.setRight(listLevel);
         VBox boxTextQuest = new VBox();
         Text textQuest = new Text("Câu hỏi abcdef là một dãy ký tự gọi là alphatest... là đúng hay sai?");
         textQuest.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
         textQuest.setFill(Paint.valueOf("#FFF"));
         boxTextQuest.getChildren().add(textQuest);
-        boxTextQuest.setPadding(new Insets(30,80,30,80));
-        boxTextQuest.setMaxHeight(120);
-        boxTextQuest.setMinHeight(120);
-        boxTextQuest.setPrefHeight(120);
+        boxTextQuest.setPadding(new Insets(sizeRoot/45.5,sizeRoot/17.075,sizeRoot/45.5,sizeRoot/17.075));
+        boxTextQuest.setMaxHeight(this.sizeRoot/11.38);
+        boxTextQuest.setMinHeight(this.sizeRoot/11.38);
+        boxTextQuest.setPrefHeight(this.sizeRoot/11.38);
         boxTextQuest.setId("boxTextQuest");
         
         GridPane boxListBtnAns = new GridPane();
-        boxListBtnAns.setPadding(new Insets(10,0,10,0));
+        boxListBtnAns.setPadding(new Insets(sizeRoot/136.6,0,sizeRoot/136.6,0));
         boxListBtnAns.setAlignment(Pos.CENTER);
         boxListBtnAns.setVgap(20);
         Button btnA = new Button("Đúng");
@@ -79,21 +81,21 @@ public class frPlaygame {
         boxListBtnAns.add(btnC,0,1);
         boxListBtnAns.add(btnD,1,1);
         BorderPane boxTime = new BorderPane();
-        boxTime.setPadding(new Insets(20));
-        boxTime.setPrefHeight(250);
+        boxTime.setPadding(new Insets(sizeRoot/68.3));
+        boxTime.setPrefHeight(sizeRoot/5.464);
         
         DropShadow ds = new DropShadow();
         ds.setOffsetY(3.0f);
         ds.setColor(Color.web("#fff"));
         
         ImageView imgMain = new ImageView(new Image(getClass().getResource("/images/mainQuest.png").toString()));
-        imgMain.setFitHeight(300);
-        imgMain.setFitWidth(300);
+        imgMain.setFitHeight(sizeRoot/4.55);
+        imgMain.setFitWidth(sizeRoot/4.55);
         imgMain.setEffect(ds);
         
         ImageView imgPlayer = new ImageView(new Image(getClass().getResource("/images/player.png").toString()));
-        imgPlayer.setFitHeight(300);
-        imgPlayer.setFitWidth(300);
+        imgPlayer.setFitHeight(sizeRoot/4.55);
+        imgPlayer.setFitWidth(sizeRoot/4.55);
         imgPlayer.setEffect(ds);
         
         VBox boxImgMain = new VBox(imgMain);
@@ -107,18 +109,18 @@ public class frPlaygame {
 
         Text textVs = new Text("VS");
         textVs.setEffect(ds);
-        textVs.setFont(Font.font("Tahoma", FontWeight.BLACK, 30));
+        textVs.setFont(Font.font("Tahoma", FontWeight.BLACK, sizeRoot/45.55));
         textVs.setFill(Paint.valueOf("#ff0000"));
         textVs.setStroke(Paint.valueOf("#FFF"));
         textVs.setStrokeWidth(1);
         HBox boxttextVs = new HBox(textVs);
         boxttextVs.setPadding(new Insets(10));
         boxttextVs.setAlignment(Pos.CENTER);
-        boxttextVs.setMaxSize(65, 65);
+        boxttextVs.setMaxSize(this.sizeRoot/21.015, this.sizeRoot/21.015);
         
         Text numTime = new Text("60");
         numTime.setEffect(ds);
-        numTime.setFont(Font.font("Tahoma", FontWeight.BLACK, 30));
+        numTime.setFont(Font.font("Tahoma", FontWeight.BLACK, sizeRoot/45.55));
         numTime.setFill(Paint.valueOf("#fff"));
         numTime.setStroke(Paint.valueOf("#FFF"));
         numTime.setStrokeWidth(1);
@@ -126,7 +128,7 @@ public class frPlaygame {
         HBox boxtCountTime = new HBox(numTime);
         boxtCountTime.setId("boxtCountTime");
         boxtCountTime.setAlignment(Pos.CENTER);
-        boxtCountTime.setMaxSize(65, 65);
+        boxtCountTime.setMaxSize(this.sizeRoot/21.015, this.sizeRoot/21.015);
         
         boxBoxTime.add(boxttextVs,0,0);
         boxBoxTime.add(boxtCountTime,0,1);
@@ -146,9 +148,9 @@ public class frPlaygame {
         root.getChildren().add(border);
     }
     public void setEffectButton(Button button){
-            button.setMinWidth(558);
-            button.setMinHeight(68);
-            button.setFont(Font.font("Tahoma", FontWeight.MEDIUM, 20));
+            button.setMinWidth(this.sizeRoot/2.449);
+            button.setMinHeight(this.sizeRoot/20.08);
+            button.setFont(Font.font("Tahoma", FontWeight.MEDIUM, this.sizeRoot/68.8));
             button.setOnMouseEntered(new EventHandler<MouseEvent>
         () {
 
@@ -173,8 +175,8 @@ public class frPlaygame {
             Label oneLevel = new Label();
             oneLevel.setText(one.getMoney());
             oneLevel.getStyleClass().addAll("btnCus","text-warning");
-            oneLevel.setMinWidth(162);
-            oneLevel.setMinHeight(42);
+            oneLevel.setMinWidth(this.sizeRoot/8.43);
+            oneLevel.setMinHeight(this.sizeRoot/32.523);
             oneLevel.setId("level-"+one.getPriId());
             oneLevel.setAlignment(Pos.CENTER);
             oneLevel.setTextAlignment(TextAlignment.CENTER);
@@ -185,8 +187,8 @@ public class frPlaygame {
     
     public GridPane listBtnHelp(){
         GridPane listBtnHelp = new GridPane();
-        listBtnHelp.setPadding(new Insets(15));
-        listBtnHelp.setHgap(10);
+        listBtnHelp.setPadding(new Insets(this.sizeRoot/91.06));
+        listBtnHelp.setHgap(this.sizeRoot/136.6);
         listBtnHelp.setAlignment(Pos.CENTER);
         Button btnPer = new Button();
         btnPer.setId("btnper50");
@@ -202,8 +204,8 @@ public class frPlaygame {
         
         for(int i=0;i<allButton.size();i++){
             listBtnHelp.add(allButton.get(i),i,0);
-            allButton.get(i).setMinWidth(50);
-            allButton.get(i).setMinHeight(50);
+            allButton.get(i).setMinWidth(this.sizeRoot/27.2);
+            allButton.get(i).setMinHeight(this.sizeRoot/27.2);
             allButton.get(i).setOnMouseEntered(new EventHandler<MouseEvent>
         () {
 

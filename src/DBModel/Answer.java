@@ -8,18 +8,22 @@ package DBModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import javafx.scene.control.Alert;
+import ui.AlertGame;
 
 /**
  *
  * @author Mattias
  */
 public class Answer {
-    public  int ansID,quesID;
+
+    public int ansID, quesID;
     public boolean isCorrect;
     public String ansContent;
+
     public Answer() {
     }
 
@@ -61,8 +65,8 @@ public class Answer {
     public void setAnsContent(String ansContent) {
         this.ansContent = ansContent;
     }
-    
-     public ArrayList<Answer> getData() {
+
+    public ArrayList<Answer> getData() {
         ArrayList<Answer> list = new ArrayList<>();
         if (MyConnect.checkData()) {
             try {
@@ -82,17 +86,23 @@ public class Answer {
                 st.close();
                 con.close();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+                new AlertGame("Lỗi", e.getMessage(), Alert.AlertType.ERROR) {
+
+                    @Override
+                    public void processResult() {
+                    }
+                };
             }
         }
         return list;
     }
-          public ArrayList<Answer> getData(int id) {
+
+    public ArrayList<Answer> getData(int id) {
         ArrayList<Answer> list = new ArrayList<>();
         if (MyConnect.checkData()) {
             try {
                 Connection con = MyConnect.getConnect();
-                PreparedStatement pst = con.prepareStatement("select * from tb_Answer where quesID = ? ");
+                PreparedStatement pst = con.prepareStatement("select * from tb_Answer where quesID = ? ORDER BY ansID ASC");
                 pst.setInt(1, id);
                 ResultSet rs = pst.executeQuery();
                 while (rs.next()) {
@@ -108,12 +118,18 @@ public class Answer {
                 pst.close();
                 con.close();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+                new AlertGame("Lỗi", e.getMessage(), Alert.AlertType.ERROR) {
+
+                    @Override
+                    public void processResult() {
+                    }
+                };
             }
         }
         return list;
     }
-     public boolean delete() {
+
+    public boolean delete() {
         try {
             if (MyConnect.checkData()) {
                 Connection con = MyConnect.getConnect();
@@ -124,24 +140,63 @@ public class Answer {
                 con.close();
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            new AlertGame("Lỗi", e.getMessage(), Alert.AlertType.ERROR) {
+
+                @Override
+                public void processResult() {
+                }
+            };
         }
         return true;
     }
-      public boolean insert() {
+
+    public boolean update() {
         try {
             if (MyConnect.checkData()) {
                 Connection con = MyConnect.getConnect();
-                PreparedStatement pst = con.prepareStatement("insert tb_Answer values (?,?,?)");
-                pst.setInt(1, quesID);
-                pst.setString(2, ansContent);
-                pst.setBoolean(3, isCorrect);
+                PreparedStatement pst = con.prepareStatement("update tb_Answer set ansContent=?, isCorrect=? where ansID = ?");
+                pst.setString(1, this.getAnsContent());
+                pst.setBoolean(2, this.getIsCorrect());
+                pst.setInt(3, this.getAnsID());
                 pst.executeUpdate();
                 pst.close();
                 con.close();
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    
+    public boolean insert() {
+        try {
+            if (MyConnect.checkData()) {
+                Connection con = MyConnect.getConnect();
+                PreparedStatement pst = con.prepareStatement("insert tb_Answer values (?,?,?)", Statement.RETURN_GENERATED_KEYS);
+                pst.setInt(1, quesID);
+                pst.setString(2, ansContent);
+                pst.setBoolean(3, isCorrect);
+                pst.executeUpdate();
+                try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        this.setAnsID(generatedKeys.getInt(1));
+                    }
+                    else {
+                        throw new SQLException("Creating user failed, no ID obtained.");
+                    }
+                }
+                pst.close();
+                con.close();
+            }
+        } catch (Exception e) {
+            new AlertGame("Lỗi", e.getMessage(), Alert.AlertType.ERROR) {
+
+                @Override
+                public void processResult() {
+                }
+            };
             return false;
         }
         return true;

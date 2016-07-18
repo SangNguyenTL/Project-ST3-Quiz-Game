@@ -6,7 +6,6 @@
 
 package ui;
 
-import DBModel.Question;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,13 +36,12 @@ import lib.openSound;
  */
 public class frAdmin{
     HBox content = new HBox(10);  
-    private ObservableList<DBModel.Question> data = FXCollections.observableArrayList() ;
     
     private int countP,countQ;
     public frAdmin(Pane root) {
         final BorderPane border = new BorderPane();
         HBox banner = new HBox();
-        banner.setPrefSize(root.getPrefWidth(), 110);
+        banner.setPrefSize(root.getWidth(), root.getHeight()*0.08);
         
         Image bannerImage = new Image(getClass().getResource("/images/adminTop.png").toString());
         ImageView iv = new ImageView(bannerImage);
@@ -51,10 +49,12 @@ public class frAdmin{
         banner.getChildren().add(iv);
         VBox slideBar = new VBox();
         
-        slideBar.setPrefWidth((root.getPrefWidth()/100)*35);
-        content.setPrefWidth((root.getPrefWidth()/100)*65);
+        slideBar.setMinWidth(root.getWidth()*0.2);
+        content.setMinWidth(root.getWidth()*0.8);
+        content.setAlignment(Pos.CENTER);
         GridPane listButton = new GridPane();
         listButton.setPadding(new Insets(10));
+        listButton.setVgap(10);
         listButton.setAlignment(Pos.CENTER);
         
         
@@ -72,9 +72,6 @@ public class frAdmin{
         boxTitle.setAlignment(Pos.CENTER);
         boxTitle.getChildren().add(scenetitle);
         
-        Text blank1 = new Text("");
-        Text blank2 = new Text("");
-        Text blank3 = new Text("");
 
         
         ArrayList<Button> btnGroup = new ArrayList();
@@ -159,7 +156,6 @@ public class frAdmin{
         
         Label blank = new Label("");
         countQ = new DBModel.Question().getNumAllRow();
-        //data = Question.class.;
         
         Label lblCountQ = new Label("Số câu hỏi: "+countQ);
         lblCountQ.setFont(new Font("Arial",20));
@@ -171,10 +167,10 @@ public class frAdmin{
         
         
         VBox boxCount = new VBox(10);
-        boxCount.setAlignment(Pos.CENTER);     
+        boxCount.setAlignment(Pos.BOTTOM_CENTER);     
         boxCount.getChildren().addAll(blank,lblCountQ,lblCountP);
 
-        slideBar.getChildren().addAll(boxTitle,blank1,blank2,blank3,listButton,boxCount);
+        slideBar.getChildren().addAll(boxTitle,listButton,boxCount);
         border.setTop(banner);
         border.setLeft(slideBar);
         border.setRight(content);

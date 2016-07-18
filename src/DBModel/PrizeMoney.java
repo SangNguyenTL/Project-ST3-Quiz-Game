@@ -9,7 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import javafx.scene.control.Alert;
+import ui.AlertGame;
 
 /**
  *
@@ -44,7 +45,12 @@ public class PrizeMoney {
                 st.close();
                 con.close();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null,e.getMessage());
+                new AlertGame("Lỗi", e.getMessage(), Alert.AlertType.ERROR) {
+
+                    @Override
+                    public void processResult() {
+                    }
+                };
             }                   
         }
         return list;    
@@ -62,7 +68,12 @@ public class PrizeMoney {
             pst.close();
             con.close();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+                new AlertGame("Lỗi", ex.getMessage(), Alert.AlertType.ERROR) {
+
+                    @Override
+                    public void processResult() {
+                    }
+                };
             return false;
         }
 

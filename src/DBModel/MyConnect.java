@@ -9,7 +9,8 @@ import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
-import javax.swing.JOptionPane;
+import javafx.scene.control.Alert;
+import ui.AlertGame;
 
 /**
  *
@@ -152,6 +153,7 @@ public class MyConnect {
             p.load(fis);
             fis.close();
         } catch (Exception ex) {     
+            
             return false;
         }
 
@@ -171,7 +173,13 @@ public class MyConnect {
             p.store(fos, "Save connect"); 
             fos.close();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+                new AlertGame("Lỗi", ex.getMessage(), Alert.AlertType.ERROR) {
+
+                    @Override
+                    public void processResult() {
+                        
+                    }
+                };
         }
     }
 }
