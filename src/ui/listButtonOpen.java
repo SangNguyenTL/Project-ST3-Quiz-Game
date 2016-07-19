@@ -6,6 +6,7 @@
 
 package ui;
 
+import lib.AlertGame;
 import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -31,7 +32,7 @@ public class listButtonOpen {
         grid.setAlignment(Pos.CENTER_LEFT);
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(0, 0, 0, 100));
+        grid.setPadding(new Insets(0, 0, 0, root.getWidth()*0.073));
        
         Button btnLogin = new Button("Đăng nhập");
         Button btnRule = new Button("Luật chơi");
@@ -48,8 +49,8 @@ public class listButtonOpen {
         for(int i=0;i<allButton.size();i++){
             grid.add(allButton.get(i), 0, i);
             allButton.get(i).getStyleClass().add("btnCus");
-            allButton.get(i).setMinWidth(162);
-            allButton.get(i).setMinHeight(42);
+            allButton.get(i).setMinWidth(root.getWidth()*0.11);
+            allButton.get(i).setMinHeight(root.getHeight()*0.05);
             allButton.get(i).setOnMouseEntered(new EventHandler<MouseEvent>
         () {
 
@@ -73,9 +74,7 @@ public class listButtonOpen {
 
             @Override
             public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new login(root);
-                
+                new frLogin(root);
             }
         });
         
@@ -85,8 +84,7 @@ public class listButtonOpen {
 
             @Override
             public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new Help(root);
+                new frHelp(root);
                 
             }
         });
@@ -95,17 +93,15 @@ public class listButtonOpen {
         //out
         btnExit.setOnMouseClicked(new EventHandler<MouseEvent>
         () {
-
             @Override
             public void handle(MouseEvent t) {
                 new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Thôi' để quay lại", Alert.AlertType.CONFIRMATION) {
-                    
                     @Override
                     public void processResult() {
-                        if(result.get() == ButtonType.OK){
+                        if(getResult().get() == ButtonType.OK){
                             System.exit(0);
                         }else{
-                            alert.close();
+                            getAlert().close();
                         }
                     }
                 };
@@ -117,8 +113,7 @@ public class listButtonOpen {
 
             @Override
             public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new TopTen(root);
+                new frRank(root);
             }
         });
     }

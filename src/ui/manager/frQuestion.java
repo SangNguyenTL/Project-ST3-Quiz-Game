@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui;
+package ui.manager;
 
 import DBModel.Category;
 import DBModel.Question;
@@ -30,17 +30,19 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import lib.AlertGame;
+import lib.TableQuestion;
 
 /**
  *
  * @author Mattias
  */
-public class FrQuestion {
+public class frQuestion extends frManager{
 
-    private TableView<Question> table = new TableView<Question>();
-    private ObservableList<DBModel.Question> masterData;
+    private TableView<Question> table;
     private ObservableList<DBModel.Question> filteredData;
     private HBox boxTable;
     private TextField txtQuestion;
@@ -48,17 +50,25 @@ public class FrQuestion {
     private ComboBox cbbCategory;
     private ComboBox cbbActive;
     private int cat;
-    private TableQuestion tableQuestion = new TableQuestion();
-    public FrQuestion(HBox root) {
+    
+    
+    public frQuestion(Pane root, DBModel.Player player, ObservableList<DBModel.Question> masterDataQuestion){
+        super(root,player);
+        init(masterDataQuestion);
+    }
+    public void init(ObservableList<DBModel.Question> masterDataQuestion) {
+        super.setMasterDataQuestion(masterDataQuestion);
+        installBoxCount();
+        root.getChildren().clear();
         GridPane main = new GridPane();
         // never size the gridpane larger than its preferred size:
         main.setAlignment(Pos.CENTER);
         main.setVgap(10);
         main.setHgap(10);
-        masterData = FXCollections.observableArrayList(new Question().getData());
+        System.out.println(masterDataQuestion.size());
         filteredData = FXCollections.observableArrayList();
-        filteredData.addAll(masterData);
-        masterData.addListener(new ListChangeListener<Question>() {
+        filteredData.addAll(masterDataQuestion);
+        masterDataQuestion.addListener(new ListChangeListener<Question>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends Question> change) {
                 updateFilteredData();
@@ -146,7 +156,7 @@ public class FrQuestion {
 
         //table cot 0 dong 3 col pan 5
         boxTable = new HBox(new TableQuestion().init(table, filteredData));
-        boxTable.setMaxWidth(Double.MAX_VALUE);
+        boxTable.setPrefWidth(500);
         boxTable.setPrefHeight(300);
         main.add(boxTable, 0, 3, 8, 4);
 
@@ -181,8 +191,7 @@ public class FrQuestion {
                     };
                     return;
                 }
-                root.getChildren().clear();
-                new FrAddAnswer(root, (Question) table.getSelectionModel().getSelectedItem(),true);
+                new frQuestionAddAnswer(root, player,(Question) table.getSelectionModel().getSelectedItem(),true);
             }
 
         });
@@ -190,8 +199,7 @@ public class FrQuestion {
         btnAdd.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                root.getChildren().clear();
-                new FrCheckQuestion(root);
+                new frQuestionAdd(root,player);
             }
 
         });
@@ -212,11 +220,11 @@ public class FrQuestion {
                 new AlertGame("Xóa đối tượng", "Bạn chắc chắn muốn xóa?", AlertType.CONFIRMATION) {
                     @Override
                     public void processResult() {
-                        if(result.get()==ButtonType.OK){
+                        if(getResult().get()==ButtonType.OK){
                             String textStatus;
                             if (ques.delete()){
-                                masterData.clear();
-                                masterData.addAll(new Question().getData());
+                                masterDataQuestion.clear();
+                                masterDataQuestion.addAll(new Question().getData());
                                 textStatus = "Thành công";
                             }
                             else{
@@ -240,7 +248,7 @@ public class FrQuestion {
             public void handle(MouseEvent event) {
                 Category selectedCat;
                 filteredData.clear();
-                filteredData.addAll(masterData);
+                filteredData.addAll(masterDataQuestion);
                 int selectCate = cbbCategory.getSelectionModel().getSelectedIndex();
                 if (selectCate != 0) {
                     selectedCat = (Category) cbbCategory.getSelectionModel().getSelectedItem();
@@ -318,6 +326,7 @@ public class FrQuestion {
 
     //Khởi tạo bảng
     private void initializeTable() {
+        table = new TableView<Question>();
         table.setPrefWidth(750);
         // Gọi và đặt tên cho từng cột
         TableColumn category = new TableColumn("Chủ đề");
@@ -349,8 +358,7 @@ public class FrQuestion {
     //Cập nhật filter data khi có thay đổi ở trường txtQuest tạm thời chỉ đối với trường này vì còn đang xem xét.
     private void updateFilteredData() {
         filteredData.clear();
-
-        for (Question p : masterData) {
+        for (Question p : masterDataQuestion) {
             if (matchesFilter(p)) {
                 filteredData.add(p);
             }
@@ -378,7 +386,8 @@ public class FrQuestion {
 
     // mỗi lần lọc xong ta đc filteredData mới và chỉ cần chạy phương thức này bảng sẽ được cập nhật lại.
     private void reapplyTableSortOrder() {
+        super.setMasterDataPlayer(masterDataPlayer);
         boxTable.getChildren().clear();
-        boxTable.getChildren().add(tableQuestion.init(table, filteredData));
+        boxTable.getChildren().add(new TableQuestion().init(table, filteredData));
     }
 }

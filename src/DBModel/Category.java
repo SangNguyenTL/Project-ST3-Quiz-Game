@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.sql.PreparedStatement;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import ui.AlertGame;
+import lib.AlertGame;
 
 public class Category {
 

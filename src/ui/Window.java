@@ -5,7 +5,6 @@
  */
 package ui;
 
-
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,7 +12,9 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.DialogEvent;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -27,13 +28,14 @@ import javafx.stage.Stage;
  * @author nhats
  */
 public class Window extends Application {
-    
-    public int width = 1366;
-    public int height = (width / 16) * 9;
-    File f;
-    Media m;
-    MediaPlayer mediaPlayer;
-    MediaView mediaView;
+
+    private int width = 1366;
+    private int height = (width / 16) * 9;
+    private File f;
+    private Media m;
+    private MediaPlayer mediaPlayer;
+    private MediaView mediaView;
+
     public Parent videoOpen(String url) {
         Pane root = new Pane();
         f = new File(System.getProperty("user.dir"), url);
@@ -44,16 +46,15 @@ public class Window extends Application {
         mediaView.setFitWidth(width);
         mediaView.setFitHeight(height);
         Button back = new Button("Bỏ qua");
-        back.setLayoutX(width-200);
-        back.setLayoutY(height-100);
-        back.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        back.setLayoutX(width*0.85);
+        back.setLayoutY(height*0.88);
+        back.getStylesheets().add(frOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         back.getStyleClass().add("btnCus");
-        back.setMinWidth(162);
-        back.setMinHeight(42);
+        back.setMinSize(width*0.11,height*0.05);
+        
         root.getChildren().addAll(mediaView);
         root.getChildren().add(back);
-        back.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
+        back.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
             public void handle(MouseEvent t) {
@@ -62,7 +63,23 @@ public class Window extends Application {
         });
         return root;
     }
-    
+
+    public void error(Exception ex) {
+        new lib.AlertGame("Lỗi", ex.getMessage(), Alert.AlertType.WARNING) {
+
+            @Override
+            public void processResult() {
+                getAlert().setOnCloseRequest(new EventHandler<DialogEvent>() {
+
+                    @Override
+                    public void handle(DialogEvent t) {
+                        System.exit(0);
+                    }
+                });
+            }
+        };
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Ai là triệu phú");
@@ -71,29 +88,29 @@ public class Window extends Application {
         stage.setMinWidth(width);
         stage.setMinHeight(height);
         stage.getIcons().add(new Image(this.getClass().getResource("/images/icon.png").toString()));
-        stage.setScene(new Scene(videoOpen("video/Opening video Of ST3.mp4"),width,height));
+        stage.setScene(new Scene(videoOpen("video/Opening video Of ST3.mp4"), width, height));
         stage.setResizable(false);
         mediaPlayer.setOnEndOfMedia(new Runnable() {
             public void run() {
                 try {
                     mediaPlayer.stop();
                 } catch (Exception ex) {
-                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                    error(ex);
                 }
             }
         });
         mediaPlayer.setOnStopped(new Runnable() {
             public void run() {
                 try {
-                    new frameOpenGame(stage);
+                    new frOpenGame(stage);
                 } catch (Exception ex) {
-                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                    error(ex);
                 }
             }
         });
         stage.show();
     }
-    
+
     public static void main(String args[]) {
         launch(args);
     }

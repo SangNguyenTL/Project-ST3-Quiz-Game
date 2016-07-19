@@ -4,16 +4,16 @@
  * and open the template in the editor.
  */
 
-package ui;
+package ui.manager;
+
+import javafx.geometry.Pos;
 
 /**
  *
  * @author nhats
  */
-public class frNewUpdateUser {
+public class frPlayerUpdate extends frManager{
     
-    private javafx.scene.layout.HBox root;
-    private DBModel.Player player;
     private javafx.scene.control.TextField txtName;
     private javafx.scene.control.TextField txtEmail;
     private javafx.scene.control.PasswordField txtPass;
@@ -27,13 +27,18 @@ public class frNewUpdateUser {
     private javafx.scene.control.Label lbPass;
     private javafx.scene.control.Label lbRePass;
     
-    public frNewUpdateUser(javafx.scene.layout.HBox root,DBModel.Player player){
-        this.player = player;
-        this.root = root;
+    public frPlayerUpdate(javafx.scene.layout.Pane root,DBModel.Player player){
+        super(root,player);
         init();
     }
-    public void init(){
+    @Override
+    public final void init(){
+        root.getChildren().clear();
+        
         javafx.scene.layout.GridPane main = new javafx.scene.layout.GridPane();
+        main.setHgap(10);
+        main.setVgap(10);
+        main.setAlignment(Pos.CENTER);
         java.util.TreeMap<Integer,javafx.scene.control.TextField> listTxtFeild = new java.util.TreeMap<>();
         java.util.TreeMap<Integer,javafx.scene.control.Label> listLabel = new java.util.TreeMap<>();
         
@@ -91,7 +96,10 @@ public class frNewUpdateUser {
 
         cbAdmin = new javafx.scene.control.CheckBox();
         main.add(cbAdmin,1,5);
-        
+        cbAdmin.setDisable(!player.isAdmin);
+        if(player.getUserID()==1){
+            cbAdmin.setDisable(true);
+        }
         javafx.scene.control.Button btnSubmit = new javafx.scene.control.Button("Xác nhận");
         btnSubmit.getStyleClass().add("btnNor");
         btnSubmit.setPrefSize(90, 30);

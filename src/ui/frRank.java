@@ -23,10 +23,11 @@ import javafx.scene.text.Text;
  *
  * @author QUANGTU
  */
-public class TopTen {
+public class frRank {
  
-    public TopTen(Pane root) {
-         GridPane grid = new GridPane();
+    public frRank(Pane root) {
+        root.getChildren().clear();
+        GridPane grid = new GridPane();
         grid.setPrefSize(root.getWidth(), root.getHeight());
         root.getChildren().add(grid);
         grid.setAlignment(Pos.TOP_CENTER);
@@ -44,10 +45,7 @@ public class TopTen {
         
         grid.add(title, 0, 0);
         
-
-        
         Button back = new Button("Quay lại");
-        back.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         HBox hbback = new HBox(10);
         back.getStyleClass().add("btnCus");
         back.setMinWidth(162);
@@ -56,12 +54,10 @@ public class TopTen {
         hbback.setPadding(new Insets(10));
         root.getChildren().add(hbback);
         back.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
             @Override
             public void handle(MouseEvent t) {
                 root.getChildren().clear();
                 new listButtonOpen(root);
-
             }
         });
     }

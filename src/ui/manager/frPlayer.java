@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui;
+package ui.manager;
 
 import DBModel.Player;
 import java.util.TreeMap;
@@ -16,6 +16,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -26,16 +27,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import lib.AlertGame;
+import lib.TablePlayer;
 
 /**
  *
  * @author QUANGTU
  */
-public class FrPlayer {
+public class frPlayer extends frManager{
 
-    private TableView<Player> table = new TableView<Player>();
-    private ObservableList<DBModel.Player> masterData;
+    private TableView<Player> table;
     private ObservableList<DBModel.Player> filteredData;
     private HBox boxTable;
     private TextField txtSearch;
@@ -44,17 +47,26 @@ public class FrPlayer {
     private TextField txtPrize;
     private TextField txtTime;
     private TreeMap<Integer,TextField> txtText;
+
+    public frPlayer(Pane root, Player player, ObservableList<DBModel.Player> masterDataPlayer) {
+        super(root, player);
+        init(masterDataPlayer);
+    }
     
-    public FrPlayer(HBox root) {
+    public void init(ObservableList<DBModel.Player> masterDataPlayer) {
+        super.setMasterDataPlayer(masterDataPlayer);
+        installBoxCount();
+        root.getChildren().clear();
         GridPane main = new GridPane();
+        main.setAlignment(Pos.CENTER);
         main.setHgap(10);
         main.setVgap(10);
         // BIến gốc
-        masterData = FXCollections.observableArrayList(new Player().getData());
+        
         //BIến dùng để lọc dữ liệu
         filteredData = FXCollections.observableArrayList();
-        filteredData.addAll(masterData);
-        masterData.addListener(new ListChangeListener<Player>() {
+        filteredData.addAll(masterDataPlayer);
+        masterDataPlayer.addListener(new ListChangeListener<Player>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends Player> change) {
                 updateFilteredData();
@@ -115,10 +127,6 @@ public class FrPlayer {
             main.add(txtText.get(i),i,0);
         }
        
-
-        //table
-        boxTable.setLayoutX(100);
-        boxTable.setLayoutY(50);
         main.add(boxTable, 0, 1, 5, 2);
 
         // button list
@@ -149,7 +157,7 @@ public class FrPlayer {
                 }
                 Player player = (Player) table.getSelectionModel().getSelectedItem();
                 root.getChildren().clear();
-                new frNewUpdateUser(root, player);
+                new frPlayerUpdate(root, player);
             }
         });
 
@@ -170,11 +178,11 @@ public class FrPlayer {
                 new AlertGame("Xóa đối tượng", "Bạn chắc chắn muốn xóa?", AlertType.CONFIRMATION) {
                     @Override
                     public void processResult() {
-                        if(result.get()==ButtonType.OK){
+                        if(getResult().get()==ButtonType.OK){
                             String textStatus;
                             if (player.delete()){
-                                masterData.clear();
-                                masterData.addAll(new Player().getData());
+                                masterDataPlayer.clear();
+                                masterDataPlayer.addAll(new Player().getData());
                                 textStatus = "Thành công";
                             }
                             else{
@@ -193,7 +201,8 @@ public class FrPlayer {
         });
 }
     private void initializeTable() {
-        table.setPrefSize(620, 300);
+        table = new TableView<Player>();
+        table.setPrefSize(750, 400);
         TableColumn userName = new TableColumn("Tên người chơi");
         userName.setCellValueFactory(
                 new PropertyValueFactory<DBModel.Player, String>("userName"));
@@ -222,7 +231,7 @@ public class FrPlayer {
     private void updateFilteredData() {
         filteredData.clear();
 
-        for (Player p : masterData) {
+        for (Player p : masterDataPlayer) {
             if (matchesFilter(p)) {
                 filteredData.add(p);
             }

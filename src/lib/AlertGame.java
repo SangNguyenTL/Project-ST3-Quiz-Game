@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui;
+package lib;
 
 import java.util.Optional;
 import javafx.scene.control.Alert;
@@ -33,6 +33,10 @@ public abstract class AlertGame {
 
     public Optional<ButtonType> getResult() {
         return result;
+    }
+
+    public Alert getAlert() {
+        return alert;
     }
 
     public abstract void processResult();

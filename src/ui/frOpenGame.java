@@ -14,9 +14,9 @@ import javafx.stage.Stage;
  *
  * @author nhats
  */
-public class frameOpenGame{
+public class frOpenGame{
         Pane root = new Pane();
-    public frameOpenGame(Stage primaryStage) {
+    public frOpenGame(Stage primaryStage) {
         Double width = primaryStage.getWidth(), height = primaryStage.getHeight();
         root.setMinSize(width, height);
         root.setMaxSize(width, height);
@@ -24,7 +24,7 @@ public class frameOpenGame{
         root.autosize();
         new listButtonOpen(root);
         Scene scene = new Scene(root, width, height);
-        scene.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        scene.getStylesheets().add(frOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         primaryStage.setScene(scene);
     }
 }

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import javafx.scene.control.Alert;
-import ui.AlertGame;
+import lib.AlertGame;
 
 /**
  *

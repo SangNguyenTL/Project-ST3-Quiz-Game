@@ -4,44 +4,37 @@
  * and open the template in the editor.
  */
 
-package ui;
+package lib;
 
-import DBModel.Player;
 import DBModel.Question;
-import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.scene.Node;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
-import org.omg.CORBA.DATA_CONVERSION;
 
 /**
  *
- * @author QUANGTU
+ * @author nhats
  */
-public class TablePlayer {
-    private HBox boxTable = new HBox();
+public class TableQuestion {
+    private final HBox boxTable = new HBox();
     
-    private ObservableList<DBModel.Player> filteredData = FXCollections.observableArrayList();
-    private TableView<Player> table;
-    private Pagination pagination;
-    private int itemsPerPage = 10;
-    private int totalRow ;
-    public TablePlayer() {
+    private ObservableList<DBModel.Question> filteredData = FXCollections.observableArrayList();
+    private TableView<Question> table;
+    private final Pagination pagination = new Pagination();
+    private final int itemsPerPage = 10;
+    public TableQuestion() {
     }
-    public HBox init(TableView<Player> table,ObservableList<DBModel.Player> filteredData) {
+    public HBox init(TableView<Question> table,ObservableList<DBModel.Question> filteredData) {
         this.table = table;
         // Initially add all data to filtered data
         this.filteredData = filteredData;
-        pagination = new Pagination((filteredData.size() / itemsPerPage + 1), 0);
+        pagination.setPageCount(filteredData.size() / itemsPerPage + 1);
+        pagination.setCurrentPageIndex(0);
         pagination.setPageFactory(this::createPage);
         AnchorPane anchor = new AnchorPane();
         AnchorPane.setTopAnchor(pagination, 10.0);

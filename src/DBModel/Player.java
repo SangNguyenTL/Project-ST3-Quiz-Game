@@ -10,7 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import lib.AlertGame;
 
 /**
  *
@@ -74,7 +76,7 @@ public class Player {
         if (MyConnect.checkData()) {
             try {
                 Connection con = MyConnect.getConnect();
-                PreparedStatement pst = con.prepareStatement("select * from tb_Player WHERE emai = ? password = ?");
+                PreparedStatement pst = con.prepareStatement("select * from tb_Player WHERE email = ? and password = ?");
                 pst.setString(1, email);
                 pst.setString(2, pass);
                 ResultSet rs = pst.executeQuery();
@@ -92,7 +94,7 @@ public class Player {
                 pst.close();
                 con.close();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+                error(e);
             }
         }
         return q;
@@ -121,34 +123,12 @@ public class Player {
                 st.close();
                 con.close();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
+                error(e);
             }
         }
         return list;
     }
-
-    public int getNumAllRow() {
-        int allnum = 0;
-        if (MyConnect.checkData()) {
-            try {
-                Connection con = MyConnect.getConnect();
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("select count(userID) from tb_Player ");
-                while (rs.next()) {
-                    allnum = rs.getInt(1);
-                }
-                rs.close();
-                st.close();
-                con.close();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
-            }
-        }
-        return allnum;
-    }
-
-
-
+    
     public boolean delete() {
         try {
             if (MyConnect.checkData()) {
@@ -160,8 +140,19 @@ public class Player {
                 con.close();
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            error(e);
         }
         return true;
+    }
+    public void error(Exception e) {
+        new AlertGame("Lỗi", e.getMessage(), Alert.AlertType.ERROR) {
+
+            @Override
+            public void processResult() {
+                if (getResult().get() == ButtonType.OK) {
+                    System.exit(0);
+                }
+            }
+        };
     }
 }

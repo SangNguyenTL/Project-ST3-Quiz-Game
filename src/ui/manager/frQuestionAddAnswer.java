@@ -3,26 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui;
+package ui.manager;
 
+import lib.AlertGame;
 import DBModel.Answer;
 import DBModel.Question;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -37,11 +34,9 @@ import javafx.scene.input.MouseEvent;
  *
  * @author Mattias
  */
-public class FrAddAnswer {
+public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
 
-    TextArea txtQues;
-    Question ques = new Question();
-    Answer ans = new Answer();
+    Answer ans;
     TextField txtA;
     TextField txtB;
     TextField txtC;
@@ -50,24 +45,29 @@ public class FrAddAnswer {
     ComboBox cbLv;
     ComboBox cbCat;
     CheckBox ckActive;
-    Label lbCount;
-    Boolean type; //Add false, update true
+
 
     public void setType(Boolean type) {
-        this.type = type;
+        super.type = type;
     }
 
     public Boolean getType(Boolean type) {
-        return this.type;
+        return super.type;
     }
-    
-    
-    public FrAddAnswer(HBox root, Question ques, boolean type) {
-        Pane main = new Pane();
-        this.ques = ques;
-        setType(type);
-        main.setPrefSize(600, 450);
 
+    public frQuestionAddAnswer(Pane root, DBModel.Player player, Question ques, boolean type) {
+        super(root, player);
+        init(root, ques, type);
+    }
+   
+    
+    public void init(Pane rootChild, Question ques, boolean type) {
+        super.ques = ques;
+        setType(type);
+        root.getChildren().clear();
+        Pane main = new Pane();
+        ans = new Answer();
+        main.setPrefSize(600, 450);
         Label lblCat = new Label("Chủ đề");
         lblCat.setFont(new Font("Cambria", 25));
         lblCat.setTextFill(Color.web("#fff"));
@@ -133,18 +133,13 @@ public class FrAddAnswer {
         lbCount.setLayoutX(200);
         lbCount.setLayoutY(70);
         
-        txtQues.setOnKeyPressed(new EventHandler<KeyEvent>(){
-
-            @Override
-            public void handle(KeyEvent t) {
-                lbCount.setText(String.valueOf(txtQues.getText().length()));
-                if(txtQues.getText().length()<10 || txtQues.getText().length()>270){
-                    lbCount.setTextFill(Color.RED);
-                }else{
-                    lbCount.setTextFill(Color.WHITE);
-                }
+        txtQues.setOnKeyPressed((KeyEvent t) -> {
+            lbCount.setText(String.valueOf(txtQues.getText().length()));
+            if(txtQues.getText().length()<10 || txtQues.getText().length()>270){
+                lbCount.setTextFill(Color.RED);
+            }else{
+                lbCount.setTextFill(Color.WHITE);
             }
-       
         });
         
         Label lblAnsA = new Label("Đáp án A");
@@ -262,134 +257,74 @@ public class FrAddAnswer {
 
         root.getChildren().add(main);
 
-        btnBack.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                root.getChildren().clear();
-                new FrCheckQuestion(root);
-            }
-
+        btnBack.setOnMouseClicked((MouseEvent event) -> {
+            new frQuestion( root,player, FXCollections.observableArrayList(new DBModel.Question().getData()));
         });
-        btnSubmit.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (checkQuestion()&&checkAddQuestion()) {
-                    DBModel.Category cate = (DBModel.Category) cbCat.getSelectionModel().getSelectedItem();
-                    ques.catId = cate.getId();
-
-                    ques.level = (cbLv.getSelectionModel().getSelectedIndex());
-                    ques.quesContent = txtQues.getText();
-
-                    if (ckActive.isSelected()) {
-                        ques.isActive = true;
-                    } else {
-                        ques.isActive = false;
-                    }
-
-                    String qu = txtQues.getText();
-                    boolean action;
-                    System.out.println(getType(type));
-                    if(getType(type)) action = ques.update();
-                    else{
-                        action = ques.insert();
-                    }
-                    if (action) {
-                        TreeMap<Integer, TextField> tmAddAns = new TreeMap<>();
-                        tmAddAns.put(0, txtA);
-                        tmAddAns.put(1, txtB);
-                        tmAddAns.put(2, txtC);
-                        tmAddAns.put(3, txtD);
-
-                        for (Question item : ques.getData(ques.getQuesId())) {
-                            if (qu.equals(item.quesContent)) {
-                                ques.quesId = item.quesId;
-                                ques.catId = item.catId;
-
-                                for (int i = 0; i < tmAddAns.size(); i++) {
-                                    ans.quesID = item.quesId;
-                                    if (cbAns.getSelectionModel().getSelectedIndex() ==  i+1) {
-                                        ans.isCorrect = true;
-                                    } else {
-                                        ans.isCorrect = false;
-                                    }
-                                    ans.ansContent = tmAddAns.get(i).getText();
-                                    
-                                    if(getType(type)){
-                                        ans.setAnsID(Integer.parseInt(tmAddAns.get(i).getId()));
-                                        ans.update();
-                                    }
-                                    else {
-                                        ans.insert();
-                                        tmAddAns.get(i).setId(String.valueOf(ans.getAnsID()));
-                                    }
+        btnSubmit.setOnMouseClicked((MouseEvent event) -> {
+            if (checkQuestion()&&checkAddQuestion()) {
+                DBModel.Category cate = (DBModel.Category) cbCat.getSelectionModel().getSelectedItem();
+                ques.catId = cate.getId();
+                
+                ques.level = (cbLv.getSelectionModel().getSelectedIndex());
+                ques.quesContent = txtQues.getText();
+                ques.isActive = ckActive.isSelected();
+                
+                String qu = txtQues.getText();
+                boolean action;
+                System.out.println(getType(type));
+                if(getType(type)) action = ques.update();
+                else{
+                    action = ques.insert();
+                }
+                if (action) {
+                    TreeMap<Integer, TextField> tmAddAns = new TreeMap<>();
+                    tmAddAns.put(0, txtA);
+                    tmAddAns.put(1, txtB);
+                    tmAddAns.put(2, txtC);
+                    tmAddAns.put(3, txtD);
+                    
+                    for (Question item : ques.getData(ques.getQuesId())) {
+                        if (qu.equals(item.quesContent)) {
+                            ques.quesId = item.quesId;
+                            ques.catId = item.catId;
+                            
+                            for (int i = 0; i < tmAddAns.size(); i++) {
+                                ans.quesID = item.quesId;
+                                ans.isCorrect = cbAns.getSelectionModel().getSelectedIndex() ==  i+1;
+                                ans.ansContent = tmAddAns.get(i).getText();
+                                
+                                if(getType(type)){
+                                    ans.setAnsID(Integer.parseInt(tmAddAns.get(i).getId()));
+                                    ans.update();
+                                }
+                                else {
+                                    ans.insert();
+                                    tmAddAns.get(i).setId(String.valueOf(ans.getAnsID()));
                                 }
                             }
                         }
-                        new AlertGame("Thành công", (!getType(type) ? "Thêm" : "Cập nhật" )+ " thành công\n\t + OK để quay lại bảng câu hỏi\n\t + Cancel để ở lại", Alert.AlertType.CONFIRMATION) {
-
-                            @Override
-                            public void processResult() {
-                                setType(true);
-                                txtQues.setEditable(true);
-                                if (result.get() == ButtonType.OK) {
-                                    root.getChildren().clear();
-                                    new FrQuestion(root);
-                                }else{
-                                    alert.close();
-                                }
-                            }
-                        };
-
                     }
-
+                    new AlertGame("Thành công", (!getType(type) ? "Thêm" : "Cập nhật" )+ " thành công\n\t + OK để quay lại bảng câu hỏi\n\t + Cancel để ở lại", Alert.AlertType.CONFIRMATION) {
+                        
+                        @Override
+                        public void processResult() {
+                            setType(true);
+                            txtQues.setEditable(true);
+                            if (getResult().get() == ButtonType.OK) {
+                                new frQuestion( root ,player, FXCollections.observableArrayList(new DBModel.Question().getData()));
+                            }else{
+                                getAlert().close();
+                            }
+                        }
+                    };
+                    
                 }
+                
             }
-
         });
     }
     private boolean check = true;
-    public boolean checkQuestion() {
-        boolean check = true;
-        if (txtQues.getText().isEmpty()) {
-            new AlertGame("Lỗi", "Bạn chưa nhập câu hỏi", Alert.AlertType.WARNING) {
-
-                @Override
-                public void processResult() {
-
-                }
-            };
-        }
-        Pattern p1 = Pattern.compile("\\s{2,}");
-        ques.setQuesContent(txtQues.getText());
-        Matcher m1 = p1.matcher(txtQues.getText());
-        if (m1.find() == true) {
-            new AlertGame("Lỗi", "Trong câu hỏi của bạn không được có hơn hai khoảng trắng sát nhau", Alert.AlertType.WARNING) {
-
-                @Override
-                public void processResult() {
-
-                }
-            };
-            //    txtQues.setText(null);
-            txtQues.requestFocus();
-            return check = false;
-        }
-
-        Pattern p2 = Pattern.compile("^\\S.{9,269}\\?$");
-        Matcher m2 = p2.matcher(txtQues.getText());
-        if (m2.matches() == false) {
-            new AlertGame("Lỗi", "Câu hỏi phải có dấu hỏi khi kết thúc câu và có từ 10 đến 270 ký tự", Alert.AlertType.WARNING) {
-
-                @Override
-                public void processResult() {
-
-                }
-            };
-            txtQues.requestFocus();
-            return check = false;
-        }
-        return check;
-    }
+    
     public boolean checkAddQuestion() {
         check=true;
         String ansA = txtA.getText();
@@ -406,30 +341,26 @@ public class FrAddAnswer {
         Pattern patternCheckAnswer = Pattern.compile("^\\S.{0,49}\\.$");
 
         SimpleStringProperty strError = new SimpleStringProperty("");
-        strError.addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                if (!t1.equals("")) {
-                    new AlertGame("Lỗi", t1, Alert.AlertType.WARNING) {
-
-                        @Override
-                        public void processResult() {
-
-                        }
-                    };
-                }
+        strError.addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            if (!t1.equals("")) {
+                new AlertGame("Lỗi", t1, Alert.AlertType.WARNING) {
+                    
+                    @Override
+                    public void processResult() {
+                        
+                    }
+                };
             }
         });
-        if(cbAns.getSelectionModel().getSelectedIndex()==0){
+        if(cbAns.getSelectionModel().getSelectedItem().equals("Chọn...")){
             strError.set("Bạn chưa chọn đáp án đúng");
             return false;
         }
-        if(cbLv.getSelectionModel().getSelectedIndex()==0){
+        if(cbLv.getSelectionModel().getSelectedItem().equals("Chọn...")){
             strError.set("Bạn chưa chọn độ khó");
             return false;
         }
-        if(cbCat.getSelectionModel().getSelectedIndex()==0){
+        if(cbCat.getSelectionModel().getSelectedItem().equals("Chọn...")){
             strError.set("Bạn chưa chọn chủ đề");
             return false;
         }

@@ -3,39 +3,46 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ui;
+package ui.manager;
 
+import lib.AlertGame;
 import DBModel.Question;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javax.swing.JOptionPane;
 
 /**
  *
  * @author Mattias
  */
-public class FrCheckQuestion {
+public class frQuestionAdd extends ui.manager.frManager{
 
-    TextArea txtQues;
-    Question ques = new Question();
-    Label lbCount;
-    public FrCheckQuestion(HBox root) {
+    protected TextArea txtQues;
+    protected Question ques;
+    protected Label lbCount;
+    protected Boolean type; //Add false, update true
+    public frQuestionAdd(Pane root, DBModel.Player player) {
+        super(root, player);
+    }
+    
+    @Override
+    public void init() {
+        type = false;
+        root.getChildren().clear();
         GridPane grid = new GridPane();
 
         grid.setAlignment(Pos.CENTER_LEFT);
@@ -58,18 +65,13 @@ public class FrCheckQuestion {
         txtQues.setFont(new Font("Tahoma", 20));
         grid.add(txtQues, 0, 1, 2, 1);
 
-        txtQues.setOnKeyPressed(new EventHandler<KeyEvent>(){
-
-            @Override
-            public void handle(KeyEvent t) {
-                lbCount.setText(String.valueOf(txtQues.getText().length()));
-                if(txtQues.getText().length()<10 || txtQues.getText().length()>270){
-                    lbCount.setTextFill(Color.RED);
-                }else{
-                    lbCount.setTextFill(Color.WHITE);
-                }
+        txtQues.setOnKeyPressed((KeyEvent t) -> {
+            lbCount.setText(String.valueOf(txtQues.getText().length()));
+            if(txtQues.getText().length()<10 || txtQues.getText().length()>270){
+                lbCount.setTextFill(Color.RED);
+            }else{
+                lbCount.setTextFill(Color.WHITE);
             }
-       
         });
         
         
@@ -91,28 +93,19 @@ public class FrCheckQuestion {
         grid.add(hbbtn, 0, 2 , 2, 1);
 
         root.getChildren().add(grid);
-
-        btnCheck.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (checkQuestion()) { 
-                    root.getChildren().clear();
-                    new FrAddAnswer(root, ques,false);
-                }
+        ques = new Question();
+        btnCheck.setOnMouseClicked((MouseEvent event) -> {
+            if (checkQuestion()) {
+                new frQuestionAddAnswer(root,player, ques, false);
             }
         });
 
-        btnReset.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                txtQues.setText("");
-            }
-
+        btnReset.setOnMouseClicked((MouseEvent event) -> {
+            txtQues.setText("");
         });
     }
 
-    public boolean checkQuestion() {
-        boolean check = true;
+    protected boolean checkQuestion() {
         if (txtQues.getText().isEmpty()) {
             new AlertGame("Lỗi", "Bạn chưa nhập câu hỏi", Alert.AlertType.WARNING) {
 
@@ -121,6 +114,8 @@ public class FrCheckQuestion {
 
                 }
             };
+            txtQues.requestFocus();
+            return false;
         }
         Pattern p1 = Pattern.compile("\\s{2,}");
         ques.setQuesContent(txtQues.getText());
@@ -135,7 +130,7 @@ public class FrCheckQuestion {
             };
             //    txtQues.setText(null);
             txtQues.requestFocus();
-            return check = false;
+            return false;
         }
 
         Pattern p2 = Pattern.compile("^\\S.{9,269}\\?$");
@@ -150,11 +145,11 @@ public class FrCheckQuestion {
                 }
             };
             txtQues.requestFocus();
-            return check = false;
+            return false;
         }
         ArrayList a = ques.getData(ques.getQuesContent());
-        System.out.println(a.size());
-        if (!a.isEmpty()) {
+        if (!a.isEmpty()&&type==false){
+            
             new AlertGame("Lỗi", "Câu hỏi đã tồn tại", Alert.AlertType.WARNING) {
 
                 @Override
@@ -162,9 +157,8 @@ public class FrCheckQuestion {
                 }
             };
             txtQues.requestFocus();
-            check = false;
+            return false;
         }
-
-        return check;
+        return true;
     }
 }

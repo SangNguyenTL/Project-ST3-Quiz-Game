@@ -5,7 +5,6 @@
  */
 package ui;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,9 +26,15 @@ import javafx.scene.text.Text;
  *
  * @author QUANGTU
  */
-public class RegistrationGame {
+public class frRegistration extends frLogin{
 
-    public RegistrationGame(Pane root) {
+    public frRegistration(Pane root, DBModel.Player player) {
+        super(root,player);
+        init();
+    }
+
+    public void init() {
+        root.getChildren().clear();
         GridPane grid = new GridPane();
         grid.setPrefSize(root.getWidth(), root.getHeight());
         root.getChildren().add(grid);
@@ -57,7 +62,6 @@ public class RegistrationGame {
         
         TextField userTextField = new TextField();
         userTextField.getStyleClass().add("txtField");
-        userTextField.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         grid.add(userTextField, 1, 1);
         userTextField.setFont(new Font("Arial",20));
         
@@ -69,7 +73,6 @@ public class RegistrationGame {
         
         TextField emailfield = new TextField();
         emailfield.getStyleClass().add("txtField");
-        emailfield.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         grid.add(emailfield, 1, 2);
         emailfield.setFont(new Font("Arial",20));
         
@@ -87,13 +90,11 @@ public class RegistrationGame {
         
         PasswordField pwBox = new PasswordField();
         pwBox.getStyleClass().add("txtField");
-        pwBox.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         grid.add(pwBox, 1, 3);
         pwBox.setFont(new Font("Arial",20));
         
         PasswordField rePwBox = new PasswordField();
         rePwBox.getStyleClass().add("txtField");
-        rePwBox.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         grid.add(rePwBox, 1, 4);
         rePwBox.setFont(new Font("Arial",20));
         
@@ -106,17 +107,14 @@ public class RegistrationGame {
         
         TextField yearfield = new TextField();
         yearfield.getStyleClass().add("txtField");
-        yearfield.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         grid.add(yearfield, 1, 5);
         yearfield.setFont(new Font("Arial",20));
         
         Button btnOK = new Button("Đồng ý");
         btnOK.getStyleClass().add("btnNor");
-        btnOK.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
 
         Button btnRe = new Button("Xóa trắng");
         btnRe.getStyleClass().add("btnNor");
-        btnRe.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         btnRe.setOnMouseClicked(new EventHandler<MouseEvent>
         () {
 
@@ -142,7 +140,6 @@ public class RegistrationGame {
         
 
         Button back = new Button("Quay lại");
-        back.getStylesheets().add(frameOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         HBox hbback = new HBox(10);
         back.getStyleClass().add("btnCus");
         back.setMinWidth(162);

@@ -6,6 +6,8 @@
 
 package ui;
 
+import lib.AlertGame;
+import ui.manager.frManager;
 import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -22,9 +24,15 @@ import lib.openSound;
  *
  * @author nhats
  */
-public class listButtonLogged {
+public class listButtonLogged extends ui.frLogin{
 
-    public listButtonLogged(Pane root) {
+    public listButtonLogged(Pane root, DBModel.Player player) {
+        super(root,player);
+        init();
+    }
+    
+    public void init() {
+        root.getChildren().clear();
         GridPane grid = new GridPane();
         root.getChildren().add(grid);
         grid.setPrefSize(root.getWidth(), root.getHeight());
@@ -79,15 +87,13 @@ public class listButtonLogged {
             }
         });
         
-        //Luật
+        //Vào trang quản lý, là true thì vào admin false thì vào user
         btnMan.setOnMouseClicked(new EventHandler<MouseEvent>
         () {
 
             @Override
             public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new frAdmin(root);
-                
+                new frManager(root, player);
             }
         });
         
@@ -98,14 +104,14 @@ public class listButtonLogged {
 
             @Override
             public void handle(MouseEvent t) {
-                new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Thôi' để quay lại", Alert.AlertType.CONFIRMATION) {
+                new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Cancel' để quay lại", Alert.AlertType.CONFIRMATION) {
                     
                     @Override
                     public void processResult() {
-                        if(result.get() == ButtonType.OK){
+                        if(getResult().get() == ButtonType.OK){
                             System.exit(0);
                         }else{
-                            alert.close();
+                            getAlert().close();
                         }
                     }
                 };
@@ -118,7 +124,7 @@ public class listButtonLogged {
             @Override
             public void handle(MouseEvent t) {
                 root.getChildren().clear();
-                new login(root);
+                new frLogin(root);
             }
         });
     }

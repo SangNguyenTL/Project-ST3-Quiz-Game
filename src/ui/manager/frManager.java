@@ -4,9 +4,15 @@
  * and open the template in the editor.
  */
 
-package ui;
+package ui.manager;
 
+import DBModel.Player;
+import DBModel.Question;
+import ui.frLogin;
 import java.util.ArrayList;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -28,30 +34,70 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import lib.openSound;
+import ui.listButtonLogged;
 
 
 /**
  *
  * @author nhats
  */
-public class frAdmin{
-    HBox content = new HBox(10);  
-    
-    private int countP,countQ;
-    public frAdmin(Pane root) {
+public class frManager extends frLogin{
+  
+    protected HBox content;
+    protected ObservableList<DBModel.Question> masterDataQuestion;
+    protected ObservableList<DBModel.Player> masterDataPlayer;
+    protected SimpleIntegerProperty countPlayer, countQuestion;
+    protected Label lblCountQ, lblCountP;
+    public frManager(Pane root, DBModel.Player player) {
+        super(root, player);
+        init();
+    }
+    protected void installBoxCount(){
+        countPlayer = new SimpleIntegerProperty(masterDataPlayer.size());
+        countQuestion = new SimpleIntegerProperty(masterDataQuestion.size());
+        lblCountQ = new Label("Số câu hỏi: "+countQuestion.getValue());
+        lblCountP = new Label("Số người chơi: "+countPlayer.getValue());
+        countPlayer.addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                 lblCountP = new Label("Số người chơi: "+t1);
+            }
+        });
+        countQuestion.addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                lblCountQ = new Label("Số câu hỏi: "+t1);
+            }
+        });
+    }
+    protected void setContent(){
+        content = new HBox();
+        content.setPrefSize(root.getWidth()*0.8,root.getHeight()-100);
+        System.out.println(content.getPrefHeight());
+        content.setAlignment(Pos.CENTER);
+    }
+    public void init() {
+        root.getChildren().clear();
+        setContent();
+        masterDataQuestion = FXCollections.observableArrayList(new Question().getData());
+        masterDataPlayer = FXCollections.observableArrayList(new Player().getData());
+        installBoxCount();
         final BorderPane border = new BorderPane();
         HBox banner = new HBox();
-        banner.setPrefSize(root.getWidth(), root.getHeight()*0.08);
-        
+        banner.setPrefWidth(root.getWidth());
         Image bannerImage = new Image(getClass().getResource("/images/adminTop.png").toString());
         ImageView iv = new ImageView(bannerImage);
+        iv.setFitHeight(100);
+        iv.setFitWidth(800);
         banner.setAlignment(Pos.CENTER);
         banner.getChildren().add(iv);
         VBox slideBar = new VBox();
         
-        slideBar.setMinWidth(root.getWidth()*0.2);
-        content.setMinWidth(root.getWidth()*0.8);
-        content.setAlignment(Pos.CENTER);
+        slideBar.setPrefWidth(root.getWidth()*0.2);
+        
+
         GridPane listButton = new GridPane();
         listButton.setPadding(new Insets(10));
         listButton.setVgap(10);
@@ -79,13 +125,14 @@ public class frAdmin{
         Button btnUsers = new Button("Người chơi");
         Button btnQuest = new Button("Câu hỏi");
         Button btnMoney = new Button("Tiền thưởng");
-        Button btnPass = new Button("Password");
+        Button btnInfo = new Button("Thông tin ID");
         Button btnExit = new Button("Quay lại");
-        
-        btnGroup.add(btnUsers);
-        btnGroup.add(btnQuest);
-        btnGroup.add(btnMoney);
-        btnGroup.add(btnPass);
+        if(player.isAdmin){
+            btnGroup.add(btnUsers);
+            btnGroup.add(btnQuest);
+            btnGroup.add(btnMoney);
+        }
+        btnGroup.add(btnInfo);
         btnGroup.add(btnExit);
         openSound hoverButton  = new openSound("sounds/hoverButton.mp3",500);
         for(int i = 0; i< btnGroup.size();i++){
@@ -113,8 +160,7 @@ public class frAdmin{
         btnUsers.setOnMouseClicked(new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent event) {
-               content.getChildren().clear();
-               new FrPlayer(content);
+               new frPlayer(content,player,masterDataPlayer);
             }
             
         });
@@ -122,8 +168,7 @@ public class frAdmin{
         {
             @Override
             public void handle(MouseEvent event) {
-               root.getChildren().clear();
-               new listButtonLogged(root);
+               new listButtonLogged(root,player);
             }
             
         });
@@ -131,16 +176,15 @@ public class frAdmin{
         {
             @Override
             public void handle(MouseEvent event) {
-                content.getChildren().clear();
-                new FrQuestion(content);
+                new frQuestion(content,player,masterDataQuestion);
             }
             
         });
-        btnPass.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        btnInfo.setOnMouseClicked(new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent event) {
                 content.getChildren().clear();
-                new FrChangePass(content);
+                new frPlayerUpdate(content,player);
             }
         
         });
@@ -148,27 +192,23 @@ public class frAdmin{
             @Override
             public void handle(MouseEvent event) {
                 content.getChildren().clear();
-                new FrPrizeMoney(content);
+                new frPrizeMoney(content,player);
             }
             
         });
         root.getChildren().add(border);
         
-        Label blank = new Label("");
-        countQ = new DBModel.Question().getNumAllRow();
-        
-        Label lblCountQ = new Label("Số câu hỏi: "+countQ);
+
         lblCountQ.setFont(new Font("Arial",20));
         lblCountQ.setTextFill(Color.web("#fff"));
         
-        Label lblCountP = new Label("Số người chơi: ");
         lblCountP.setFont(new Font("Arial",20));
         lblCountP.setTextFill(Color.web("#fff"));
         
         
         VBox boxCount = new VBox(10);
         boxCount.setAlignment(Pos.BOTTOM_CENTER);     
-        boxCount.getChildren().addAll(blank,lblCountQ,lblCountP);
+        boxCount.getChildren().addAll(lblCountQ,lblCountP);
 
         slideBar.getChildren().addAll(boxTitle,listButton,boxCount);
         border.setTop(banner);
@@ -178,5 +218,15 @@ public class frAdmin{
         border.setAlignment(content,Pos.CENTER);
         border.setAlignment(slideBar,Pos.CENTER);
     }
-        
+
+    protected void setMasterDataPlayer(ObservableList<Player> masterDataPlayer) {
+        this.masterDataPlayer = FXCollections.observableArrayList();
+        this.masterDataPlayer.addAll(masterDataPlayer);
+    }
+
+    protected void setMasterDataQuestion(ObservableList<Question> masterDataQuestion) {
+        this.masterDataQuestion = FXCollections.observableArrayList();
+        this.masterDataQuestion.addAll(masterDataQuestion);
+    }
+
 }
