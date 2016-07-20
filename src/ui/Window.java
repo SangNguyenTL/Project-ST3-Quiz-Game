@@ -6,6 +6,10 @@
 package ui;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -29,8 +33,8 @@ import javafx.stage.Stage;
  */
 public class Window extends Application {
 
-    private int width = 1366;
-    private int height = (width / 16) * 9;
+    private int width;
+    private int height;
     private File f;
     private Media m;
     private MediaPlayer mediaPlayer;
@@ -63,7 +67,26 @@ public class Window extends Application {
         });
         return root;
     }
-
+    private boolean loadResolution(){
+        FileInputStream fIs;
+        ObjectInputStream oIs;
+        try{
+            fIs = new FileInputStream("resolution.ini");
+            oIs = new ObjectInputStream(fIs);
+            String i = oIs.readObject().toString();
+            width = Integer.parseInt(i);
+            oIs.close();
+            fIs.close();
+        }catch(ClassNotFoundException e){
+            return false;
+        }catch(FileNotFoundException e){
+            return false;
+        }catch(IOException e){
+            return false;
+        }
+        return true;
+    }
+    
     public void error(Exception ex) {
         new lib.AlertGame("Lỗi", ex.getMessage(), Alert.AlertType.WARNING) {
 
@@ -82,6 +105,10 @@ public class Window extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        if(!loadResolution()){
+            width = 1366;
+        }
+        height  = (width / 16) * 9;
         stage.setTitle("Ai là triệu phú");
         stage.setMaxWidth(width);
         stage.setMaxHeight(height);

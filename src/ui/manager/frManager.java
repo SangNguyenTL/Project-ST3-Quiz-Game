@@ -48,17 +48,23 @@ public class frManager extends frLogin{
     protected ObservableList<DBModel.Player> masterDataPlayer;
     protected SimpleIntegerProperty countPlayer, countQuestion;
     protected Label lblCountQ, lblCountP;
+    protected DBModel.Player rootPlayer;
     public frManager(Pane root, DBModel.Player player) {
         super(root, player);
-        init();
+        init(player);
     }
+    protected void setRootPlayer(Player player){
+        this.rootPlayer = player;
+    }
+    
     protected void installBoxCount(){
         countPlayer = new SimpleIntegerProperty(masterDataPlayer.size());
         countQuestion = new SimpleIntegerProperty(masterDataQuestion.size());
         lblCountQ = new Label("Số câu hỏi: "+countQuestion.getValue());
-        lblCountP = new Label("Số người chơi: "+countPlayer.getValue());
-        countPlayer.addListener(new ChangeListener<Number>() {
+        lblCountP = new Label("Số người chơi: "+countPlayer.getValue());     
 
+        countPlayer.addListener(new ChangeListener<Number>() {
+            
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                  lblCountP = new Label("Số người chơi: "+t1);
@@ -71,6 +77,7 @@ public class frManager extends frLogin{
                 lblCountQ = new Label("Số câu hỏi: "+t1);
             }
         });
+        
     }
     protected void setContent(){
         content = new HBox();
@@ -78,8 +85,9 @@ public class frManager extends frLogin{
         System.out.println(content.getPrefHeight());
         content.setAlignment(Pos.CENTER);
     }
-    public void init() {
+    public void init(DBModel.Player player) {
         root.getChildren().clear();
+        setRootPlayer(player);
         setContent();
         masterDataQuestion = FXCollections.observableArrayList(new Question().getData());
         masterDataPlayer = FXCollections.observableArrayList(new Player().getData());
@@ -127,7 +135,7 @@ public class frManager extends frLogin{
         Button btnMoney = new Button("Tiền thưởng");
         Button btnInfo = new Button("Thông tin ID");
         Button btnExit = new Button("Quay lại");
-        if(player.isAdmin){
+        if(player.isAdmin()){
             btnGroup.add(btnUsers);
             btnGroup.add(btnQuest);
             btnGroup.add(btnMoney);
@@ -160,7 +168,7 @@ public class frManager extends frLogin{
         btnUsers.setOnMouseClicked(new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent event) {
-               new frPlayer(content,player,masterDataPlayer);
+               new frPlayer(content,rootPlayer,masterDataPlayer);
             }
             
         });
@@ -168,7 +176,7 @@ public class frManager extends frLogin{
         {
             @Override
             public void handle(MouseEvent event) {
-               new listButtonLogged(root,player);
+               new listButtonLogged(root,rootPlayer);
             }
             
         });
@@ -176,7 +184,7 @@ public class frManager extends frLogin{
         {
             @Override
             public void handle(MouseEvent event) {
-                new frQuestion(content,player,masterDataQuestion);
+                new frQuestion(content,rootPlayer,masterDataQuestion);
             }
             
         });
@@ -184,7 +192,7 @@ public class frManager extends frLogin{
             @Override
             public void handle(MouseEvent event) {
                 content.getChildren().clear();
-                new frPlayerUpdate(content,player);
+                new frPlayerUpdate(content,rootPlayer,rootPlayer);
             }
         
         });
@@ -192,7 +200,7 @@ public class frManager extends frLogin{
             @Override
             public void handle(MouseEvent event) {
                 content.getChildren().clear();
-                new frPrizeMoney(content,player);
+                new frPrizeMoney(content,rootPlayer);
             }
             
         });
@@ -209,6 +217,8 @@ public class frManager extends frLogin{
         VBox boxCount = new VBox(10);
         boxCount.setAlignment(Pos.BOTTOM_CENTER);     
         boxCount.getChildren().addAll(lblCountQ,lblCountP);
+        
+        boxCount.setVisible(player.isAdmin());
 
         slideBar.getChildren().addAll(boxTitle,listButton,boxCount);
         border.setTop(banner);

@@ -54,6 +54,7 @@ public class frPlayer extends frManager{
     }
     
     public void init(ObservableList<DBModel.Player> masterDataPlayer) {
+        super.setRootPlayer(player);
         super.setMasterDataPlayer(masterDataPlayer);
         installBoxCount();
         root.getChildren().clear();
@@ -155,9 +156,8 @@ public class frPlayer extends frManager{
                     };
                     return;
                 }
-                Player player = (Player) table.getSelectionModel().getSelectedItem();
-                root.getChildren().clear();
-                new frPlayerUpdate(root, player);
+                Player childPlayer = (Player) table.getSelectionModel().getSelectedItem();
+                new frPlayerUpdate(root, childPlayer, rootPlayer);
             }
         });
 

@@ -26,6 +26,7 @@ import lib.openSound;
 public class listButtonOpen {
 
     public listButtonOpen(Pane root) {
+        root.getChildren().clear();
         GridPane grid = new GridPane();
         root.getChildren().add(grid);
         grid.setPrefSize(root.getWidth(), root.getHeight());
@@ -37,12 +38,14 @@ public class listButtonOpen {
         Button btnLogin = new Button("Đăng nhập");
         Button btnRule = new Button("Luật chơi");
         Button btnTop = new Button("Xếp hạng");
+        Button bntSetting = new Button("Thiết đặt");
         Button btnExit = new Button("Thoát");
 
         ArrayList<Button> allButton = new ArrayList();
         allButton.add(btnLogin);
         allButton.add(btnTop);
         allButton.add(btnRule);
+        allButton.add(bntSetting);
         allButton.add(btnExit);
         
         openSound hoverButton  = new openSound("sounds/hoverButton.mp3",500);
@@ -85,6 +88,17 @@ public class listButtonOpen {
             @Override
             public void handle(MouseEvent t) {
                 new frHelp(root);
+                
+            }
+        });
+        
+        //Thiết đặt
+        bntSetting.setOnMouseClicked(new EventHandler<MouseEvent>
+        () {
+
+            @Override
+            public void handle(MouseEvent t) {
+                new frSetting(root);
                 
             }
         });

@@ -6,10 +6,15 @@ package DBModel;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Properties;
+import java.sql.SQLException;
+import java.util.HashMap;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import lib.AlertGame;
 
 /**
@@ -20,9 +25,10 @@ public class MyConnect {
     //Declare variable:
     private static String user,pass,port,dbName,server;
     private static Connection con;
-    public static Properties p;
-    public static String username,password,portP,dbNameP,severP,fname;
-    
+    private static HashMap<String,String> p;
+    private static String username,password,portP,dbNameP,severP,fname;
+    private static String key  = "ST3sediToicuoiMa"; // 128 bit key
+    private static String initVector = "RandomInitVector"; // 16 bytes IV
     //Default Constructor:
     public MyConnect() {
         username="username";
@@ -30,7 +36,8 @@ public class MyConnect {
         portP="port";
         dbNameP="database";
         severP="sever";
-        fname="myConnect.properties";
+        fname="data.dat";
+        
     }
     
     //Set value for variable con:
@@ -39,8 +46,7 @@ public class MyConnect {
     }
     
     //Get value from variable con:
-    public static Connection getConnect() {        
-        MyConnect m=new MyConnect();      
+    public static Connection getConnect() {
         return con;
     }
     
@@ -84,7 +90,7 @@ public class MyConnect {
        user = users;
     }
 
-    public static boolean  checkCon(String userC,String passC,String portC,String dbNameC,String serverC){
+    public static boolean checkCon(String userC,String passC,String portC,String dbNameC,String serverC){
         user=userC;
         pass=passC;
         port=portC;
@@ -93,7 +99,7 @@ public class MyConnect {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con=DriverManager.getConnection(bulid());
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             return false;
         }
         return true;
@@ -122,62 +128,73 @@ public class MyConnect {
         if (p == null) {
             return "";
         }
-
-        return p.getProperty(prop);
+        return lib.Encryption.decrypt(key, initVector,p.get( prop));
     }
 
     public static void setProperty(String prop, String value) {
         if (p == null) {
-            p = new Properties();
+            p = new HashMap<>();
         }
-        p.setProperty(prop, value);
+        p.put(prop, lib.Encryption.encrypt(key, initVector, value));
     }
     
       public static boolean checkData() {
-          MyConnect m=new MyConnect();
-          if (MyConnect.loadData()) {
-            if (MyConnect.checkCon(MyConnect.getProperty(MyConnect.username), MyConnect.getProperty(MyConnect.password), MyConnect.getProperty(MyConnect.portP), MyConnect.getProperty(MyConnect.dbNameP), MyConnect.getProperty(MyConnect.severP))) {
-                con = MyConnect.getConnect();
-            }
+          MyConnect m = new MyConnect();
+          if (MyConnect.loadData()
+                  && MyConnect.checkCon(
+                    MyConnect.getProperty(MyConnect.username),
+                    MyConnect.getProperty(MyConnect.password),
+                    MyConnect.getProperty(MyConnect.portP),
+                    MyConnect.getProperty(MyConnect.dbNameP),
+                    MyConnect.getProperty(MyConnect.severP))) {
+            con = MyConnect.getConnect();
         } else {
             return false;
         }
         return true;
     }
 
-    public static boolean loadData() {
-        p = new Properties();
-        FileInputStream fis = null;
+    public static boolean loadData(){
+        p = new HashMap<>();
+        FileInputStream fis;
+        ObjectInputStream oIs;
         try {
             fis = new FileInputStream(fname);
-            p.load(fis);
+            oIs = new ObjectInputStream(fis);
+            p = (HashMap < String, String >) oIs.readObject();
+            p.size();
+            oIs.close();
             fis.close();
-        } catch (Exception ex) {     
-            
+        } catch (IOException | ClassNotFoundException ex) {
             return false;
         }
-
         return true;
     }
 
     public static void saveData() {
-        MyConnect m=new MyConnect();
         FileOutputStream fos = null;
+        ObjectOutputStream oOs;
+        
         try {
+            System.out.println(user);
             setProperty(username, user);
             setProperty(password, pass);
             setProperty(dbNameP, dbName);
             setProperty(portP, port);
             setProperty(severP, server);
             fos = new FileOutputStream(fname);
-            p.store(fos, "Save connect"); 
+            oOs = new ObjectOutputStream(fos);
+            oOs.writeObject(p);
+            oOs.close();
             fos.close();
-        } catch (Exception ex) {
-                new AlertGame("Lỗi", ex.getMessage(), Alert.AlertType.ERROR) {
+        } catch (IOException ex) {
+                new AlertGame("Lỗi", "Không thể lưu kết nối... Xin thử lại sau!", Alert.AlertType.ERROR) {
 
                     @Override
                     public void processResult() {
-                        
+                        if(this.getResult().get()== ButtonType.OK){
+                            System.exit(0);
+                        }
                     }
                 };
         }

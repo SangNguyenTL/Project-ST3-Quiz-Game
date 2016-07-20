@@ -68,11 +68,8 @@ public class frQuestion extends frManager{
         System.out.println(masterDataQuestion.size());
         filteredData = FXCollections.observableArrayList();
         filteredData.addAll(masterDataQuestion);
-        masterDataQuestion.addListener(new ListChangeListener<Question>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends Question> change) {
-                updateFilteredData();
-            }
+        masterDataQuestion.addListener((ListChangeListener.Change<? extends Question> change) -> {
+            updateFilteredData();
         });
         initializeTable();
 
