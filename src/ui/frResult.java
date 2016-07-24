@@ -7,29 +7,22 @@ package ui;
 
 import DBModel.Player;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.regex.Pattern;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import lib.AlertGame;
 
 /**
  *
@@ -67,15 +60,21 @@ public class frResult extends frLogin {
 
         Text txtResult = new Text("Thành tích.");
         txtResult.setEffect(ds);
-        txtResult.setFont(Font.font("Tahoma", FontWeight.BOLD, 30));
+        txtResult.setFill(Color.WHITE);
+        txtResult.setFont(Font.font("Tahoma", FontWeight.BOLD, 50));
         HBox boxResult = new HBox(txtResult);
         boxResult.setAlignment(Pos.CENTER);
-        grid.getStyleClass().add("text-white");
         grid.add(boxResult,0,0);
-        grid.add(new Text("Số tiền đạt được:"+newGame.getMoney()), 0, 1);
-        grid.add(new Text("Tổng thời gian:"+newGame.getTimeTotal()), 0, 2);
-        grid.add(new Text("Số tiền lần trước:"+newGame.getOldTime()), 0, 3);
-        grid.add(new Text("Tổng số tiền lần trước:"+newGame.getOldMoney()), 0, 4);
+        Text str1 = new Text("Số tiền đạt được:"+newGame.getMoney()+"\nTổng thời gian:"+newGame.getTimeTotal()+"\nSố tiền lần trước:"+newGame.getOldTime()+"\nTổng số tiền lần trước:"+newGame.getOldMoney());
+        str1.setFont(Font.font("Tahoma", FontWeight.NORMAL, FontPosture.REGULAR, 50));
+        str1.setFill(Color.WHITE);
+        str1.setEffect(ds);
+        grid.add(str1, 0, 1);
+        if(newGame.getMoney()>player.getMoney()){
+            player.setTotalTime(newGame.getTimeTotal());
+            player.setMoney(newGame.getMoney());
+            player.update();
+        }
 
         Button back = new Button("Quay lại");
         HBox hbback = new HBox(10);

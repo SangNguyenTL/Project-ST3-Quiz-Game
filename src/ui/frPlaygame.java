@@ -192,6 +192,9 @@ public class frPlaygame {
                 timeLineGame = textAnimationGame.setAnimation(numTime, time);
             }
             if (t1.intValue() == 3) {
+                soundGame.stopSound();
+                if(newGame.getLevelQuestion()!=14) winner = new lib.openSound("sounds/fail.mp3");
+                winner.play();
                 new frResult(root, player, newGame);
             }
         });
@@ -213,9 +216,12 @@ public class frPlaygame {
         fail = new openSound("sounds/fail.mp3");
         winner = new openSound("sounds/winner.mp3");
         per50.getMediaPlayer().setOnEndOfMedia(()->{
+            per50.stopSound();
             soundGame.play();
         });
-
+        winner.getMediaPlayer().setOnEndOfMedia(()->{
+            winner.stopSound();
+        });
         nextQuest.getMediaPlayer().setOnEndOfMedia(() -> {
             nextQuest.stopSound();
             soundGame.play();
@@ -435,6 +441,14 @@ public class frPlaygame {
                 a.getTimeline().stop();
             });
         });
+        btnStop.setOnAction((ActionEvent t) ->{
+            timeLineGame.stop();
+            lib.textAnimation a = new lib.textAnimation();
+            mess.set("Vậy bạn đã xin ngừng cuộc chơi. Chúng tôi sẽ chuyển bạn tới phần kết quả");
+            a.setAnimation(2000, () -> {
+                statusGame.set(3);
+            });
+        });
     }
 
     public int getCurrentMoney(int i) {
@@ -473,7 +487,6 @@ public class frPlaygame {
             soundGame.stopSound();
             waitResult.play();
             timeLineGame.stop();
-            newGame.setTimeTotal(newGame.getTimeTotal() + time.intValue());
             new lib.textAnimation().setAnimation(1500, () -> {
                 if (waitResult.getMediaPlayer().getStatus() == MediaPlayer.Status.PLAYING && waitResult.getMediaPlayer().getCurrentTime() == Duration.millis(1200));
                 button.getStyleClass().add("trans");
@@ -488,16 +501,19 @@ public class frPlaygame {
                 if (button.getStyleClass().contains("isCorrect")) {
                     isCorrect.play();
                     newGame.setMoney(newGame.getMoney() + getCurrentMoney(15));
+                    newGame.setTimeTotal(newGame.getTimeTotal() + time.intValue());
                 }
                 if (!button.getStyleClass().contains("isCorrect")) {
                     button.getStyleClass().add("falseAns");
                     isNotCorrect.play();
                     if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 9) {
                         newGame.setMoney(getCurrentMoney(9));
+                        newGame.setTimeTotal(newGame.getTimeTotal() + time.intValue());
                     } else if (newGame.getLevelQuestion() > 9) {
                         newGame.setMoney(getCurrentMoney(4));
+                        newGame.setTimeTotal(newGame.getTimeTotal() + time.intValue());
                     } else {
-                        newGame.setMoney(getCurrentMoney(14));
+                        newGame.setMoney(0);
                     }
                 }
             });

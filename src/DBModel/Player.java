@@ -40,7 +40,6 @@ public class Player {
 
     public void setPasword(String password) {
         this.password = lib.Encryption.encrypt(key, initVector, password);
-        System.out.println(this.password);
     }
 
     public void setYear(int year) {
@@ -271,12 +270,14 @@ public class Player {
         try {
             if (MyConnect.checkData()) {
                 Connection con = MyConnect.getConnect();
-                PreparedStatement pst = con.prepareStatement("update tb_Player set userName = ?, password = ?, year = ?, isAdmin = ? where userID = ?");
+                PreparedStatement pst = con.prepareStatement("update tb_Player set userName = ?, password = ?, year = ?, isAdmin = ?, totalTime = ?, money = ? where userID = ?");
                 pst.setString(1, userName);
-                pst.setString(2, password);
+                pst.setString(2, getPasword());
                 pst.setInt(3, year);
                 pst.setBoolean(4,isAdmin);
                 pst.setInt(5, userID);
+                pst.setInt(6, totalTime);
+                pst.setInt(7, money);
                 pst.executeUpdate();
                 pst.close();
                 con.close();

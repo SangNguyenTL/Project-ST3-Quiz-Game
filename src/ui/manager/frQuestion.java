@@ -156,7 +156,7 @@ public class frQuestion extends frManager{
         txtQuestion.setPrefHeight(50);
         main.add(txtQuestion, 1, 1, 7, 1);
 
-        main.add(boxTable, 0, 2, 9, 3);
+        main.add(boxTable, 0, 2, 8, 3);
 
         Button btnAdd = new Button("Thêm");
         btnAdd.setPrefWidth(100);
