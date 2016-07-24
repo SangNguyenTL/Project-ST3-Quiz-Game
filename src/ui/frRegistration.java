@@ -8,14 +8,10 @@ package ui;
 import DBModel.Player;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -34,7 +30,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import lib.AlertGame;
-import ui.manager.frQuestion;
 
 /**
  *

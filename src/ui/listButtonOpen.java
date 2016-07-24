@@ -8,7 +8,6 @@ package ui;
 
 import lib.AlertGame;
 import java.util.ArrayList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -23,8 +22,8 @@ import lib.openSound;
  *
  * @author nhats
  */
-public class listButtonOpen {
-
+public class listButtonOpen{
+    
     public listButtonOpen(Pane root) {
         root.getChildren().clear();
         GridPane grid = new GridPane();
@@ -54,81 +53,45 @@ public class listButtonOpen {
             allButton.get(i).getStyleClass().add("btnCus");
             allButton.get(i).setMinWidth(root.getWidth()*0.11);
             allButton.get(i).setMinHeight(root.getHeight()*0.05);
-            allButton.get(i).setOnMouseEntered(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
+            allButton.get(i).setOnMouseEntered((MouseEvent t) -> {
                 hoverButton.play();
-            }
-        });
-            allButton.get(i).setOnMouseExited(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
+            });
+            allButton.get(i).setOnMouseExited((MouseEvent t) -> {
                 hoverButton.stopSound();
-            }
-        });
+            });
         }
         //login
-        btnLogin.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
-                new frLogin(root);
-            }
+        btnLogin.setOnMouseClicked((MouseEvent t) -> {
+            new frLogin(root);
         });
         
         //Luật
-        btnRule.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
-                new frHelp(root);
-                
-            }
+        btnRule.setOnMouseClicked((MouseEvent t) -> {
+            new frHelp(root);
         });
         
         //Thiết đặt
-        bntSetting.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
-                new frSetting(root);
-                
-            }
+        bntSetting.setOnMouseClicked((MouseEvent t) -> {
+            new frSetting(root);
         });
         
         
         //out
-        btnExit.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-            @Override
-            public void handle(MouseEvent t) {
-                new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Thôi' để quay lại", Alert.AlertType.CONFIRMATION) {
-                    @Override
-                    public void processResult() {
-                        if(getResult().get() == ButtonType.OK){
-                            System.exit(0);
-                        }else{
-                            getAlert().close();
-                        }
+        btnExit.setOnMouseClicked((MouseEvent t) -> {
+            new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Thôi' để quay lại", Alert.AlertType.CONFIRMATION) {
+                @Override
+                public void processResult() {
+                    if(getResult().get() == ButtonType.OK){
+                        System.exit(0);
+                    }else{
+                        getAlert().close();
                     }
-                };
-            }
+                }
+            };
         });
         //top 
-         btnTop.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
-                new frRank(root);
-            }
+         btnTop.setOnMouseClicked((MouseEvent t) -> {
+             new frRank(root);
         });
     }
     

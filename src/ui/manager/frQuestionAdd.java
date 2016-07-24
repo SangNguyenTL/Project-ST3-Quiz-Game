@@ -10,7 +10,6 @@ import DBModel.Question;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -37,6 +36,7 @@ public class frQuestionAdd extends ui.manager.frManager{
     protected Boolean type; //Add false, update true
     public frQuestionAdd(Pane root, DBModel.Player player) {
         super(root, player);
+        init();
     }
     
     @Override
@@ -44,8 +44,7 @@ public class frQuestionAdd extends ui.manager.frManager{
         type = false;
         root.getChildren().clear();
         GridPane grid = new GridPane();
-
-        grid.setAlignment(Pos.CENTER_LEFT);
+        grid.setAlignment(Pos.TOP_CENTER);
         grid.setVgap(10);
         grid.setHgap(20);
 

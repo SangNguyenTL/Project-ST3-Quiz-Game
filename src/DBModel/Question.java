@@ -174,30 +174,31 @@ public class Question {
         return list;
     }
 
-    public Question getRadomQues(int lev, int cat) {
-        Question q = new Question();
+    public ArrayList<Question> getRadomQues(int lev, int num) {
+        ArrayList<Question> list = new ArrayList<>();
         if (MyConnect.checkData()) {
             try {
                 Connection con = MyConnect.getConnect();
-                PreparedStatement pst = con.prepareStatement("select top 1 * from tb_Question where level= ? and catId= ? and isActive='true' order by NEWID() ");
+                PreparedStatement pst = con.prepareStatement("select top "+num+" * from tb_Question where level= ? and isActive='true' order by NEWID() ");
                 pst.setInt(1, lev);
-                pst.setInt(2, cat);
                 ResultSet rs = pst.executeQuery();
                 while (rs.next()) {
+                    Question q = new Question();
                     q.quesId = rs.getInt(1);
                     q.catId = rs.getInt(2);
                     q.quesContent = rs.getString(3);
                     q.isActive = rs.getBoolean(4);
                     q.level = rs.getInt(5);
+                    list.add(q);
                 }
                 rs.close();
                 pst.close();
                 con.close();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 error(e);
             }
         }
-        return q;
+        return list;
     }
 
     public boolean insert() {
@@ -222,8 +223,7 @@ public class Question {
                 pst.close();
                 con.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
             return false;
         }
         return true;
@@ -243,8 +243,7 @@ public class Question {
                 pst.close();
                 con.close();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
             return false;
         }
         return true;
@@ -263,8 +262,7 @@ public class Question {
                     pst.close();
                     con.close();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException e) {
                 return false;
             }
             return true;

@@ -13,7 +13,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
@@ -21,7 +20,6 @@ import javafx.scene.layout.VBox;
  * @author nhats
  */
 public class TableQuestion {
-    private final HBox boxTable = new HBox();
     
     private ObservableList<DBModel.Question> filteredData = FXCollections.observableArrayList();
     private TableView<Question> table;
@@ -29,7 +27,7 @@ public class TableQuestion {
     private final int itemsPerPage = 10;
     public TableQuestion() {
     }
-    public HBox init(TableView<Question> table,ObservableList<DBModel.Question> filteredData) {
+    public AnchorPane init(TableView<Question> table,ObservableList<DBModel.Question> filteredData) {
         this.table = table;
         // Initially add all data to filtered data
         this.filteredData = filteredData;
@@ -42,9 +40,7 @@ public class TableQuestion {
         AnchorPane.setBottomAnchor(pagination, 10.0);
         AnchorPane.setLeftAnchor(pagination, 10.0);
         anchor.getChildren().addAll(pagination);
-        boxTable.setPrefSize(620, 300);
-        boxTable.getChildren().add(anchor);
-        return boxTable;
+        return anchor;
     }
 
     

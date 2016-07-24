@@ -191,6 +191,35 @@ public class Player {
         return list;
     }
     
+    public ArrayList<Player> getRank(){
+        ArrayList<Player> list = new ArrayList<>();
+        if (MyConnect.checkData()) {
+            try {
+                Connection con = MyConnect.getConnect();
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery("select top 10 * from tb_Player ORDER BY money DESC, totalTime ASC");
+                while (rs.next()) {
+                    Player q = new Player();
+                    q.userID = rs.getInt(1);
+                    q.userName = rs.getString(2);
+                    q.email = rs.getString(3);
+                    q.password= rs.getString(4);
+                    q.year = rs.getInt(5);
+                    q.money = rs.getInt(6);
+                    q.totalTime = rs.getInt(7);
+                    q.isAdmin = rs.getBoolean(8);
+                    list.add(q);
+                }
+                rs.close();
+                st.close();
+                con.close();
+            } catch (Exception e) {
+                error(e);
+            }
+        }
+        return list;
+    }
+    
     public boolean delete() {
         try {
             if (MyConnect.checkData()) {

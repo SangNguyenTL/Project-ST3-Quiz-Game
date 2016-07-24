@@ -9,8 +9,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
@@ -18,9 +16,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.util.Callback;
 
 /**
@@ -31,7 +26,6 @@ public class frPrizeMoney extends frManager {
 
     private ObservableList<DBModel.PrizeMoney> data;
     TableView table = new TableView();
-    private HBox boxTable = new HBox();
 
     public frPrizeMoney(Pane root, DBModel.Player player) {
         super(root, player);
@@ -41,11 +35,13 @@ public class frPrizeMoney extends frManager {
     public void init(){
         root.getChildren().clear();
         HBox main = new HBox();
-        main.setPrefSize(root.getPrefWidth(),400);
+        main.setMaxWidth(root.getWidth()*0.8);
         data = FXCollections.observableArrayList(new DBModel.PrizeMoney().getData());
         main.setAlignment(Pos.CENTER);
         table = new TableView();
-        table.setMaxSize(600, 400);
+        table.getStyleClass().add("table-quiz");
+        table.setPrefWidth(main.getMaxWidth());
+        table.setPrefHeight(300);
         table.setEditable(true);
 
         // gọi hàm edit cho table

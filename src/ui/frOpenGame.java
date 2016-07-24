@@ -17,7 +17,7 @@ import lib.AlertGame;
  * @author nhats
  */
 public class frOpenGame{
-        Pane root = new Pane();
+        public static Pane root = new Pane();
     public frOpenGame(Stage primaryStage) {
         Double width = primaryStage.getWidth(), height = primaryStage.getHeight();
         root.setMinSize(width, height);

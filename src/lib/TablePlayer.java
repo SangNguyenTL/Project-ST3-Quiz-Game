@@ -37,7 +37,7 @@ public class TablePlayer {
     private int totalRow ;
     public TablePlayer() {
     }
-    public HBox init(TableView<Player> table,ObservableList<DBModel.Player> filteredData) {
+    public AnchorPane init(TableView<Player> table,ObservableList<DBModel.Player> filteredData) {
         this.table = table;
         // Initially add all data to filtered data
         this.filteredData = filteredData;
@@ -49,9 +49,7 @@ public class TablePlayer {
         AnchorPane.setBottomAnchor(pagination, 10.0);
         AnchorPane.setLeftAnchor(pagination, 10.0);
         anchor.getChildren().addAll(pagination);
-        boxTable.setPrefSize(620, 300);
-        boxTable.getChildren().add(anchor);
-        return boxTable;
+        return anchor;
     }
 
     

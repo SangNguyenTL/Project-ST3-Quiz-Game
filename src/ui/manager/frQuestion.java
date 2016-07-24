@@ -62,17 +62,22 @@ public class frQuestion extends frManager{
         root.getChildren().clear();
         GridPane main = new GridPane();
         // never size the gridpane larger than its preferred size:
-        main.setAlignment(Pos.CENTER);
+        main.setAlignment(Pos.TOP_CENTER);
         main.setVgap(10);
         main.setHgap(10);
-        System.out.println(masterDataQuestion.size());
         filteredData = FXCollections.observableArrayList();
         filteredData.addAll(masterDataQuestion);
         masterDataQuestion.addListener((ListChangeListener.Change<? extends Question> change) -> {
             updateFilteredData();
         });
-        initializeTable();
 
+        //table cot 0 dong 3 col pan 5
+        boxTable = new HBox();
+        boxTable.setMaxWidth(root.getWidth()*0.9);
+        initializeTable();
+        boxTable.getChildren().add(new TableQuestion().init(table, filteredData));
+        
+        
         Label lblCategory = new Label("Chủ đề: ");
         lblCategory.setFont(new Font("Arial", 20));
         lblCategory.setTextFill(Color.web("#fff"));
@@ -94,7 +99,7 @@ public class frQuestion extends frManager{
         lblLevel.setFont(new Font("Arial", 20));
         lblLevel.setTextFill(Color.web("#fff"));
         // cot 2 dong 0
-        main.add(lblLevel, 6, 0);
+        main.add(lblLevel, 2, 0);
 
         cbbLevel = new ComboBox();
         cbbLevel.getItems().add("Chọn...");
@@ -106,14 +111,14 @@ public class frQuestion extends frManager{
         );
         cbbLevel.getSelectionModel().selectFirst();;
         // cot 3 dong 0
-        main.add(cbbLevel, 7, 0);
+        main.add(cbbLevel, 3, 0);
 
         Label lbActive = new Label();
         lbActive.setText("Tình trạng: ");
         lbActive.setFont(new Font("Arial", 20));
         lbActive.setTextFill(Color.web("#fff"));
         // cot 0 dong 1
-        main.add(lbActive, 0, 1);
+        main.add(lbActive, 4, 0);
 
         cbbActive = new ComboBox();
         cbbActive.getItems().add("Chọn...");
@@ -123,229 +128,197 @@ public class frQuestion extends frManager{
         );
         cbbActive.getSelectionModel().selectFirst();;
         // cot 1 dong 1
-        main.add(cbbActive, 1, 1);
+        main.add(cbbActive, 5, 0);
 
         Button btnSearch = new Button("Tìm kiếm");
-        btnSearch.setMaxWidth(Double.MAX_VALUE);
+        btnSearch.setPrefWidth(100);
         btnSearch.getStyleClass().add("btnNor");
         btnSearch.setPrefHeight(30);
         // cot 2 dong 1
-        main.add(btnSearch, 6, 1);
+        main.add(btnSearch, 6, 0);
 
         Button btnViewAll = new Button("Xem tất cả");
-        btnViewAll.setMaxWidth(Double.MAX_VALUE);
+        btnViewAll.setPrefWidth(100);
         btnViewAll.getStyleClass().add("btnNor");
         btnViewAll.setPrefHeight(30);
         // cot 3 dong 1
-        main.add(btnViewAll, 7, 1);
+        main.add(btnViewAll, 7,0);
 
         Label lblQuestion = new Label();
         lblQuestion.setText("Nhập Câu hỏi: ");
         lblQuestion.setFont(new Font("Arial", 20));
         lblQuestion.setTextFill(Color.web("#fff"));
         // cot 0 dong 2
-        main.add(lblQuestion, 0, 2);
+        main.add(lblQuestion, 0, 1);
 
         txtQuestion = new TextField();
-        txtQuestion.setMaxWidth(Double.MAX_VALUE);
+        txtQuestion.setPrefWidth(100);
         txtQuestion.setPrefHeight(50);
-        main.add(txtQuestion, 1, 2, 7, 1);
+        main.add(txtQuestion, 1, 1, 7, 1);
 
-        //table cot 0 dong 3 col pan 5
-        boxTable = new HBox(new TableQuestion().init(table, filteredData));
-        boxTable.setPrefWidth(500);
-        boxTable.setPrefHeight(300);
-        main.add(boxTable, 0, 3, 8, 4);
+        main.add(boxTable, 0, 2, 9, 3);
 
         Button btnAdd = new Button("Thêm");
-        btnAdd.setMaxWidth(Double.MAX_VALUE);
+        btnAdd.setPrefWidth(100);
         btnAdd.getStyleClass().add("btnNor");
         btnAdd.setPrefHeight(30);
         main.add(btnAdd, 8, 3);
 
         Button btnUpdate = new Button("Cập nhật");
-        btnUpdate.setMaxWidth(Double.MAX_VALUE);
+        btnUpdate.setPrefWidth(100);
         btnUpdate.getStyleClass().add("btnNor");
         btnUpdate.setPrefHeight(30);
         main.add(btnUpdate, 8, 4);
 
         Button btnDelete = new Button("Xóa");
-        btnDelete.setMaxWidth(Double.MAX_VALUE);
+        btnDelete.setPrefWidth(100);
         btnDelete.getStyleClass().add("btnNor");
         btnDelete.setPrefHeight(30);
         main.add(btnDelete, 8, 5);
+        
         root.getChildren().add(main);
-        btnUpdate.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-
-                if (table.getSelectionModel().isEmpty()) {
-                    new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
-
-                        @Override
-                        public void processResult() {
-                        }
-                    };
-                    return;
-                }
-                new frQuestionAddAnswer(root, player,(Question) table.getSelectionModel().getSelectedItem(),true);
-            }
-
-        });
-
-        btnAdd.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                new frQuestionAdd(root,player);
-            }
-
-        });
-
-        btnDelete.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (table.getSelectionModel().isEmpty()) {
-                    new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
-
-                        @Override
-                        public void processResult() {
-                        }
-                    };
-                    return;
-                }
-                Question ques = (Question) table.getSelectionModel().getSelectedItem();
-                new AlertGame("Xóa đối tượng", "Bạn chắc chắn muốn xóa?", AlertType.CONFIRMATION) {
+        btnUpdate.setOnMouseClicked((MouseEvent event) -> {
+            if (table.getSelectionModel().isEmpty()) {
+                new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
+                    
                     @Override
                     public void processResult() {
-                        if(getResult().get()==ButtonType.OK){
-                            String textStatus;
-                            if (ques.delete()){
-                                masterDataQuestion.clear();
-                                masterDataQuestion.addAll(new Question().getData());
-                                textStatus = "Thành công";
-                            }
-                            else{
-                                textStatus = "Thất bại";
-                            }
-                            new AlertGame("Trạng thái", "Xóa "+textStatus, AlertType.INFORMATION) {
-
-                                @Override
-                                public void processResult() {
-                                }
-                            };
-                        }
                     }
                 };
+                return;
             }
+            new frQuestionAddAnswer(root, player,(Question) table.getSelectionModel().getSelectedItem(),true);
+        });
+
+        btnAdd.setOnMouseClicked((MouseEvent event) -> {
+            new frQuestionAdd(root,player);
+        });
+
+        btnDelete.setOnMouseClicked((MouseEvent event) -> {
+            if (table.getSelectionModel().isEmpty()) {
+                new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
+                    
+                    @Override
+                    public void processResult() {
+                    }
+                };
+                return;
+            }
+            Question ques = (Question) table.getSelectionModel().getSelectedItem();
+            new AlertGame("Xóa đối tượng", "Bạn chắc chắn muốn xóa?", AlertType.CONFIRMATION) {
+                @Override
+                public void processResult() {
+                    if(getResult().get()==ButtonType.OK){
+                        String textStatus;
+                        if (ques.delete()){
+                            masterDataQuestion.clear();
+                            masterDataQuestion.addAll(new Question().getData());
+                            textStatus = "Thành công";
+                        }
+                        else{
+                            textStatus = "Thất bại";
+                        }
+                        new AlertGame("Trạng thái", "Xóa "+textStatus, AlertType.INFORMATION) {
+                            
+                            @Override
+                            public void processResult() {
+                            }
+                        };
+                    }
+                }
+            };
         });
         // 1. Wrap the ObservableList in a FilteredList (initially display all data).
 
-        btnSearch.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                Category selectedCat;
-                filteredData.clear();
-                filteredData.addAll(masterDataQuestion);
-                int selectCate = cbbCategory.getSelectionModel().getSelectedIndex();
-                if (selectCate != 0) {
-                    selectedCat = (Category) cbbCategory.getSelectionModel().getSelectedItem();
-                    cat = selectedCat.getId();
-                }
-
-                int level = cbbLevel.getSelectionModel().getSelectedIndex();
-                int selectActive = cbbActive.getSelectionModel().getSelectedIndex();
-                String statusActive = cbbActive.getSelectionModel().getSelectedItem().toString();
-                String lowCaseQuest = txtQuestion.getText().toLowerCase();
-                ObservableList<DBModel.Question> newFilteredData = FXCollections.observableArrayList();
-                //Lặp mảng đối tượng lọc (ko lặp mảng đới tượng chính do mảng chính ko được lọc qua nội dung câu hỏi)
-                for (Question q : filteredData) {
-                    //Điều kiện lọc
-                    Boolean filter = true;
-                    if (selectCate != 0) {
-                        filter = filter && q.getCatId() == cat;
-                    }
-                    if (level != 0) {
-                        filter = filter && q.getLevel() == level;
-                    }
-                    if (selectActive != 0) {
-                        filter = filter && q.getActive().equals(statusActive);
-                    }
-                    if (!lowCaseQuest.equals("") || lowCaseQuest != null) {
-                        filter = filter && (q.getQuesContent().toLowerCase().indexOf(lowCaseQuest) != -1);
-                    }
-                    if (filter) {
-                        newFilteredData.add(q);
-                    }
-                }
-                filteredData.clear();
-                filteredData.addAll(newFilteredData);
-                //Gọi lại table với giữ liệu được lọc
-                reapplyTableSortOrder();
+        btnSearch.setOnMouseClicked((MouseEvent event) -> {
+            Category selectedCat;
+            filteredData.clear();
+            filteredData.addAll(masterDataQuestion);
+            int selectCate = cbbCategory.getSelectionModel().getSelectedIndex();
+            if (selectCate != 0) {
+                selectedCat = (Category) cbbCategory.getSelectionModel().getSelectedItem();
+                cat = selectedCat.getId();
             }
-
+            
+            int level = cbbLevel.getSelectionModel().getSelectedIndex();
+            int selectActive = cbbActive.getSelectionModel().getSelectedIndex();
+            String statusActive = cbbActive.getSelectionModel().getSelectedItem().toString();
+            String lowCaseQuest = txtQuestion.getText().toLowerCase();
+            ObservableList<DBModel.Question> newFilteredData = FXCollections.observableArrayList();
+            filteredData.stream().forEach((q) -> {
+                Boolean filter = true;
+                if (selectCate != 0) {
+                    filter = filter && q.getCatId() == cat;
+                }
+                if (level != 0) {
+                    filter = filter && q.getLevel() == level;
+                }
+                if (selectActive != 0) {
+                    filter = filter && q.getActive().equals(statusActive);
+                }
+                if (!lowCaseQuest.equals("") || lowCaseQuest != null) {
+                    filter = filter && (q.getQuesContent().toLowerCase().indexOf(lowCaseQuest) != -1);
+                }
+                if (filter) {
+                    newFilteredData.add(q);
+                }
+            });
+            filteredData.clear();
+            filteredData.addAll(newFilteredData);
+            //Gọi lại table với giữ liệu được lọc
+            reapplyTableSortOrder();
         });
         // Thực hiện hành động lọc nội dung câu hỏi khi trường text Question thay đổi
-        txtQuestion.textProperty().addListener(new InvalidationListener() {
-
-            @Override
-            public void invalidated(Observable o) {
-                // Sleep một 0.5 giây để đợi kết thúc ấn nội dung lọc thì mới bắt đầu lọc tránh nặng xử lý
-                Task<Void> sleeper = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        try {
-                            //Đặt thời gian
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                        }
-                        return null;
+        txtQuestion.textProperty().addListener((Observable o) -> {
+            Task<Void> sleeper;
+            sleeper = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
                     }
-                };
-                // KHi sleep hết thời gian sẽ chạy đoạn code trong handle
-                sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                    @Override
-                    public void handle(WorkerStateEvent event) {
-                        updateFilteredData();
-                    }
-                });
-                new Thread(sleeper).start();
-            }
+                    return null;
+                }
+            };
+            // KHi sleep hết thời gian sẽ chạy đoạn code trong handle
+            sleeper.setOnSucceeded((WorkerStateEvent event) -> {
+                updateFilteredData();
+            });
+            new Thread(sleeper).start();
         });
 
-        btnViewAll.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                updateFilteredData();
-            }
+        btnViewAll.setOnAction((ActionEvent t) -> {
+            updateFilteredData();
         });
     }
 
     //Khởi tạo bảng
     private void initializeTable() {
-        table = new TableView<Question>();
-        table.setPrefWidth(750);
+        table = new TableView<>();
+        table.getStyleClass().add("table-quiz");
+        table.setPrefWidth(boxTable.getMaxWidth());
         // Gọi và đặt tên cho từng cột
         TableColumn category = new TableColumn("Chủ đề");
         //Gán giá trị cho cột theo đối tượng (đối tượng phải chứa phưng thức get<...>(). <...> là khóa nội dung của đối tượng muốn lấy,
         // ví dụ như bên dưới rõ hơn thì vào từn class để xem).
         category.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Question, String>("Cat"));
+                new PropertyValueFactory<>("Cat"));
         TableColumn level = new TableColumn("Cấp độ");
         level.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Question, String>("Level"));
-        TableColumn content = new TableColumn("Nội dung");
-        content.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Question, String>("QuesContent"));
+                new PropertyValueFactory<>("Level"));
+        TableColumn contentQuestion = new TableColumn("Nội dung");
+        contentQuestion.setCellValueFactory(
+                new PropertyValueFactory<>("QuesContent"));
         TableColumn status = new TableColumn("Trạng thái");
         status.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Question, String>("Active"));
+                new PropertyValueFactory<>("Active"));
         //Căn đều các cột theo tỉ lệ nhât định qua phương thức bind().
         category.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
         level.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
-        content.prefWidthProperty().bind(table.widthProperty().multiply(0.5));
+        contentQuestion.prefWidthProperty().bind(table.widthProperty().multiply(0.5));
         status.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-        table.getColumns().addAll(category, level, content, status);
+        table.getColumns().addAll(category, level, contentQuestion, status);
     }
 
     /**
@@ -355,11 +328,9 @@ public class frQuestion extends frManager{
     //Cập nhật filter data khi có thay đổi ở trường txtQuest tạm thời chỉ đối với trường này vì còn đang xem xét.
     private void updateFilteredData() {
         filteredData.clear();
-        for (Question p : masterDataQuestion) {
-            if (matchesFilter(p)) {
-                filteredData.add(p);
-            }
-        }
+        masterDataQuestion.stream().filter((p) -> (matchesFilter(p))).forEach((p) -> {
+            filteredData.add(p);
+        });
         // Must re-sort table after items changed
         reapplyTableSortOrder();
     }
@@ -372,13 +343,7 @@ public class frQuestion extends frManager{
         }
 
         String lowerCaseFilterString = filterString.toLowerCase();
-        //Đặt điều kiện lọc dùng phương thức getQuesContetn() thông qua đối tượng được truyền vào là q so sánh với lowerCaseFilterString nếu khác -1
-        // thì chuỗi tìm kiếm có trong nội dung câu hỏi của đối tượng q => trả về true.
-        if (q.getQuesContent().toLowerCase().indexOf(lowerCaseFilterString) != -1) {
-            return true;
-        }
-        // ko có trả về false
-        return false; // Does not match
+        return q.getQuesContent().toLowerCase().indexOf(lowerCaseFilterString) != -1; 
     }
 
     // mỗi lần lọc xong ta đc filteredData mới và chỉ cần chạy phương thức này bảng sẽ được cập nhật lại.

@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -29,6 +30,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 /**
  *
@@ -65,14 +68,32 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         super.ques = ques;
         setType(type);
         root.getChildren().clear();
-        Pane main = new Pane();
+        GridPane main = new GridPane();
+        main.setHgap(10);
+        main.setVgap(10);
         ans = new Answer();
-        main.setPrefSize(600, 450);
+        
+        Label lblRightAns = new Label("Đáp án đúng");
+        lblRightAns.setFont(new Font("Cambria", 25));
+        lblRightAns.setTextFill(Color.web("#fff"));
+        main.add(lblRightAns, 0, 0);
+
+        cbAns = new ComboBox();
+        cbAns.getItems().addAll(
+                "Chọn...",
+                "A",
+                "B",
+                "C",
+                "D"
+        );
+
+        cbAns.getSelectionModel().selectFirst();
+        main.add(cbAns, 1,0);
+        
         Label lblCat = new Label("Chủ đề");
         lblCat.setFont(new Font("Cambria", 25));
         lblCat.setTextFill(Color.web("#fff"));
-        lblCat.setLayoutX(10);
-        lblCat.setLayoutY(20);
+        main.add(lblCat, 2, 0);
 
         cbCat = new ComboBox();
         ObservableList<DBModel.Category> listCategory = FXCollections.observableArrayList(new DBModel.Category().getData());
@@ -84,14 +105,12 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
             cbCat.getSelectionModel().select(new DBModel.Category().getData(ques.getCatId()));
         }
 
-        cbCat.setLayoutX(100);
-        cbCat.setLayoutY(20);
+        main.add(cbCat, 3, 0);
 
         Label lblLv = new Label("Độ khó");
         lblLv.setFont(new Font("Cambria", 25));
         lblLv.setTextFill(Color.web("#fff"));
-        lblLv.setLayoutX(350);
-        lblLv.setLayoutY(20);
+        main.add(lblLv, 4, 0);
 
         cbLv = new ComboBox();
         cbLv.getItems().addAll(
@@ -108,15 +127,13 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
             cbLv.getSelectionModel().select(ques.getLevel());
         }
 
-        cbLv.setLayoutX(450);
-        cbLv.setLayoutY(20);
+        main.add(cbLv, 5, 0);
 
         Label lblQues = new Label("Câu hỏi");
         lblQues.setFont(new Font("Cambria", 25));
         lblQues.setTextFill(Color.web("#fff"));
         
-        lblQues.setLayoutX(10);
-        lblQues.setLayoutY(70);
+        main.add(lblQues, 0, 1);
 
 
         txtQues = new TextArea();
@@ -125,13 +142,12 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         txtQues.setLayoutX(20);
         txtQues.setLayoutY(100);
         txtQues.setPrefSize(650, 100);
-        txtQues.setEditable(getType(type));
+        main.add(txtQues, 0, 2, 6, 1);
         
         lbCount = new Label(String.valueOf(txtQues.getText().length()));
         lbCount.setFont(new Font("Arial", 20));
         lbCount.setTextFill(Color.web("#fff"));
-        lbCount.setLayoutX(200);
-        lbCount.setLayoutY(70);
+        main.add(lbCount, 1, 1);
         
         txtQues.setOnKeyPressed((KeyEvent t) -> {
             lbCount.setText(String.valueOf(txtQues.getText().length()));
@@ -145,81 +161,53 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         Label lblAnsA = new Label("Đáp án A");
         lblAnsA.setFont(new Font("Cambria", 25));
         lblAnsA.setTextFill(Color.web("#fff"));
-        lblAnsA.setLayoutX(10);
-        lblAnsA.setLayoutY(220);
+        main.add(lblAnsA, 0, 3, 3, 1);
 
         Label lblAnsB = new Label("Đáp án B");
         lblAnsB.setFont(new Font("Cambria", 25));
         lblAnsB.setTextFill(Color.web("#fff"));
-        lblAnsB.setLayoutX(350);
-        lblAnsB.setLayoutY(220);
-
+        main.add(lblAnsB, 3, 3, 3, 1);
+                
         txtA = new TextField();
         txtA.getStyleClass().add("txtField");
         txtA.setFont(new Font("Arial", 25));
-        txtA.setLayoutX(20);
-        txtA.setLayoutY(250);
+        main.add(txtA, 0, 4, 3, 1);
 
         txtB = new TextField();
         txtB.getStyleClass().add("txtField");
         txtB.setFont(new Font("Arial", 25));
-        txtB.setLayoutX(360);
-        txtB.setLayoutY(250);
+        main.add(txtB, 3, 4, 3, 1);
 
         Label lblAnsC = new Label("Đáp án C");
         lblAnsC.setFont(new Font("Cambria", 25));
         lblAnsC.setTextFill(Color.web("#fff"));
-        lblAnsC.setLayoutX(10);
-        lblAnsC.setLayoutY(320);
+        main.add(lblAnsC, 0, 5, 3, 1);
 
         Label lblAnsD = new Label("Đáp án D");
         lblAnsD.setFont(new Font("Cambria", 25));
         lblAnsD.setTextFill(Color.web("#fff"));
-        lblAnsD.setLayoutX(350);
-        lblAnsD.setLayoutY(320);
-
+        main.add(lblAnsD, 3, 5, 3, 1);
+        
         txtC = new TextField();
         txtC.getStyleClass().add("txtField");
         txtC.setFont(new Font("Arial", 25));
-        txtC.setLayoutX(20);
-        txtC.setLayoutY(350);
+        main.add(txtC, 0, 6, 3, 1);
 
         txtD = new TextField();
         txtD.getStyleClass().add("txtField");
         txtD.setFont(new Font("Arial", 25));
-        txtD.setLayoutX(360);
-        txtD.setLayoutY(350);
+         main.add(txtD, 3, 6, 3, 1);
 
-        Label lblRightAns = new Label("Đáp án đúng");
-        lblRightAns.setFont(new Font("Cambria", 25));
-        lblRightAns.setTextFill(Color.web("#fff"));
-        lblRightAns.setLayoutX(10);
-        lblRightAns.setLayoutY(420);
 
-        cbAns = new ComboBox();
-        cbAns.getItems().addAll(
-                "Chọn...",
-                "A",
-                "B",
-                "C",
-                "D"
-        );
-
-        cbAns.getSelectionModel().selectFirst();
-
-        cbAns.setLayoutX(160);
-        cbAns.setLayoutY(420);
 
         Label lblActive = new Label("Hiển thị");
         lblActive.setFont(new Font("Cambria", 25));
         lblActive.setTextFill(Color.web("#fff"));
-        lblActive.setLayoutX(350);
-        lblActive.setLayoutY(420);
+        main.add(lblActive, 2, 1);
 
         ckActive = new CheckBox();
         ckActive.setSelected(true);
-        ckActive.setLayoutX(445);
-        ckActive.setLayoutY(427);
+        main.add(ckActive, 3, 1);
 
         if (ques.getQuesId() != 0) {
             ArrayList<Answer> listAnswer = new Answer().getData(ques.quesId);
@@ -243,18 +231,18 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         
         Button btnSubmit = new Button("Xác nhận");
         btnSubmit.getStyleClass().add("btnNor");
-        btnSubmit.setLayoutX(240);
-        btnSubmit.setLayoutY(480);
         btnSubmit.setPrefSize(90, 30);
 
         Button btnBack = new Button("Quay lại");
         btnBack.getStyleClass().add("btnNor");
-        btnBack.setLayoutX(360);
-        btnBack.setLayoutY(480);
         btnBack.setPrefSize(90, 30);
-
-        main.getChildren().addAll(lblCat, cbCat, lblLv, lbCount,cbLv, lblQues, txtQues, lblAnsA, lblAnsB, txtA, txtB, lblAnsC, lblAnsD, txtC, txtD, lblRightAns, cbAns, lblActive, ckActive, btnSubmit, btnBack);
-
+        
+        HBox boxButton = new HBox(10);
+        boxButton.setAlignment(Pos.CENTER);
+        boxButton.getChildren().addAll(btnSubmit,btnBack);
+        
+        main.add(boxButton, 0, 7, 6, 1);
+        
         root.getChildren().add(main);
 
         btnBack.setOnMouseClicked((MouseEvent event) -> {

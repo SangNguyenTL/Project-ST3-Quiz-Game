@@ -49,7 +49,7 @@ public class frPlayerUpdate extends frManager {
         javafx.scene.layout.GridPane main = new javafx.scene.layout.GridPane();
         main.setHgap(10);
         main.setVgap(10);
-        main.setAlignment(Pos.CENTER);
+        main.setAlignment(Pos.TOP_CENTER);
         listTxtFeild = new java.util.TreeMap<>();
         listLabel = new java.util.TreeMap<>();
 

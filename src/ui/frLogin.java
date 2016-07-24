@@ -27,11 +27,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import ui.frRegistration;
-import ui.frOpenGame;
-import ui.listButtonLogged;
-import ui.listButtonOpen;
-
 
 /**
  *
@@ -40,7 +35,7 @@ import ui.listButtonOpen;
 public class frLogin{
 
     protected Pane root;
-    protected DBModel.Player player;
+    protected static DBModel.Player player;
     protected Double width;
     protected Double height;
     
@@ -60,6 +55,10 @@ public class frLogin{
     public frLogin(Pane root, Player player) {
         this.root = root;
         this.player = player;
+    }
+
+    public static Player getPlayer() {
+        return player;
     }
     
     
@@ -145,7 +144,7 @@ public class frLogin{
 
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                        if(t1=="") return;
+                        if("".equals(t1)) return;
                         else{
                             new lib.AlertGame("Lỗi", t1, Alert.AlertType.WARNING) {
                                 

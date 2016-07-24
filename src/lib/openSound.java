@@ -28,7 +28,11 @@ public class openSound {
         mediaPlayer.setStartTime(Duration.millis(startTime));
     }
     
-
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+    
+    
     public void play() {
         
         mediaPlayer.play();

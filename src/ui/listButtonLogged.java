@@ -58,74 +58,75 @@ public class listButtonLogged extends ui.frLogin{
             allButton.get(i).getStyleClass().add("btnCus");
             allButton.get(i).setMinWidth(162);
             allButton.get(i).setMinHeight(42);
-            allButton.get(i).setOnMouseEntered(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
+            allButton.get(i).setOnMouseEntered((MouseEvent t) -> {
                 hoverButton.play();
-            }
-        });
-            allButton.get(i).setOnMouseExited(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
+            });
+            allButton.get(i).setOnMouseExited((MouseEvent t) -> {
                 hoverButton.stopSound();
-            }
-        });
+            });
         }
         //login
-        btnPlay.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
+        btnPlay.setOnMouseClicked((MouseEvent t) -> {
+            root.getChildren().clear();
+            frPlaygame playGame = new frPlaygame(root);
+            
+            lib.openVideo introGame = new lib.openVideo("video/intro.mp4", root.getWidth(), root.getHeight());
+            
+            Button backGame = new Button("Bỏ qua");
+            backGame.setLayoutX(root.getWidth()*0.85);
+            backGame.setLayoutY(root.getHeight()*0.88);
+            backGame.getStyleClass().add("btnCus");
+            backGame.setMinSize(root.getWidth()*0.11,root.getHeight()*0.05);
 
-            @Override
-            public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new frPlaygame(root);
-                
-            }
+            root.getChildren().addAll(introGame.getMediaView());
+            introGame.star();
+            root.getChildren().add(backGame);
+            backGame.setOnMouseClicked((MouseEvent c) -> {
+                introGame.stop();
+            });
+            introGame.getMediaPlayer().setOnEndOfMedia(() -> {
+                try {
+                    introGame.stop();
+                } catch (Exception ex) {
+                    
+                }
+            });
+            introGame.getMediaPlayer().setOnStopped(() -> {
+                try {
+                     root.getChildren().clear();
+                     root.getChildren().add(playGame.getBorder());
+                     playGame.setPlaySoundGame();
+                     playGame.setStatusGame(2);
+                } catch (Exception ex) {
+                    
+                }
+            });
         });
         
         //Vào trang quản lý, là true thì vào admin false thì vào user
-        btnMan.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
-                new frManager(root, player);
-            }
+        btnMan.setOnMouseClicked((MouseEvent t) -> {
+            new frManager(root, player);
         });
         
         
         //out
-        btnExit.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
-                new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Cancel' để quay lại", Alert.AlertType.CONFIRMATION) {
-                    
-                    @Override
-                    public void processResult() {
-                        if(getResult().get() == ButtonType.OK){
-                            System.exit(0);
-                        }else{
-                            getAlert().close();
-                        }
+        btnExit.setOnMouseClicked((MouseEvent t) -> {
+            new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Cancel' để quay lại", Alert.AlertType.CONFIRMATION) {
+                
+                @Override
+                public void processResult() {
+                    if(getResult().get() == ButtonType.OK){
+                        System.exit(0);
+                    }else{
+                        getAlert().close();
                     }
-                };
-            }
+                }
+            };
         });
         //top 
-         btnBack.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new frLogin(root);
-            }
+         btnBack.setOnMouseClicked((MouseEvent t) -> {
+             root.getChildren().clear();
+             new frLogin(root);
         });
     }
     

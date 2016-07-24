@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -33,13 +36,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import lib.AlertGame;
 
 /**
  *
  * @author nhats
  */
-class frSetting {
+class frSetting{
     private Pane root;
     private Double width;
     private Double height;
@@ -60,6 +64,7 @@ class frSetting {
     private ArrayList<Label> listLabel;
     private Button btnSubmit;
     public frSetting(Pane root) {
+        
         this.root = root;
         this.fileName = "resolution.ini";
         this.width = root.getWidth();
@@ -152,6 +157,7 @@ class frSetting {
                     
                     @Override
                     public void processResult() {
+                        
                     }
                 };
         });
@@ -164,7 +170,12 @@ class frSetting {
                     @Override
                     public void processResult() {
                         if(getResult().get() == ButtonType.OK){
-                            new listButtonOpen(root);
+                            try {
+                                Window.getPrimaryStage().close();
+                                new Window().start(new Stage());
+                            } catch (Exception ex) {
+                                Logger.getLogger(frSetting.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 };
@@ -190,7 +201,7 @@ class frSetting {
             txtUser.setText(MyConnect.getUser());
             txtPass.setText(MyConnect.getPass());
         }
-        if(!loadResolution()) cbbResolution.getSelectionModel().selectFirst();
+        if(!loadResolution()) cbbResolution.getSelectionModel().selectLast();
     }
     private boolean checkFeild(){
         SimpleStringProperty strError = new SimpleStringProperty();

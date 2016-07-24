@@ -59,7 +59,7 @@ public class frPlayer extends frManager{
         installBoxCount();
         root.getChildren().clear();
         GridPane main = new GridPane();
-        main.setAlignment(Pos.CENTER);
+        main.setAlignment(Pos.TOP_CENTER);
         main.setHgap(10);
         main.setVgap(10);
         // BIến gốc
@@ -67,15 +67,13 @@ public class frPlayer extends frManager{
         //BIến dùng để lọc dữ liệu
         filteredData = FXCollections.observableArrayList();
         filteredData.addAll(masterDataPlayer);
-        masterDataPlayer.addListener(new ListChangeListener<Player>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends Player> change) {
-                updateFilteredData();
-            }
+        masterDataPlayer.addListener((ListChangeListener.Change<? extends Player> change) -> {
+            updateFilteredData();
         });
+        boxTable = new HBox();
+        boxTable.setMaxWidth(root.getWidth()*0.8);
         initializeTable();
-        boxTable = new HBox(new TablePlayer().init(table, filteredData));
-        
+        boxTable.getChildren().add(new TablePlayer().init(table, filteredData));
         
         txtSearch = new TextField();
         txtSearch.setPromptText("Nhập tên");
@@ -134,12 +132,12 @@ public class frPlayer extends frManager{
         Button btnDelete = new Button("Xóa");
         btnDelete.getStyleClass().add("btnNor");
         btnDelete.setPrefSize(90, 30);
-        main.add(btnDelete,6,1);
+        main.add(btnDelete,6,0);
 
         Button btnUpdate = new Button("Cập nhật");
         btnUpdate.getStyleClass().add("btnNor");
         btnUpdate.setPrefSize(90, 30);
-        main.add(btnUpdate,6,2);
+        main.add(btnUpdate,6,1);
 
         root.getChildren().add(main);
 
@@ -202,7 +200,9 @@ public class frPlayer extends frManager{
 }
     private void initializeTable() {
         table = new TableView<Player>();
-        table.setPrefSize(750, 400);
+        table.getStyleClass().add("table-quiz");
+        table.setPrefWidth(boxTable.getMaxWidth());
+        table.setMaxHeight(300);
         TableColumn userName = new TableColumn("Tên người chơi");
         userName.setCellValueFactory(
                 new PropertyValueFactory<DBModel.Player, String>("userName"));
