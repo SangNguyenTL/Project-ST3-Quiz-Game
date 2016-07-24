@@ -19,9 +19,8 @@ public class statusGame {
     private int money;
     private int oldMoney;
     private int oldTime;
-    private int statusGame;
 
-    public statusGame(Player player, int levelQuestion, boolean changeQuest, boolean per50, int timeTotal, int money, int oldMoney, int oldTime,int statusGame) {
+    public statusGame(Player player, int levelQuestion, boolean changeQuest, boolean per50, int timeTotal, int money) {
         this.player = player;
         this.levelQuestion = levelQuestion;
         
@@ -29,8 +28,8 @@ public class statusGame {
         this.per50 = per50;
         this.timeTotal = timeTotal;
         this.money = money;
-        this.oldMoney = oldMoney;
-        this.oldTime = oldTime;
+        this.oldMoney = player.getMoney();
+        this.oldTime = player.getTotalTime();
     }
     public statusGame() {
     }

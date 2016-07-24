@@ -108,7 +108,7 @@ public class frPlaygame {
     protected void installGame() {
 
         time = new SimpleIntegerProperty();
-        newGame = new DBModel.statusGame(player, 0, true, true, 0, 0, player.getTotalTime(), player.getTotalTime(), 1);
+        newGame = new DBModel.statusGame(player, 0, true, true, 0, 0);
         listQuestion = new DBModel.Question().getRadomQues(1, 6);
         listQuestion.addAll(new DBModel.Question().getRadomQues(2, 6));
         listQuestion.addAll(new DBModel.Question().getRadomQues(3, 3));
