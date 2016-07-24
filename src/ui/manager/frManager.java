@@ -82,7 +82,6 @@ public class frManager extends frLogin{
     protected void setContent(){
         content = new HBox();
         content.setPrefSize(root.getWidth()*0.8,root.getHeight()-100);
-        System.out.println(content.getPrefHeight());
         content.setAlignment(Pos.CENTER);
     }
     public void init(DBModel.Player player) {

@@ -31,6 +31,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import lib.AlertGame;
@@ -157,12 +158,10 @@ public class frQuestion extends frManager{
         main.add(txtQuestion, 1, 1, 7, 1);
 
         main.add(boxTable, 0, 2, 8, 3);
-
         Button btnAdd = new Button("Thêm");
         btnAdd.setPrefWidth(100);
         btnAdd.getStyleClass().add("btnNor");
         btnAdd.setPrefHeight(30);
-        main.add(btnAdd, 8, 3);
 
         Button btnUpdate = new Button("Cập nhật");
         btnUpdate.setPrefWidth(100);
@@ -174,7 +173,9 @@ public class frQuestion extends frManager{
         btnDelete.setPrefWidth(100);
         btnDelete.getStyleClass().add("btnNor");
         btnDelete.setPrefHeight(30);
-        main.add(btnDelete, 8, 5);
+        VBox boxButton = new VBox(btnAdd,btnUpdate,btnDelete);
+        boxButton.setSpacing(10);
+        main.add(boxButton, 8, 3);
         
         root.getChildren().add(main);
         btnUpdate.setOnMouseClicked((MouseEvent event) -> {
@@ -230,7 +231,23 @@ public class frQuestion extends frManager{
         });
         // 1. Wrap the ObservableList in a FilteredList (initially display all data).
 
-        btnSearch.setOnMouseClicked((MouseEvent event) -> {
+        btnSearch.setOnAction((ActionEvent event) -> {
+            search();
+        });
+        // Thực hiện hành động lọc nội dung câu hỏi khi trường text Question thay đổi
+        txtQuestion.textProperty().addListener((Observable o) -> {
+                lib.textAnimation a = new lib.textAnimation();
+                a.setAnimation(500, ()->{
+                    search();
+                    a.getTimeline().stop();
+                });
+        });
+
+        btnViewAll.setOnAction((ActionEvent t) -> {
+            updateFilteredData();
+        });
+    }
+    public void search(){
             Category selectedCat;
             filteredData.clear();
             filteredData.addAll(masterDataQuestion);
@@ -266,33 +283,9 @@ public class frQuestion extends frManager{
             filteredData.clear();
             filteredData.addAll(newFilteredData);
             //Gọi lại table với giữ liệu được lọc
-            reapplyTableSortOrder();
-        });
-        // Thực hiện hành động lọc nội dung câu hỏi khi trường text Question thay đổi
-        txtQuestion.textProperty().addListener((Observable o) -> {
-            Task<Void> sleeper;
-            sleeper = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                    }
-                    return null;
-                }
-            };
-            // KHi sleep hết thời gian sẽ chạy đoạn code trong handle
-            sleeper.setOnSucceeded((WorkerStateEvent event) -> {
-                updateFilteredData();
-            });
-            new Thread(sleeper).start();
-        });
-
-        btnViewAll.setOnAction((ActionEvent t) -> {
-            updateFilteredData();
-        });
+            reapplyTableSortOrder(); 
     }
-
+    
     //Khởi tạo bảng
     private void initializeTable() {
         table = new TableView<>();

@@ -101,26 +101,11 @@ public class frPlayer extends frManager{
 
             @Override
             public void invalidated(Observable o) {
-                // Sleep một 0.5 giây để đợi kết thúc ấn nội dung lọc thì mới bắt đầu lọc tránh nặng xử lý
-                Task<Void> sleeper = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        try {
-                            //Đặt thời gian
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                        }
-                        return null;
-                    }
-                };
-                // KHi sleep hết thời gian sẽ chạy đoạn code trong handle
-                sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                    @Override
-                    public void handle(WorkerStateEvent event) {
-                        updateFilteredData();
-                    }
+                lib.textAnimation a = new lib.textAnimation();
+                a.setAnimation(500, ()->{
+                    updateFilteredData();
+                    a.getTimeline().stop();
                 });
-                new Thread(sleeper).start();
             }
         });
             main.add(txtText.get(i),i,0);
