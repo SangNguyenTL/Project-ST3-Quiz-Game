@@ -165,7 +165,7 @@ public class frPlaygame {
                         break;
                     }
                 }
-                textAnimationQuest.setAnimation(textQuest, listSorted.get(newGame.getLevelQuestion()).quesContent, () -> {
+                textAnimationQuest.setAnimation(textQuest, newGame.getLevelQuestion()+1+". "+listSorted.get(newGame.getLevelQuestion()).quesContent, () -> {
                     listAns = new DBModel.Answer().getData(listSorted.get(newGame.getLevelQuestion()).quesId);
                     listButton = new ArrayList<>();
                     listButton.add(btnA);
@@ -228,15 +228,20 @@ public class frPlaygame {
             statusGame.set(2);
         });
         isCorrect.getMediaPlayer().setOnEndOfMedia(() -> {
-            mess.set("Chúc mừng bạn đã trả lời chình xác. Hãy chuẩn bị để sang câu tiếp theo");
-            isCorrect.stopSound();
-            textQuest.setText("");
+            if(newGame.getLevelQuestion() == 14){
+                mess.set("Chúc mừng bạn đã vượt qua 15 câu hỏi. Và bạn đã là người chiến thắng.");
+                statusGame.set(3);
+            }else{
+                mess.set("Chúc mừng bạn đã trả lời chình xác. Hãy chuẩn bị để sang câu tiếp theo");
+                isCorrect.stopSound();
+                textQuest.setText("");
 
-            installButtonAns();
+                installButtonAns();
 
-            root.getStylesheets().retainAll();
-            newGame.setLevelQuestion(newGame.getLevelQuestion() + 1);
-            nextQuest.play();
+                root.getStylesheets().retainAll();
+                newGame.setLevelQuestion(newGame.getLevelQuestion() + 1);
+                nextQuest.play();
+            }
         });
         isNotCorrect.getMediaPlayer().setOnEndOfMedia(() -> {
             fail.play();
@@ -403,10 +408,11 @@ public class frPlaygame {
             mess.set("Bạn đã chọn sự trợ giúp 50/50. Bây giờ máy tính sẽ bỏ đi hai phương án sai.");
             btnPer.setDisable(true);
             newGame.setPer50(false);
-            new lib.textAnimation().setAnimation(2000, () -> {
+            lib.textAnimation a = new lib.textAnimation();
+            a.setAnimation(2000, () -> {
                 Random rand = new Random();
                 int count = 0;
-                while (count<1) {
+                while (count<2) {
                     count++;
                     int i = rand.nextInt(listButton.size());
                     if (listButton.get(i).getStyleClass().contains("isCorrect")){
@@ -417,8 +423,11 @@ public class frPlaygame {
                     if(count==1){
                         soundGame.stopSound();
                         per50.play();
+                        
                     }
+                    
                 }
+                a.getTimeline().stop();
             });
         });
         btnChange.setOnAction((ActionEvent t) -> {
@@ -500,7 +509,7 @@ public class frPlaygame {
                 });
                 if (button.getStyleClass().contains("isCorrect")) {
                     isCorrect.play();
-                    newGame.setMoney(newGame.getMoney() + getCurrentMoney(15));
+                    newGame.setMoney(getCurrentMoney(15));
                     newGame.setTimeTotal(newGame.getTimeTotal() + time.intValue());
                 }
                 if (!button.getStyleClass().contains("isCorrect")) {

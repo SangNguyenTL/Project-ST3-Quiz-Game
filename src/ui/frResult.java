@@ -18,7 +18,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -65,7 +64,7 @@ public class frResult extends frLogin {
         HBox boxResult = new HBox(txtResult);
         boxResult.setAlignment(Pos.CENTER);
         grid.add(boxResult,0,0);
-        Text str1 = new Text("Số tiền đạt được:"+newGame.getMoney()+"\nTổng thời gian:"+newGame.getTimeTotal()+"\nSố tiền lần trước:"+newGame.getOldTime()+"\nTổng số tiền lần trước:"+newGame.getOldMoney());
+        Text str1 = new Text("Số tiền đạt được:"+newGame.getMoney()+"\nTổng thời gian:"+newGame.getTimeTotal()+"\nSố tiền lần trước:"+newGame.getOldMoney()+"\nTổng số thời gian lần trước:"+newGame.getOldTime());
         str1.setFont(Font.font("Tahoma", FontWeight.NORMAL, FontPosture.REGULAR, 50));
         str1.setFill(Color.WHITE);
         str1.setEffect(ds);

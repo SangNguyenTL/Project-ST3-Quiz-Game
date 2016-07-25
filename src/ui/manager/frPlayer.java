@@ -12,8 +12,6 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -52,6 +50,10 @@ public class frPlayer extends frManager{
         super(root, player);
         init(masterDataPlayer);
     }
+
+    public ObservableList<Player> getMasterDataPlayer() {
+        return masterDataPlayer;
+    }
     
     public void init(ObservableList<DBModel.Player> masterDataPlayer) {
         super.setRootPlayer(player);
@@ -67,7 +69,7 @@ public class frPlayer extends frManager{
         //BIến dùng để lọc dữ liệu
         filteredData = FXCollections.observableArrayList();
         filteredData.addAll(masterDataPlayer);
-        masterDataPlayer.addListener((ListChangeListener.Change<? extends Player> change) -> {
+        super.masterDataPlayer.addListener((ListChangeListener.Change<? extends Player> change) -> {
             updateFilteredData();
         });
         boxTable = new HBox();
@@ -157,15 +159,24 @@ public class frPlayer extends frManager{
                     };
                     return;
                 }
-                Player player = (Player) table.getSelectionModel().getSelectedItem();
+                Player playerObject = (Player) table.getSelectionModel().getSelectedItem();
+                if (player.getUserID()!=1 && playerObject.isAdmin()) {
+                    new AlertGame("Lỗi", "Bạn không có quyền để xóa người chơi này!", AlertType.WARNING) {
+
+                        @Override
+                        public void processResult() {
+                        }
+                    };
+                    return;
+                }
                 new AlertGame("Xóa đối tượng", "Bạn chắc chắn muốn xóa?", AlertType.CONFIRMATION) {
                     @Override
                     public void processResult() {
                         if(getResult().get()==ButtonType.OK){
                             String textStatus;
-                            if (player.delete()){
-                                masterDataPlayer.clear();
-                                masterDataPlayer.addAll(new Player().getData());
+                            if (playerObject.delete()){
+                                getMasterDataPlayer().clear();
+                                getMasterDataPlayer().addAll(new Player().getData());
                                 textStatus = "Thành công";
                             }
                             else{
