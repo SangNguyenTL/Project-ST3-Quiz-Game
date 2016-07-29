@@ -73,6 +73,9 @@ public class frResult extends frLogin {
             player.setTotalTime(newGame.getTimeTotal());
             player.setMoney(newGame.getMoney());
             player.update();
+        }else if(newGame.getMoney() == player.getMoney() && newGame.getTimeTotal() < player.getTotalTime()){
+            player.setTotalTime(newGame.getTimeTotal());
+            player.update();
         }
 
         Button back = new Button("Quay lại");
@@ -83,6 +86,7 @@ public class frResult extends frLogin {
         hbback.getChildren().add(back);
         hbback.setPadding(new Insets(10));
         root.getChildren().add(hbback);
+        back.setCancelButton(true);
         back.setOnAction((ActionEvent t) -> {
             root.getChildren().clear();
             new listButtonLogged(root,player);

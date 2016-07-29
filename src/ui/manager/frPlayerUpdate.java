@@ -204,7 +204,7 @@ public class frPlayerUpdate extends frManager {
             return false;
         }
 
-        if (Integer.parseInt(txtYear.getText().trim()) > (Calendar.getInstance().get(Calendar.YEAR) - 5) || Integer.parseInt(txtYear.getText().trim()) < (Calendar.getInstance().get(Calendar.YEAR) - 151)) {
+        if (Integer.parseInt(txtYear.getText().trim()) > (Calendar.getInstance().get(Calendar.YEAR) - 5) || Integer.parseInt(txtYear.getText().trim()) < (Calendar.getInstance().get(Calendar.YEAR) - 150)) {
             strError.set("Năm sinh phải từ " + (Calendar.getInstance().get(Calendar.YEAR) - 150) + " -> " + (Calendar.getInstance().get(Calendar.YEAR) - 5));
             txtYear.requestFocus();
             return false;
@@ -217,7 +217,7 @@ public class frPlayerUpdate extends frManager {
         }
 
         if (!txtPass.getText().equals(reTxtPass.getText())) {
-            strError.set("Mật khẩu bạn nhập không giốn nhau, xin nhập lại");
+            strError.set("Mật khẩu bạn nhập không giống nhau, xin nhập lại");
             txtPass.requestFocus();
             return false;
         }

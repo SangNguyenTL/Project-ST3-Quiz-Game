@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,10 +18,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogEvent;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
@@ -28,11 +29,11 @@ import javafx.stage.Stage;
  */
 public class Window extends Application {
 
-    private Double width;
-    private Double height;
+    private static Double width;
+    private static Double height;
     private static Stage pStage;
-    private MediaView mediaView;
-    private lib.openVideo opening;
+    private static MediaView mediaView;
+    private static lib.openVideo opening;
     public static Stage getPrimaryStage() {
         return pStage;
     }
@@ -41,23 +42,24 @@ public class Window extends Application {
         Window.pStage = pStage;
     }
     
-    public Parent videoOpen(String url) {
+    public static Parent videoOpen(String url) {
         Pane root = new Pane();
         
         opening = new lib.openVideo(url, width, height);
+        opening.getMediaPlayer().setStopTime(Duration.millis(9500));
         opening.setAutoPlay(true);
         mediaView = opening.getMediaView();
         
         Button back = new Button("Bỏ qua");
         back.setLayoutX(width*0.85);
         back.setLayoutY(height*0.88);
-        back.getStylesheets().add(frOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
+        back.getStylesheets().add(Window.class.getClass().getResource("/css/frameOpenGame.css").toExternalForm());
         back.getStyleClass().add("btnCus");
         back.setMinSize(width*0.11,height*0.05);
         
         root.getChildren().addAll(mediaView);
         root.getChildren().add(back);
-        back.setOnMouseClicked((MouseEvent t) -> {
+        back.setOnAction((ActionEvent t) -> {
             opening.stop();
         });
         return root;
@@ -103,6 +105,7 @@ public class Window extends Application {
         if(!loadResolution()){
             width = Double.valueOf("1056");
         }
+
         height  = (width / 16) * 9;
         stage.setTitle("Ai là triệu phú");
         stage.setMaxWidth(width);
@@ -110,6 +113,8 @@ public class Window extends Application {
         stage.setMinWidth(width);
         stage.setMinHeight(height);
         stage.getIcons().add(new Image(this.getClass().getResource("/images/icon.png").toString()));
+        
+
         stage.setScene(new Scene(videoOpen("video/open.mp4"), width, height));
         stage.setResizable(false);
         opening.getMediaPlayer().setOnEndOfMedia(() -> {

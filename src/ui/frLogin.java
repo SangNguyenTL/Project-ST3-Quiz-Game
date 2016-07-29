@@ -7,6 +7,9 @@
 package ui;
 
 import DBModel.Player;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,11 +19,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -38,7 +41,7 @@ public class frLogin{
     protected static DBModel.Player player;
     protected Double width;
     protected Double height;
-    
+    private CheckBox saveId;
     private Label lbUserName;
     private Label lbPassword;
     private TextField txtUserName;
@@ -105,6 +108,7 @@ public class frLogin{
         txtPassowrd.getStyleClass().add("txtField");
         txtPassowrd.setFont(new Font("Arial",width*0.0146));
         grid.add(txtPassowrd, 1, 2);
+        loadIdPass();
         
         Button btnSinIn = new Button("Đăng nhập");
         btnSinIn.getStyleClass().add("btnNor");
@@ -113,8 +117,19 @@ public class frLogin{
         btnSignUp.getStyleClass().add("btnNor");
        
         
-        HBox hbBtn = new HBox(width*0.0073);
+
+        
+        Label saveLabel = new Label("Lưu mật khẩu");
+        saveLabel.setEffect(ds);
+        saveLabel.setTextFill(Color.WHITE);
+        saveLabel.setFont(new Font("Arial",width*0.0146));
+        
+        saveId = new CheckBox();
+        saveId.setSelected(Boolean.valueOf(saveFile.getProperty("checkSave")));
+        HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(saveLabel);
+        hbBtn.getChildren().add(saveId);
         hbBtn.getChildren().add(btnSignUp);
         hbBtn.getChildren().add(btnSinIn);
         
@@ -133,55 +148,49 @@ public class frLogin{
             grid.add(actiontarget, 1, 6);
             
         //Ấn nút đăng nhập và thiết đặt kiểm tra điều kiện
-        btnSinIn.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent e) {
-                String strUserName = txtUserName.getText();
-                String strPassword = txtPassowrd.getText();
-                SimpleStringProperty strError = new SimpleStringProperty("");
-                strError.addListener(new ChangeListener<String>() {
-
-                    @Override
-                    public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                        if("".equals(t1)) return;
-                        else{
-                            new lib.AlertGame("Lỗi", t1, Alert.AlertType.WARNING) {
-                                
-                                @Override
-                                public void processResult() {
-                                }
-                            };
-                        }
-                    };
-                });
-                if(strUserName == null || strUserName.isEmpty()){
-                    strError.set("Tên đăng nhập không được để trống");
-                    txtUserName.requestFocus();
-                    return;
-                }
-                if(strPassword == null || strPassword.isEmpty()){
-                    strError.set("Mật khẩu không được để trống");
-                    txtPassowrd.requestFocus();
-                    return;
-                }
-                player = new Player().getData(strUserName, strPassword);
-                if(player.getUserID()!=0){
-                    new listButtonLogged(root,player);
-                }else{
-                    strError.set("Tên tài khoản hoặc email không đúng!\nXin nhập lại.");
-                }
+        btnSinIn.setDefaultButton(true);
+            
+        btnSinIn.setOnAction((ActionEvent e) -> {
+            String strUserName = txtUserName.getText();
+            String strPassword = txtPassowrd.getText();
+            SimpleStringProperty strError = new SimpleStringProperty("");
+            strError.addListener(new ChangeListener<String>() {
+                
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                    if("".equals(t1)) return;
+                    else{
+                        new lib.AlertGame("Lỗi", t1, Alert.AlertType.WARNING) {
+                            
+                            @Override
+                            public void processResult() {
+                            }
+                        };
+                    }
+                };
+            });
+            if(strUserName == null || strUserName.isEmpty()){
+                strError.set("Tên đăng nhập không được để trống");
+                txtUserName.requestFocus();
+                return;
+            }
+            if(strPassword == null || strPassword.isEmpty()){
+                strError.set("Mật khẩu không được để trống");
+                txtPassowrd.requestFocus();
+                return;
+            }
+            player = new Player().getData(strUserName, strPassword);
+            if(player.getUserID()!=0){
+                saveIdPass(player.getEmail(), player.getPassEnscript());
+                new listButtonLogged(root,player);
+            }else{
+                strError.set("Tên tài khoản hoặc email không đúng!\nXin nhập lại.");
             }
         });
-        back.setOnMouseClicked(new EventHandler<MouseEvent>
-        () {
-
-            @Override
-            public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new listButtonOpen(root);
-                
-            }
+        back.setCancelButton(true);
+        back.setOnAction((ActionEvent t) -> {
+            root.getChildren().clear();
+            new listButtonOpen(root);
         });
         //Registration
         btnSignUp.setOnAction(new EventHandler<ActionEvent>() {
@@ -192,5 +201,34 @@ public class frLogin{
             }
         });
     }
-        
+    private Properties saveFile;
+    private void saveIdPass(String email, String password) {
+        FileOutputStream fOs;
+        Properties saveFile = new Properties();
+        saveFile.put("email", email);
+        saveFile.put("password",password);
+        saveFile.put("checkSave", Boolean.toString( saveId.isSelected()));
+        try{
+            fOs = new FileOutputStream("data.properties");
+            saveFile.store(fOs, "InforId");
+            fOs.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    private boolean loadIdPass(){
+        FileInputStream fIs;
+        try{
+            fIs = new FileInputStream("data.properties");
+            saveFile = new Properties();
+            saveFile.load(fIs);
+            txtUserName.setText(saveFile.getProperty("email"));
+            txtPassowrd.setText(new DBModel.Player().getPasword(saveFile.getProperty("password")));
+            fIs.close();
+        }catch(Exception e){
+            return false;
+        }
+        return true;
+    }
 }

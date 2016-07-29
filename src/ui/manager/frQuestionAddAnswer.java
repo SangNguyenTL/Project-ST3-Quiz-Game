@@ -44,9 +44,9 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
     TextField txtB;
     TextField txtC;
     TextField txtD;
-    ComboBox cbAns;
-    ComboBox cbLv;
-    ComboBox cbCat;
+    ComboBox<String> cbAns;
+    ComboBox<String> cbLv;
+    ComboBox<DBModel.Category> cbCat;
     CheckBox ckActive;
 
 
@@ -78,14 +78,8 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         lblRightAns.setTextFill(Color.web("#fff"));
         main.add(lblRightAns, 0, 0);
 
-        cbAns = new ComboBox();
-        cbAns.getItems().addAll(
-                "Chọn...",
-                "A",
-                "B",
-                "C",
-                "D"
-        );
+        cbAns = new ComboBox<String>();
+        cbAns.getItems().addAll("Chọn...","A","B","C","D");
 
         cbAns.getSelectionModel().selectFirst();
         main.add(cbAns, 1,0);
@@ -95,9 +89,9 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         lblCat.setTextFill(Color.web("#fff"));
         main.add(lblCat, 2, 0);
 
-        cbCat = new ComboBox();
+        cbCat = new ComboBox<DBModel.Category>();
         ObservableList<DBModel.Category> listCategory = FXCollections.observableArrayList(new DBModel.Category().getData());
-        cbCat.getItems().add("Chọn...");
+        cbCat.getItems().add(new DBModel.Category(0,"Chọn..."));
         cbCat.getItems().addAll(listCategory);
 
         cbCat.getSelectionModel().selectFirst();
@@ -112,14 +106,9 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         lblLv.setTextFill(Color.web("#fff"));
         main.add(lblLv, 4, 0);
 
-        cbLv = new ComboBox();
-        cbLv.getItems().addAll(
-                "Chọn...",
-                "1",
-                "2",
-                "3",
-                "4"
-        );
+        cbLv = new ComboBox<String>();
+        
+        cbLv.getItems().addAll("Chọn...","1","2","3","4");
 
         cbLv.getSelectionModel().selectFirst();
 
@@ -319,7 +308,7 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         String ansB = txtB.getText();
         String ansC = txtC.getText();
         String ansD = txtD.getText();
-        TreeMap<String, TextField> listTextAnswer = new TreeMap();
+        TreeMap<String, TextField> listTextAnswer = new TreeMap<String,TextField>();
         listTextAnswer.put("Đáp án D", txtD);
         listTextAnswer.put("Đáp án C", txtC);
         listTextAnswer.put("Đáp án B", txtB);

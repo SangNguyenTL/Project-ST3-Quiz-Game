@@ -17,7 +17,8 @@ import lib.AlertGame;
  * @author nhats
  */
 public class frOpenGame{
-        public static Pane root = new Pane();
+        public Pane root = new Pane();
+        public Scene scene;
     public frOpenGame(Stage primaryStage) {
         Double width = primaryStage.getWidth(), height = primaryStage.getHeight();
         root.setMinSize(width, height);
@@ -36,7 +37,7 @@ public class frOpenGame{
             new frSetting(root);
         }
             
-        Scene scene = new Scene(root, width, height);
+        scene = new Scene(root, width, height);
         scene.getStylesheets().add(frOpenGame.class.getResource("/css/frameOpenGame.css").toExternalForm());
         primaryStage.setScene(scene);
     }

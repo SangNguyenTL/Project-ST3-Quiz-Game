@@ -7,12 +7,10 @@ package DBModel;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Properties;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import lib.AlertGame;
@@ -25,7 +23,7 @@ public class MyConnect {
     //Declare variable:
     private static String user,pass,port,dbName,server;
     private static Connection con;
-    private static HashMap<String,String> p;
+    private static Properties p;
     private static String username,password,portP,dbNameP,severP,fname;
     private static String key  = "ST3sediToicuoiMa"; // 128 bit key
     private static String initVector = "RandomInitVector"; // 16 bytes IV
@@ -128,53 +126,48 @@ public class MyConnect {
         if (p == null) {
             return "";
         }
-        return lib.Encryption.decrypt(key, initVector,p.get( prop));
+        return lib.Encryption.decrypt(key, initVector,p.getProperty(prop));
     }
 
     public static void setProperty(String prop, String value) {
         if (p == null) {
-            p = new HashMap<>();
+            p = new Properties();
         }
         p.put(prop, lib.Encryption.encrypt(key, initVector, value));
     }
     
       public static boolean checkData() {
           MyConnect m = new MyConnect();
-          if (MyConnect.loadData()
-                  && MyConnect.checkCon(
+          if (MyConnect.loadData()){
+                 if (MyConnect.checkCon(
                     MyConnect.getProperty(MyConnect.username),
                     MyConnect.getProperty(MyConnect.password),
                     MyConnect.getProperty(MyConnect.portP),
                     MyConnect.getProperty(MyConnect.dbNameP),
                     MyConnect.getProperty(MyConnect.severP))) {
-            con = MyConnect.getConnect();
-        } else {
+                       con = MyConnect.getConnect();
+                 }
+          } else {
             return false;
         }
         return true;
     }
-
+    
     public static boolean loadData(){
-        p = new HashMap<>();
+        p = new Properties();
         FileInputStream fis;
-        ObjectInputStream oIs;
         try {
             fis = new FileInputStream(fname);
-            oIs = new ObjectInputStream(fis);
-            p = (HashMap < String, String >) oIs.readObject();
-            p.size();
-            oIs.close();
+            p.load(fis);
             fis.close();
-        } catch (IOException | ClassNotFoundException ex) {
+        } catch (IOException ex) {     
             return false;
         }
         return true;
     }
 
     public static void saveData() {
-        FileOutputStream fos = null;
-        ObjectOutputStream oOs;
-        
+        FileOutputStream fos = null;        
         try {
             System.out.println(user);
             setProperty(username, user);
@@ -183,9 +176,7 @@ public class MyConnect {
             setProperty(portP, port);
             setProperty(severP, server);
             fos = new FileOutputStream(fname);
-            oOs = new ObjectOutputStream(fos);
-            oOs.writeObject(p);
-            oOs.close();
+            p.store(fos, "===Cấu hình server ST3 Quiz===");
             fos.close();
         } catch (IOException ex) {
                 new AlertGame("Lỗi", "Không thể lưu kết nối... Xin thử lại sau!", Alert.AlertType.ERROR) {

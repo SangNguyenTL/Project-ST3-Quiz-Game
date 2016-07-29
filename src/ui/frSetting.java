@@ -16,12 +16,15 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -36,6 +39,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lib.AlertGame;
 
@@ -58,7 +62,7 @@ class frSetting{
     private TextField txtDatabase;
     private TextField txtUser;
     private TextField txtPass;
-    private ComboBox cbbResolution;
+    private ComboBox<String> cbbResolution;
     private String fileName;
     private ArrayList<TextField> listTextFeild;
     private ArrayList<Label> listLabel;
@@ -88,7 +92,7 @@ class frSetting{
         lbUser = new Label("User name");
         lbPassword = new Label("Password");
         lbResolution = new Label("Resolution");
-        listLabel = new ArrayList();
+        listLabel = new ArrayList<Label>();
         listLabel.add(lbServer);
         listLabel.add(lbPort);
         listLabel.add(lbDatabse);
@@ -107,7 +111,7 @@ class frSetting{
         txtDatabase = new TextField();
         txtUser = new TextField();
         txtPass = new PasswordField();
-        listTextFeild = new ArrayList();
+        listTextFeild = new ArrayList<TextField>();
         listTextFeild.add(txtServer);
         listTextFeild.add(txtPort);
         listTextFeild.add(txtDatabase);
@@ -120,7 +124,7 @@ class frSetting{
             grid.add(listTextFeild.get(i),1, i);
         }
         
-        cbbResolution = new ComboBox();
+        cbbResolution = new ComboBox<String>();
         cbbResolution.setMaxWidth(Double.MAX_VALUE);
         cbbResolution.getItems().addAll(
                 "1366",
@@ -149,6 +153,7 @@ class frSetting{
         root.getChildren().add(hbback);
         final Text actiontarget = new Text();
         grid.add(actiontarget, 1, 6);
+        back.setCancelButton(true);
         back.setOnAction((ActionEvent t) -> {
             if(DBModel.MyConnect.checkData())
                 new listButtonOpen(root);
@@ -171,8 +176,14 @@ class frSetting{
                     public void processResult() {
                         if(getResult().get() == ButtonType.OK){
                             try {
-                                Window.getPrimaryStage().close();
-                                new Window().start(new Stage());
+                                Window.getPrimaryStage().setMaxWidth(Double.valueOf(cbbResolution.getSelectionModel().getSelectedItem()));
+                                Window.getPrimaryStage().setMinWidth(Double.valueOf(cbbResolution.getSelectionModel().getSelectedItem()));
+                                Window.getPrimaryStage().setMinHeight((Double.valueOf(cbbResolution.getSelectionModel().getSelectedItem())/ 16) * 9);
+                                Window.getPrimaryStage().setMaxHeight((Double.valueOf(cbbResolution.getSelectionModel().getSelectedItem())/ 16) * 9);
+                                Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+                                Window.getPrimaryStage().setX((primScreenBounds.getWidth() - Window.getPrimaryStage().getWidth()) / 2);
+                                Window.getPrimaryStage().setY((primScreenBounds.getHeight() - Window.getPrimaryStage().getHeight()) / 2);
+                                new frOpenGame(Window.getPrimaryStage());
                             } catch (Exception ex) {
                                 Logger.getLogger(frSetting.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -192,6 +203,7 @@ class frSetting{
         });
         
     }
+    
     private void loadData(){
         MyConnect m = new MyConnect();
         if(MyConnect.loadData()){

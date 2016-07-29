@@ -8,6 +8,7 @@ package ui;
 
 import lib.AlertGame;
 import java.util.ArrayList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -40,7 +41,7 @@ public class listButtonOpen{
         Button bntSetting = new Button("Thiết đặt");
         Button btnExit = new Button("Thoát");
 
-        ArrayList<Button> allButton = new ArrayList();
+        ArrayList<Button> allButton = new ArrayList<Button>();
         allButton.add(btnLogin);
         allButton.add(btnTop);
         allButton.add(btnRule);
@@ -77,7 +78,8 @@ public class listButtonOpen{
         
         
         //out
-        btnExit.setOnMouseClicked((MouseEvent t) -> {
+        btnExit.setCancelButton(true);
+        btnExit.setOnAction((ActionEvent t) -> {
             new AlertGame("Thoát chương trình", "'Ok' để thoát hoặc 'Thôi' để quay lại", Alert.AlertType.CONFIRMATION) {
                 @Override
                 public void processResult() {

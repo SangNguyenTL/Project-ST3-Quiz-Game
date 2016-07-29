@@ -8,12 +8,11 @@ package ui;
 
 import DBModel.Player;
 import java.util.ArrayList;
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -140,12 +139,10 @@ public class frRank {
         hbback.getChildren().add(back);
         hbback.setPadding(new Insets(10));
         root.getChildren().add(hbback);
-        back.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new listButtonOpen(root);
-            }
+        back.setCancelButton(true);
+        back.setOnAction((ActionEvent t) -> {
+            root.getChildren().clear();
+            new listButtonOpen(root);
         });
     }
 }

@@ -179,7 +179,7 @@ public class Question {
         if (MyConnect.checkData()) {
             try {
                 Connection con = MyConnect.getConnect();
-                PreparedStatement pst = con.prepareStatement("select top "+num+" * from tb_Question where level= ? and isActive='true' order by NEWID() ");
+                PreparedStatement pst = con.prepareStatement("select top "+num+" p.quesID, C.catID, p.quesContent, p.isActive, p.level from tb_Category as C JOIN tb_Question as P ON C.catID = P.catID WHERE P.quesID = (select TOP 1 P2.quesID from tb_Question as P2 where C.catID = P2.catID and  p2.level = ? and p2.isActive = 1 order by NewID()) order by NEWID();");
                 pst.setInt(1, lev);
                 ResultSet rs = pst.executeQuery();
                 while (rs.next()) {

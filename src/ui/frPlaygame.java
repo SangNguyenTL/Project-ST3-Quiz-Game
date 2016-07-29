@@ -72,19 +72,19 @@ public class frPlaygame {
     private Button btnChange;
     private Button btnStop;
     private openSound soundGame;
-    private openSound isCorrect;
-    private openSound isNotCorrect;
-    private openSound waitResult;
-    private openSound nextQuest;
-    private openSound winner;
-    private openSound per50;
-    private openSound fail;
+    private openSound soundClap;
+    private openSound soundIsCorrect;
+    private openSound soundIsNotCorrect;
+    private openSound soundWaitResult;
+    private openSound soundNextQuest;
+    private openSound soundWinner;
+    private openSound soundPer50;
+    private openSound soundFail;
     private SimpleStringProperty mess;
     private Label txtMess;
     private DropShadow ds;
     private Pane root;
     private DropShadow dsB;
-    private int numtrue;
 
     public frPlaygame(Pane root) {
         player = frLogin.getPlayer();
@@ -103,29 +103,55 @@ public class frPlaygame {
 
     public void setPlaySoundGame() {
         soundGame.play();
+        soundClap.play();
     }
 
     protected void installGame() {
 
         time = new SimpleIntegerProperty();
         newGame = new DBModel.statusGame(player, 0, true, true, 0, 0);
-        listQuestion = new DBModel.Question().getRadomQues(1, 6);
-        listQuestion.addAll(new DBModel.Question().getRadomQues(2, 6));
-        listQuestion.addAll(new DBModel.Question().getRadomQues(3, 3));
-        listQuestion.addAll(new DBModel.Question().getRadomQues(4, 2));
-        listSorted = new ArrayList();
+        listQuestion = new DBModel.Question().getRadomQues(1,4);
+        int count = 0;
+        do{
+            ArrayList<Question> reQuestion = new DBModel.Question().getRadomQues(1,4);
+            for(int i = 0; i < reQuestion.size() ; i++){
+                if(!listQuestion.contains(reQuestion.get(i))){
+                    listQuestion.add(reQuestion.get(i));
+                    System.out.println(count);
+                    ++count;
+                    if(count == 2) break;
+                }
+            }
+        }while(count < 2);
+        listQuestion.addAll(new DBModel.Question().getRadomQues(2,4));
+        count = 0;
+        do{
+            ArrayList<Question> reQuestion = new DBModel.Question().getRadomQues(2,4);
+            for(int i = 0; i < reQuestion.size() ; i++){
+                if(!listQuestion.contains(reQuestion.get(i))){
+                    listQuestion.add(reQuestion.get(i));
+                    System.out.println(count);
+                    ++count;
+                    if(count == 2) break;
+                }
+            }
+        }while(count < 2);
+        listQuestion.addAll(new DBModel.Question().getRadomQues(3,3));
+        listQuestion.addAll(new DBModel.Question().getRadomQues(4,2));
+        listSorted = new ArrayList<Question>();
         for (int i = 0; i < listQuestion.size(); i++) {
             Question checkQ = listQuestion.get(i);
             if (i < 5 && checkQ.getLevel() == 1) {
                 listSorted.add(checkQ); // 0-4
-            } else if (i != 5 && i < 11 && checkQ.getLevel() == 2) {
+            } else if (i > 5 && i < 11 && checkQ.getLevel() == 2) {
                 listSorted.add(checkQ); // 6-10
-            } else if (i != 11 && i < 15 && checkQ.getLevel() == 3) {
+            } else if (i > 11 && i < 15 && checkQ.getLevel() == 3) {
                 listSorted.add(checkQ); //12-14
-            } else if (i != 5 && i < 17 && checkQ.getLevel() == 4) {
+            } else if ( i > 14 && checkQ.getLevel() == 4) {
                 listSorted.add(checkQ); //14-16
             }
         }
+        
         btnChange.setDisable(true);
         btnPer.setDisable(true);
 
@@ -134,7 +160,7 @@ public class frPlaygame {
         statusGame.addListener((ObservableValue<? extends Number> ov, Number t, Number t1) -> {
             if (t1.intValue() == 2) {
                 if(newGame.getLevelQuestion() > 9){
-                    waitResult.getMediaPlayer().setStopTime(Duration.millis(4000));
+                    soundWaitResult.getMediaPlayer().setStopTime(Duration.millis(4000));
                     soundGame = new openSound("sounds/questLast.mp3");
                     soundGame.getMediaPlayer().setOnEndOfMedia(() -> {
                         soundGame.stopSound();
@@ -148,7 +174,7 @@ public class frPlaygame {
                         soundGame.play();
                     });
                     soundGame.play();
-                    waitResult.getMediaPlayer().setStopTime(Duration.millis(3500));
+                    soundWaitResult.getMediaPlayer().setStopTime(Duration.millis(3500));
                     if (newGame.isChangeQuest()) {
                         btnChange.setDisable(false);
                     }
@@ -183,6 +209,7 @@ public class frPlaygame {
                                 }
                                 timeLineAns = textAnimationAns.setAnimation(listButton.get(i), listAns.get(i).getAnsContent());
                             }
+                            listButton.get(i).setDisable(false);
                         }
                     }
                 });
@@ -193,58 +220,67 @@ public class frPlaygame {
             }
             if (t1.intValue() == 3) {
                 soundGame.stopSound();
-                if(newGame.getLevelQuestion()!=14) winner = new lib.openSound("sounds/fail.mp3");
-                winner.play();
+                if(newGame.getLevelQuestion()!=14) soundWinner = new lib.openSound("sounds/fail.mp3");
+                soundWinner.play();
                 new frResult(root, player, newGame);
             }
         });
 
         //sound
-        soundGame = new openSound("sounds/FirstQuest14.mp3");
+        soundGame = new openSound("sounds/soundOpenGame.mp3");
+        soundGame.getMediaPlayer().setStopTime(Duration.seconds(52));
         soundGame.getMediaPlayer().setOnEndOfMedia(() -> {
             soundGame.stopSound();
             soundGame.play();
         });
-        isCorrect = new openSound("sounds/isCorrect.mp3");
-        isCorrect.getMediaPlayer().setStopTime(Duration.seconds(3));
-        isNotCorrect = new openSound("sounds/isnotCorrect.mp3");
-        waitResult = new openSound("sounds/checkAns.mp3");
-        waitResult.getMediaPlayer().setStopTime(Duration.seconds(3));
-        per50 = new openSound("sounds/50-50.mp3");
-        nextQuest = new openSound("sounds/nextQuest.mp3");
-        nextQuest.getMediaPlayer().setStopTime(Duration.seconds(6));
-        fail = new openSound("sounds/fail.mp3");
-        winner = new openSound("sounds/winner.mp3");
-        per50.getMediaPlayer().setOnEndOfMedia(()->{
-            per50.stopSound();
+        soundGame.getMediaPlayer().setOnStopped(()->{
+            soundGame.getMediaPlayer().setStartTime(Duration.seconds(6));
+        });
+        soundClap = new openSound("sounds/clap.mp3");
+        soundClap.getMediaPlayer().setStopTime(Duration.seconds(7));
+        soundClap.getMediaPlayer().setOnEndOfMedia(() -> {
+            soundClap.stopSound();
+        });
+        soundIsCorrect = new openSound("sounds/isCorrect.mp3");
+        soundIsCorrect.getMediaPlayer().setStopTime(Duration.seconds(3));
+        soundIsNotCorrect = new openSound("sounds/isnotCorrect.mp3");
+        soundWaitResult = new openSound("sounds/checkAns.mp3");
+        soundWaitResult.getMediaPlayer().setStopTime(Duration.seconds(3));
+        soundPer50 = new openSound("sounds/50-50.mp3");
+        soundNextQuest = new openSound("sounds/nextQuest.mp3");
+        soundNextQuest.getMediaPlayer().setStopTime(Duration.seconds(6));
+        soundFail = new openSound("sounds/fail.mp3");
+        soundWinner = new openSound("sounds/winner.mp3");
+        soundPer50.getMediaPlayer().setOnEndOfMedia(()->{
+            soundPer50.stopSound();
             soundGame.play();
         });
-        winner.getMediaPlayer().setOnEndOfMedia(()->{
-            winner.stopSound();
+        soundWinner.getMediaPlayer().setOnEndOfMedia(()->{
+            soundWinner.stopSound();
         });
-        nextQuest.getMediaPlayer().setOnEndOfMedia(() -> {
-            nextQuest.stopSound();
+        soundNextQuest.getMediaPlayer().setOnEndOfMedia(() -> {
+            soundNextQuest.stopSound();
             soundGame.play();
             statusGame.set(2);
         });
-        isCorrect.getMediaPlayer().setOnEndOfMedia(() -> {
+        soundIsCorrect.getMediaPlayer().setOnEndOfMedia(() -> {
             if(newGame.getLevelQuestion() == 14){
                 mess.set("Chúc mừng bạn đã vượt qua 15 câu hỏi. Và bạn đã là người chiến thắng.");
                 statusGame.set(3);
             }else{
                 mess.set("Chúc mừng bạn đã trả lời chình xác. Hãy chuẩn bị để sang câu tiếp theo");
-                isCorrect.stopSound();
+                soundIsCorrect.stopSound();
                 textQuest.setText("");
 
                 installButtonAns();
 
                 root.getStylesheets().retainAll();
                 newGame.setLevelQuestion(newGame.getLevelQuestion() + 1);
-                nextQuest.play();
+                soundNextQuest.play();
             }
         });
-        isNotCorrect.getMediaPlayer().setOnEndOfMedia(() -> {
-            fail.play();
+        soundIsNotCorrect.getMediaPlayer().setOnEndOfMedia(() -> {
+            soundFail.play();
             statusGame.set(3);
         });
 
@@ -262,6 +298,11 @@ public class frPlaygame {
                     }
                     if (btnChange.isDisable() && !btnPer.isDisable()) {
                         mess.set("Bạn còn một quyền trợ giúp duy nhất là \"Bỏ đi hai phương án sai\". Hãy cân nhắc!");
+                    }
+                    break;
+                case 25:
+                    if (!btnChange.isDisable() && !btnPer.isDisable() && newGame.getLevelQuestion() > 5) {
+                        mess.set("Bạn đã hết quyền trợ giúp rồi, dừng lại đúng lúc cũng là một cách hay.");
                     }
                     break;
                 case 10:
@@ -413,16 +454,16 @@ public class frPlaygame {
                 Random rand = new Random();
                 int count = 0;
                 while (count<2) {
-                    count++;
                     int i = rand.nextInt(listButton.size());
-                    if (listButton.get(i).getStyleClass().contains("isCorrect")){
+                    if (listButton.get(i).getStyleClass().contains("isCorrect") || listButton.get(i).getText().isEmpty() || listButton.get(i).getText() == null){
                         System.out.println(i);
                         continue;
                     }
+                    count++;
                     listButton.get(i).setText("");
                     if(count==1){
                         soundGame.stopSound();
-                        per50.play();
+                        soundPer50.play();
                         
                     }
                     
@@ -444,7 +485,7 @@ public class frPlaygame {
                 if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 9) {
                     listSorted.set(newGame.getLevelQuestion(), listQuestion.get(5));
                 } else {
-                    listSorted.set(newGame.getLevelQuestion(), listQuestion.get(10));
+                    listSorted.set(newGame.getLevelQuestion(), listQuestion.get(11));
                 }
                 statusGame.set(2);
                 a.getTimeline().stop();
@@ -453,6 +494,8 @@ public class frPlaygame {
         btnStop.setOnAction((ActionEvent t) ->{
             timeLineGame.stop();
             lib.textAnimation a = new lib.textAnimation();
+            newGame.setLevelQuestion(newGame.getLevelQuestion()-1);
+            newGame.setMoney(getCurrentMoney(15));
             mess.set("Vậy bạn đã xin ngừng cuộc chơi. Chúng tôi sẽ chuyển bạn tới phần kết quả");
             a.setAnimation(2000, () -> {
                 statusGame.set(3);
@@ -494,27 +537,29 @@ public class frPlaygame {
             });
             button.getStyleClass().add("clickAns");
             soundGame.stopSound();
-            waitResult.play();
+            soundWaitResult.play();
             timeLineGame.stop();
             new lib.textAnimation().setAnimation(1500, () -> {
-                if (waitResult.getMediaPlayer().getStatus() == MediaPlayer.Status.PLAYING && waitResult.getMediaPlayer().getCurrentTime() == Duration.millis(1200));
+                if (soundWaitResult.getMediaPlayer().getStatus() == MediaPlayer.Status.PLAYING && soundWaitResult.getMediaPlayer().getCurrentTime() == Duration.millis(1200));
                 button.getStyleClass().add("trans");
             });
-            waitResult.getMediaPlayer().setOnEndOfMedia(() -> {
-                waitResult.stopSound();
+            soundWaitResult.getMediaPlayer().setOnEndOfMedia(() -> {
+                soundWaitResult.stopSound();
                 listButton.forEach((Button v) -> {
                     if (v.getStyleClass().contains("isCorrect")) {
                         v.getStyleClass().add("trueAns");
                     }
                 });
                 if (button.getStyleClass().contains("isCorrect")) {
-                    isCorrect.play();
+                    soundIsCorrect.play();
+                    if(newGame.getLevelQuestion()>9) soundClap.play();
                     newGame.setMoney(getCurrentMoney(15));
                     newGame.setTimeTotal(newGame.getTimeTotal() + time.intValue());
                 }
                 if (!button.getStyleClass().contains("isCorrect")) {
                     button.getStyleClass().add("falseAns");
-                    isNotCorrect.play();
+                    mess.set("Bạn đã đưa ra phương án sai. Rất tiếc cho bạn...");
+                    soundIsNotCorrect.play();
                     if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 9) {
                         newGame.setMoney(getCurrentMoney(9));
                         newGame.setTimeTotal(newGame.getTimeTotal() + time.intValue());
@@ -563,7 +608,7 @@ public class frPlaygame {
         btnStop = new Button();
         btnStop.setId("btnstop");
 
-        ArrayList<Button> allButton = new ArrayList();
+        ArrayList<Button> allButton = new ArrayList<Button>();
         allButton.add(btnPer);
         allButton.add(btnChange);
         allButton.add(btnStop);
@@ -590,15 +635,19 @@ public class frPlaygame {
 
         btnA = new Button();
         btnA.setId("btnA");
+        btnA.setDisable(true);
         setEffectButton(btnA);
         btnB = new Button();
         btnB.setId("btnB");
+        btnB.setDisable(true);
         setEffectButton(btnB);
         btnC = new Button();
         btnC.setId("btnC");
+        btnC.setDisable(true);
         setEffectButton(btnC);
         btnD = new Button();
         btnD.setId("btnD");
+        btnD.setDisable(true);
         setEffectButton(btnD);
 
         boxListBtnAns.add(btnA, 0, 0);

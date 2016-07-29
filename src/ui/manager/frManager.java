@@ -127,7 +127,7 @@ public class frManager extends frLogin{
         
 
         
-        ArrayList<Button> btnGroup = new ArrayList();
+        ArrayList<Button> btnGroup = new ArrayList<Button>();
         
         Button btnUsers = new Button("Người chơi");
         Button btnQuest = new Button("Câu hỏi");

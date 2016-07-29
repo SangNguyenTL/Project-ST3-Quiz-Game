@@ -185,6 +185,7 @@ public class frRegistration extends frLogin {
 
         Button back = new Button("Quay lại");
         HBox hbback = new HBox(10);
+        back.setCancelButton(true);
         back.getStyleClass().add("btnCus");
         back.setMinWidth(162);
         back.setMinHeight(42);
@@ -237,7 +238,7 @@ public class frRegistration extends frLogin {
             return false;
         }
         if (txtemail.getText().trim().length() > 50) {
-            strError.set("Độ dài tên không được vượt quá 50 ký tự");
+            strError.set("Độ dài email không được vượt quá 50 ký tự");
             txtemail.requestFocus();
             return false;
         }
@@ -247,7 +248,7 @@ public class frRegistration extends frLogin {
             return false;
         }
 
-        if (Integer.parseInt(txtyear.getText().trim()) > (Calendar.getInstance().get(Calendar.YEAR) - 5) || Integer.parseInt(txtyear.getText().trim()) < (Calendar.getInstance().get(Calendar.YEAR) - 151)) {
+        if (Integer.parseInt(txtyear.getText().trim()) > (Calendar.getInstance().get(Calendar.YEAR) - 5) || Integer.parseInt(txtyear.getText().trim()) < (Calendar.getInstance().get(Calendar.YEAR) - 150)) {
             strError.set("Năm sinh phải từ " + (Calendar.getInstance().get(Calendar.YEAR) - 150) + " -> " + (Calendar.getInstance().get(Calendar.YEAR) - 5));
             txtyear.requestFocus();
             return false;

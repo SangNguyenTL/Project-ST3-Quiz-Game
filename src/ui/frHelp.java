@@ -5,14 +5,13 @@
  */
 package ui;
 
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -42,6 +41,26 @@ public class frHelp {
         HBox layout = new HBox(width*0.0073);
         layout.setAlignment(Pos.CENTER_LEFT);
         layout.getChildren().addAll(imageView, ND2);
+        return layout;
+    }
+    
+     HBox QuickContent1(String text, String image, String text1) {
+        DropShadow ds = new DropShadow();
+        ds.setOffsetY(3.0f);
+        ds.setColor(Color.web("#00A1FF"));
+        Text ND2 = new Text(text);
+        ND2.setFont(Font.font("Tahoma", FontWeight.NORMAL, width*0.02));
+        ND2.setEffect(ds);
+        ND2.setFill(Color.WHITE);
+        Text ND3 = new Text(text1);
+        ND3.setFont(Font.font("Tahoma", FontWeight.NORMAL, width*0.02));
+        ND3.setEffect(ds);
+        ND3.setFill(Color.WHITE);
+        ImageView imageView = new ImageView(
+                new Image(getClass().getResource(image).toString()));
+        HBox layout = new HBox(width*0.0073);
+        layout.setAlignment(Pos.CENTER_LEFT);
+        layout.getChildren().addAll(ND2 ,imageView, ND3);
         return layout;
     }
 
@@ -83,8 +102,8 @@ public class frHelp {
         grid.add(QuickContent("Có 2 sự trợ giúp cho bạn trong quá trình chơi:", ""), 0, 2);
         grid.add(QuickContent("Bỏ đi hai phương án sai", "/images/a50-50-acitve.png"), 0, 3);
         grid.add(QuickContent("Đổi câu hỏi", "/images/changeQuiz-active.png"), 0, 4);
-        grid.add(QuickContent("Sử dụng nút để dừng cuộc chơi", "/images/stopGame-active.png"), 0, 6);
-
+        grid.add(QuickContent1("Sử dụng nút", "/images/stopGame-active.png", "để dừng cuộc chơi"), 0, 6);
+ 
         Text ND4 = new Text("Bạn có thời gian là 60s để trả lời cho mỗi câu hỏi. Trong khi sử dụng  sự trợ giúp, thời gian vẫn\nđược tính.");
         ND4.setFont(Font.font("Tahoma", FontWeight.NORMAL, width*0.0146));
         ND4.setEffect(ds);
@@ -110,14 +129,10 @@ public class frHelp {
         root.getChildren().add(hbback);
         final Text actiontarget = new Text();
         grid.add(actiontarget, 1, 6);
-        back.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent t) {
-                root.getChildren().clear();
-                new listButtonOpen(root);
-
-            }
+        back.setCancelButton(true);
+        back.setOnAction((ActionEvent t) -> {
+            root.getChildren().clear();
+            new listButtonOpen(root);
         });
     }
 }

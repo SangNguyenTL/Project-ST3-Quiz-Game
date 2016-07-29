@@ -5,8 +5,13 @@
  */
 package ui.manager;
 
+import DBModel.MyConnect;
 import DBModel.Player;
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -23,12 +28,23 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import lib.AlertGame;
 import lib.TablePlayer;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -45,7 +61,7 @@ public class frPlayer extends frManager{
     private TextField txtPrize;
     private TextField txtTime;
     private TreeMap<Integer,TextField> txtText;
-
+    private JasperDesign jd;
     public frPlayer(Pane root, Player player, ObservableList<DBModel.Player> masterDataPlayer) {
         super(root, player);
         init(masterDataPlayer);
@@ -61,6 +77,18 @@ public class frPlayer extends frManager{
         installBoxCount();
         root.getChildren().clear();
         GridPane main = new GridPane();
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(30);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(25);
+        ColumnConstraints col3 = new ColumnConstraints();
+        col3.setPercentWidth(15);
+        ColumnConstraints col4 = new ColumnConstraints();
+        col3.setPercentWidth(15);
+        ColumnConstraints col5 = new ColumnConstraints();
+        col3.setPercentWidth(15);
+        main.getColumnConstraints().addAll(col1,col2,col3,col4,col5);
+        
         main.setAlignment(Pos.TOP_CENTER);
         main.setHgap(10);
         main.setVgap(10);
@@ -126,24 +154,44 @@ public class frPlayer extends frManager{
         btnUpdate.setPrefSize(90, 30);
         main.add(btnUpdate,6,1);
 
+        Button btnPrint = new Button("Thống kê");
+        btnPrint.getStyleClass().add("btnNor");
+        btnPrint.setPrefSize(90, 30);
+        main.add(btnPrint,6,2);
+
         root.getChildren().add(main);
-
-        btnUpdate.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                if (table.getSelectionModel().isEmpty()) {
-                    new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
-
-                        @Override
-                        public void processResult() {
-                        }
-                    };
-                    return;
+        
+        btnPrint.setOnAction((ActionEvent t) -> {
+            if (MyConnect.checkData()) {
+                try {
+                    Connection cn = new DBModel.MyConnect().getConnect();
+                    jd = JRXmlLoader.load(".\\src\\ui\\reportPlayer.jrxml");
+                    String sql = "SELECT  userName, email, YEAR(getdate()) - year as 'age', money, totalTime FROM tb_Player where userID <> 1 ORDER BY money DESC, totalTime ASC";
+                    JRDesignQuery newQuery = new JRDesignQuery();
+                    newQuery.setText(sql);
+                    jd.setQuery(newQuery);
+                    JasperReport jr = JasperCompileManager.compileReport(jd);
+                    JasperPrint jp = JasperFillManager.fillReport(jr, null, cn);
+                    JasperViewer.viewReport(jp, false);
+                    JasperExportManager.exportReportToPdfFile(jp,System.getProperty("user.home") + "\\Desktop\\reportPlayer.pdf");
+                } catch (JRException ex) {
+                    Logger.getLogger(frPlayer.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                Player childPlayer = (Player) table.getSelectionModel().getSelectedItem();
-                new frPlayerUpdate(root, childPlayer, rootPlayer);
+            }  
+        });
+        
+        btnUpdate.setOnAction((ActionEvent t) -> {
+            if (table.getSelectionModel().isEmpty()) {
+                new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
+                    
+                    @Override
+                    public void processResult() {
+                    }
+                };
+                return;
             }
+            Player childPlayer = (Player) table.getSelectionModel().getSelectedItem();
+            new frPlayerUpdate(root, childPlayer, rootPlayer);
         });
 
         // Khi ấn nút delete
@@ -199,21 +247,21 @@ public class frPlayer extends frManager{
         table.getStyleClass().add("table-quiz");
         table.setPrefWidth(boxTable.getMaxWidth());
         table.setMaxHeight(300);
-        TableColumn userName = new TableColumn("Tên người chơi");
+        TableColumn<DBModel.Player, String> userName = new TableColumn<>("Tên người chơi");
         userName.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Player, String>("userName"));
-        TableColumn email = new TableColumn("Tên đăng nhập");
+                new PropertyValueFactory<>("userName"));
+        TableColumn<DBModel.Player, String> email = new TableColumn<>("Tên đăng nhập");
         email.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Player, String>("Email"));
-        TableColumn year = new TableColumn("Năm sinh");
+                new PropertyValueFactory<>("Email"));
+        TableColumn<DBModel.Player, String> year = new TableColumn<>("Năm sinh");
         year.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Player, String>("year"));
-        TableColumn money = new TableColumn("Tiền thưởng");
+                new PropertyValueFactory<>("year"));
+        TableColumn<DBModel.Player, String> money = new TableColumn<>("Tiền thưởng");
         money.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Player, String>("Money"));
-        TableColumn time = new TableColumn("Thời gian");
+                new PropertyValueFactory<>("Money"));
+        TableColumn<Player, String> time = new TableColumn<>("Thời gian");
         time.setCellValueFactory(
-                new PropertyValueFactory<DBModel.Player, String>("TotalTime"));
+                new PropertyValueFactory<>("TotalTime"));
         
         userName.prefWidthProperty().bind(table.widthProperty().divide(5)); 
         email.prefWidthProperty().bind(table.widthProperty().divide(5)); 
@@ -221,7 +269,14 @@ public class frPlayer extends frManager{
         money.prefWidthProperty().bind(table.widthProperty().divide(5)); 
         time.prefWidthProperty().bind(table.widthProperty().divide(5)); 
         
-        table.getColumns().addAll(userName, email, year, money,time);
+        ArrayList<TableColumn<Player, String>> listCol = new ArrayList<>();
+        listCol.add(userName);
+        listCol.add(email);
+        listCol.add(year);
+        listCol.add(money);
+        listCol.add(time);
+        
+        table.getColumns().addAll(listCol);
     }
 
     private void updateFilteredData() {

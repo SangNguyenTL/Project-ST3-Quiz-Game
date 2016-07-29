@@ -9,7 +9,7 @@ package ui;
 import lib.AlertGame;
 import ui.manager.frManager;
 import java.util.ArrayList;
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -46,7 +46,7 @@ public class listButtonLogged extends ui.frLogin{
         Button btnBack = new Button("Quay lại");
         Button btnExit = new Button("Thoát");
 
-        ArrayList<Button> allButton = new ArrayList();
+        ArrayList<Button> allButton = new ArrayList<Button>();
         allButton.add(btnPlay);
         allButton.add(btnMan);
         allButton.add(btnBack);
@@ -124,7 +124,8 @@ public class listButtonLogged extends ui.frLogin{
             };
         });
         //top 
-         btnBack.setOnMouseClicked((MouseEvent t) -> {
+        btnBack.setCancelButton(true);
+         btnBack.setOnAction((ActionEvent t) -> {
              root.getChildren().clear();
              new frLogin(root);
         });

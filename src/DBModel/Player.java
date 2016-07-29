@@ -25,8 +25,8 @@ public class Player {
     private String userName, email, password;
     private int year, money, totalTime;
     private boolean  isAdmin;
-    private String key = "St3vodoiProject2"; // 128 bit key
-    private String initVector = "RandomInitVector"; // 16 bytes IV
+    static private String key = "St3vodoiProject2"; // 128 bit key
+    static private String initVector = "RandomInitVector"; // 16 bytes IV
     public Player() {
     }
 
@@ -67,6 +67,10 @@ public class Player {
         this.money = money;
         this.totalTime = time;
     }
+    
+    public String getPassEnscript(){
+        return password;
+    }
 
     public int getUserID() {
         return userID;
@@ -83,7 +87,11 @@ public class Player {
     public String getPasword() {
         return lib.Encryption.decrypt(key, initVector, password);
     }
-
+    
+    static public String getPasword(String pass) {
+        return lib.Encryption.decrypt(key, initVector, pass);
+    }
+    
     public int getYear() {
         return year;
     }

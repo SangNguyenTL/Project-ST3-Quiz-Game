@@ -47,9 +47,9 @@ public class frQuestion extends frManager{
     private ObservableList<DBModel.Question> filteredData;
     private HBox boxTable;
     private TextField txtQuestion;
-    private ComboBox cbbLevel;
-    private ComboBox cbbCategory;
-    private ComboBox cbbActive;
+    private ComboBox<String> cbbLevel;
+    private ComboBox<DBModel.Category> cbbCategory;
+    private ComboBox<String> cbbActive;
     private int cat;
     
     
@@ -85,12 +85,9 @@ public class frQuestion extends frManager{
         //Them lable vao grid cot 0 dong 0
         main.add(lblCategory, 0, 0);
 
-        cbbCategory = new ComboBox();
-        cbbCategory.getItems().add("Chọn...");
-        ArrayList<DBModel.Category> listCategory = new DBModel.Category().getData();
-        for (int i = 0; i < listCategory.size(); i++) {
-            cbbCategory.getItems().add(listCategory.get(i));
-        }
+        cbbCategory = new ComboBox<DBModel.Category>();
+        cbbCategory.getItems().add(new DBModel.Category(0,"Chọn..."));
+        cbbCategory.getItems().addAll(new DBModel.Category().getData());
         cbbCategory.getSelectionModel().selectFirst();
         //them cbbCategory cot 1 dong 0
         main.add(cbbCategory, 1, 0);
@@ -102,14 +99,8 @@ public class frQuestion extends frManager{
         // cot 2 dong 0
         main.add(lblLevel, 2, 0);
 
-        cbbLevel = new ComboBox();
-        cbbLevel.getItems().add("Chọn...");
-        cbbLevel.getItems().addAll(
-                1,
-                2,
-                3,
-                4
-        );
+        cbbLevel = new ComboBox<String>();
+        cbbLevel.getItems().addAll("Chọn...","1","2","3","4");
         cbbLevel.getSelectionModel().selectFirst();;
         // cot 3 dong 0
         main.add(cbbLevel, 3, 0);
@@ -121,7 +112,7 @@ public class frQuestion extends frManager{
         // cot 0 dong 1
         main.add(lbActive, 4, 0);
 
-        cbbActive = new ComboBox();
+        cbbActive = new ComboBox<String>();
         cbbActive.getItems().add("Chọn...");
         cbbActive.getItems().addAll(
                 "Khả dụng",
@@ -292,18 +283,18 @@ public class frQuestion extends frManager{
         table.getStyleClass().add("table-quiz");
         table.setPrefWidth(boxTable.getMaxWidth());
         // Gọi và đặt tên cho từng cột
-        TableColumn category = new TableColumn("Chủ đề");
+        TableColumn<DBModel.Question, String> category = new TableColumn<>("Chủ đề");
         //Gán giá trị cho cột theo đối tượng (đối tượng phải chứa phưng thức get<...>(). <...> là khóa nội dung của đối tượng muốn lấy,
         // ví dụ như bên dưới rõ hơn thì vào từn class để xem).
         category.setCellValueFactory(
                 new PropertyValueFactory<>("Cat"));
-        TableColumn level = new TableColumn("Cấp độ");
+        TableColumn<DBModel.Question, String> level = new TableColumn<>("Cấp độ");
         level.setCellValueFactory(
                 new PropertyValueFactory<>("Level"));
-        TableColumn contentQuestion = new TableColumn("Nội dung");
+        TableColumn<DBModel.Question, String> contentQuestion = new TableColumn<>("Nội dung");
         contentQuestion.setCellValueFactory(
                 new PropertyValueFactory<>("QuesContent"));
-        TableColumn status = new TableColumn("Trạng thái");
+        TableColumn<DBModel.Question, String> status = new TableColumn<>("Trạng thái");
         status.setCellValueFactory(
                 new PropertyValueFactory<>("Active"));
         //Căn đều các cột theo tỉ lệ nhât định qua phương thức bind().
@@ -311,7 +302,13 @@ public class frQuestion extends frManager{
         level.prefWidthProperty().bind(table.widthProperty().multiply(0.1));
         contentQuestion.prefWidthProperty().bind(table.widthProperty().multiply(0.5));
         status.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
-        table.getColumns().addAll(category, level, contentQuestion, status);
+        ArrayList<TableColumn<DBModel.Question, String>> listCol = new ArrayList<>();
+        listCol.add(category);
+        listCol.add(level);
+        listCol.add(contentQuestion);
+        listCol.add(status);
+        
+        table.getColumns().addAll(listCol);
     }
 
     /**
