@@ -58,16 +58,16 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         return super.type;
     }
 
-    public frQuestionAddAnswer(Pane root, DBModel.Player player, Question ques, boolean type) {
-        super(root, player);
-        init(root, ques, type);
+    public frQuestionAddAnswer(Pane root,HBox content, DBModel.Player player, Question ques, boolean type) {
+        super(root,content, player);
+        init(content, ques, type);
     }
    
     
     public void init(Pane rootChild, Question ques, boolean type) {
         super.ques = ques;
         setType(type);
-        root.getChildren().clear();
+        content.getChildren().clear();
         GridPane main = new GridPane();
         main.setHgap(10);
         main.setVgap(10);
@@ -79,7 +79,7 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         main.add(lblRightAns, 0, 0);
 
         cbAns = new ComboBox<String>();
-        cbAns.getItems().addAll("Chọn...","A","B","C","D");
+        cbAns.getItems().addAll("Chọn...","1","2","3","4");
 
         cbAns.getSelectionModel().selectFirst();
         main.add(cbAns, 1,0);
@@ -128,8 +128,7 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         txtQues = new TextArea();
         txtQues.setText(ques.quesContent);
         txtQues.setFont(new Font("Tahoma", 20));
-        txtQues.setLayoutX(20);
-        txtQues.setLayoutY(100);
+        txtQues.setWrapText(true);
         txtQues.setPrefSize(650, 100);
         main.add(txtQues, 0, 2, 6, 1);
         
@@ -147,12 +146,12 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
             }
         });
         
-        Label lblAnsA = new Label("Đáp án A");
+        Label lblAnsA = new Label("Đáp án 1");
         lblAnsA.setFont(new Font("Cambria", 25));
         lblAnsA.setTextFill(Color.web("#fff"));
         main.add(lblAnsA, 0, 3, 3, 1);
 
-        Label lblAnsB = new Label("Đáp án B");
+        Label lblAnsB = new Label("Đáp án 2");
         lblAnsB.setFont(new Font("Cambria", 25));
         lblAnsB.setTextFill(Color.web("#fff"));
         main.add(lblAnsB, 3, 3, 3, 1);
@@ -167,12 +166,12 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         txtB.setFont(new Font("Arial", 25));
         main.add(txtB, 3, 4, 3, 1);
 
-        Label lblAnsC = new Label("Đáp án C");
+        Label lblAnsC = new Label("Đáp án 3");
         lblAnsC.setFont(new Font("Cambria", 25));
         lblAnsC.setTextFill(Color.web("#fff"));
         main.add(lblAnsC, 0, 5, 3, 1);
 
-        Label lblAnsD = new Label("Đáp án D");
+        Label lblAnsD = new Label("Đáp án 4");
         lblAnsD.setFont(new Font("Cambria", 25));
         lblAnsD.setTextFill(Color.web("#fff"));
         main.add(lblAnsD, 3, 5, 3, 1);
@@ -220,11 +219,11 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         
         Button btnSubmit = new Button("Xác nhận");
         btnSubmit.getStyleClass().add("btnNor");
-        btnSubmit.setPrefSize(90, 30);
+        btnSubmit.setPrefSize(150, 30);
 
         Button btnBack = new Button("Quay lại");
         btnBack.getStyleClass().add("btnNor");
-        btnBack.setPrefSize(90, 30);
+        btnBack.setPrefSize(150, 30);
         
         HBox boxButton = new HBox(10);
         boxButton.setAlignment(Pos.CENTER);
@@ -232,10 +231,11 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         
         main.add(boxButton, 0, 7, 6, 1);
         
-        root.getChildren().add(main);
+        content.getChildren().add(main);
 
         btnBack.setOnMouseClicked((MouseEvent event) -> {
-            new frQuestion( root,player, FXCollections.observableArrayList(new DBModel.Question().getData()));
+            new frQuestion( root, content,player, FXCollections.observableArrayList(new DBModel.Question().getData()));
+            new frManager(root,player);
         });
         btnSubmit.setOnMouseClicked((MouseEvent event) -> {
             if (checkQuestion()&&checkAddQuestion()) {
@@ -248,7 +248,6 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
                 
                 String qu = txtQues.getText();
                 boolean action;
-                System.out.println(getType(type));
                 if(getType(type)) action = ques.update();
                 else{
                     action = ques.insert();
@@ -288,7 +287,8 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
                             setType(true);
                             txtQues.setEditable(true);
                             if (getResult().get() == ButtonType.OK) {
-                                new frQuestion( root ,player, FXCollections.observableArrayList(new DBModel.Question().getData()));
+                                new frQuestion(root, content, player, FXCollections.observableArrayList(new Question().getData()));
+                                new frManager(root,player);
                             }else{
                                 getAlert().close();
                             }
@@ -309,10 +309,10 @@ public final class frQuestionAddAnswer extends ui.manager.frQuestionAdd{
         String ansC = txtC.getText();
         String ansD = txtD.getText();
         TreeMap<String, TextField> listTextAnswer = new TreeMap<String,TextField>();
-        listTextAnswer.put("Đáp án D", txtD);
-        listTextAnswer.put("Đáp án C", txtC);
-        listTextAnswer.put("Đáp án B", txtB);
-        listTextAnswer.put("Đáp án A", txtA);
+        listTextAnswer.put("Đáp án 4", txtD);
+        listTextAnswer.put("Đáp án 3", txtC);
+        listTextAnswer.put("Đáp án 2", txtB);
+        listTextAnswer.put("Đáp án 1", txtA);
 
         Pattern patternCheckAnswerBlankkSpace = Pattern.compile("\\s{2,}");
         Pattern patternCheckAnswer = Pattern.compile("^\\S.{0,49}\\.$");

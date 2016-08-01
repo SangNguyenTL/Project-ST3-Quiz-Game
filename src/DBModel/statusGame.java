@@ -16,9 +16,29 @@ public class statusGame {
     private boolean changeQuest;
     private boolean per50;
     private int timeTotal;
+    private int timeTotal4;
+    private int timeTotal9;
     private int money;
     private int oldMoney;
     private int oldTime;
+
+    public void setTimeTotal4(int timeTotal4) {
+        this.timeTotal4 = timeTotal4;
+    }
+
+    public void setTimeTotal9(int timeTotal9) {
+        this.timeTotal9 = timeTotal9;
+    }
+
+    public int getTimeTotal4() {
+        return timeTotal4;
+    }
+
+    public int getTimeTotal9() {
+        return timeTotal9;
+    }
+    
+    
 
     public statusGame(Player player, int levelQuestion, boolean changeQuest, boolean per50, int timeTotal, int money) {
         this.player = player;

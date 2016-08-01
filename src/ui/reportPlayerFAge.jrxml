@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5696afc3-ff8e-475b-8893-e33a4bb9894e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[select (YEAR(GETDATE()) - year) as N'Tuổi', userName as N'Tên người chơi', email as 'Email', year as N'Năm Sinh', money as N'Tiền thưởng', totalTime as N'Tổng thời gian' from tb_Player where userID <> 1 order by year DESC]]>
+	</queryString>
+	<field name="Tuổi" class="java.lang.Integer"/>
+	<field name="Tên người chơi" class="java.lang.String"/>
+	<field name="Email" class="java.lang.String"/>
+	<field name="Năm Sinh" class="java.lang.Integer"/>
+	<field name="Tiền thưởng" class="java.lang.Long"/>
+	<field name="Tổng thời gian" class="java.lang.Integer"/>
+	<group name="Tuổi">
+		<groupExpression><![CDATA[$F{Tuổi}]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="100" height="32" forecolor="#666666" backcolor="#E6E6E6" uuid="34db28fe-a190-4f76-853f-f4ddd9ccd0ff"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[Tuổi]]></text>
+				</staticText>
+				<textField>
+					<reportElement mode="Opaque" x="100" y="0" width="455" height="32" forecolor="#006699" backcolor="#E6E6E6" uuid="e39ab9c6-5afa-4bd8-a815-d1060ea65b5e"/>
+					<textElement>
+						<font size="24" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Tuổi}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="-20" y="32" width="595" height="1" forecolor="#666666" uuid="08a55799-df47-4a85-8f2e-ac05043fbc9e"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="41">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="10" width="138" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="e394af41-3dc3-4ac2-ade8-57b64c3b25f9"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tổng]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="154" y="10" width="138" height="20" uuid="b61ead18-3dba-4e3f-b909-1a36d3023534"/>
+					<textElement>
+						<font size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Tuổi_COUNT}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="0" width="575" height="72" backcolor="#006699" uuid="cb65762b-5bb8-499f-9439-f52bb43a5162"/>
+				<staticText>
+					<reportElement x="20" y="20" width="346" height="43" forecolor="#FFFFFF" uuid="904428ad-560a-4ce3-950b-adb597518617"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Thống kê người chơi]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="395" y="43" width="180" height="20" forecolor="#FFFFFF" uuid="801b4ddc-92ed-4f32-968e-a5388ef3c759"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Theo độ tuổi]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="ec4249f7-71e4-456e-b167-ccd0d2ac54f2"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="138" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="4779eccf-4b90-4d98-bf18-d7cad09a7bd2"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tên người chơi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="138" y="0" width="170" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="aa4c5c29-ed81-4872-88a7-dde0af4e7499"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Email]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="308" y="0" width="133" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="5ff138df-a2e7-4469-b912-dacf3e01de2e"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tổng thời gian]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="441" y="0" width="114" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="847a3155-6cbe-40b9-b886-dd72b47c5fda"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tiền thưởng]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="67359734-2403-4584-8398-870a0cdb644a"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="138" height="0" uuid="2525692a-8700-4241-b643-606ea87e96e7"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Tên người chơi}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="138" y="-1" width="170" height="0" uuid="950ff157-d42c-4041-8098-5b2d7f9c0280"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Email}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="308" y="-1" width="150" height="20" uuid="7c2e61b5-83e1-497a-9bd7-dcc579fbbfb3"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Tổng thời gian}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="441" y="0" width="114" height="20" uuid="e3fe0d9e-de2e-43cc-9832-f9b6156e3e03"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Tiền thưởng}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="ca3da7d5-c3a7-40d9-97aa-044f23f8a2de"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Trang "+$V{PAGE_NUMBER}+" trong"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="73ffb6c9-de02-4df1-a9f1-f74e0149b343"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="64f1ff8e-2b52-4c7a-ad2a-f17e89fd80c2"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

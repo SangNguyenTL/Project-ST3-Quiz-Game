@@ -5,20 +5,14 @@
  */
 package ui.manager;
 
-import DBModel.MyConnect;
 import DBModel.Player;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -35,22 +29,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import lib.AlertGame;
 import lib.TablePlayer;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JRDesignQuery;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
  * @author QUANGTU
  */
-public class frPlayer extends frManager{
+public class frPlayer{
 
     private TableView<Player> table;
     private ObservableList<DBModel.Player> filteredData;
@@ -61,22 +45,23 @@ public class frPlayer extends frManager{
     private TextField txtPrize;
     private TextField txtTime;
     private TreeMap<Integer,TextField> txtText;
-    private JasperDesign jd;
-    public frPlayer(Pane root, Player player, ObservableList<DBModel.Player> masterDataPlayer) {
-        super(root, player);
-        init(masterDataPlayer);
+    protected HBox content;
+    protected Pane root;
+    protected Player rootPlayer;
+    private ObservableList<DBModel.Player> masterDataPlayer;
+    public frPlayer(Pane root, HBox Content, Player player, ObservableList<DBModel.Player> masterDataPlayer) {
+        this.root = root;
+        this.content = Content;
+        this.rootPlayer = player;
+        this.masterDataPlayer = masterDataPlayer;
+        init();        
     }
-
-    public ObservableList<Player> getMasterDataPlayer() {
-        return masterDataPlayer;
-    }
-    
-    public void init(ObservableList<DBModel.Player> masterDataPlayer) {
-        super.setRootPlayer(player);
-        super.setMasterDataPlayer(masterDataPlayer);
-        installBoxCount();
-        root.getChildren().clear();
+    public void init() {
+        content.getChildren().clear();
         GridPane main = new GridPane();
+        main.setAlignment(Pos.TOP_CENTER);
+        main.setHgap(10);
+        main.setVgap(10);
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setPercentWidth(30);
         ColumnConstraints col2 = new ColumnConstraints();
@@ -89,32 +74,30 @@ public class frPlayer extends frManager{
         col3.setPercentWidth(15);
         main.getColumnConstraints().addAll(col1,col2,col3,col4,col5);
         
-        main.setAlignment(Pos.TOP_CENTER);
-        main.setHgap(10);
-        main.setVgap(10);
+        
         // BIến gốc
         
         //BIến dùng để lọc dữ liệu
         filteredData = FXCollections.observableArrayList();
         filteredData.addAll(masterDataPlayer);
-        super.masterDataPlayer.addListener((ListChangeListener.Change<? extends Player> change) -> {
+        masterDataPlayer.addListener((ListChangeListener.Change<? extends Player> change) -> {
             updateFilteredData();
         });
         boxTable = new HBox();
-        boxTable.setMaxWidth(root.getWidth()*0.8);
+        boxTable.setMaxWidth(root.getWidth()*0.75);
         initializeTable();
         boxTable.getChildren().add(new TablePlayer().init(table, filteredData));
         
         txtSearch = new TextField();
-        txtSearch.setPromptText("Nhập tên");
+        txtSearch.setPromptText("Tên");
         txtEmail = new TextField();
-        txtEmail.setPromptText("Nhập email");
+        txtEmail.setPromptText("Email");
         txtYear = new TextField();
-        txtYear.setPromptText("Nhập năm sinh");
+        txtYear.setPromptText("Năm sinh");
         txtPrize = new TextField();
-        txtPrize.setPromptText("Nhập tiền thưởng");
+        txtPrize.setPromptText("Tiền thưởng");
         txtTime = new TextField();
-        txtTime.setPromptText("Nhập thời gian");
+        txtTime.setPromptText("Thời gian");
         
         txtText = new TreeMap<>();
         txtText.put(0, txtSearch);
@@ -125,19 +108,15 @@ public class frPlayer extends frManager{
         
         for(int i = 0; i <txtText.size(); i++){
             txtText.get(i).getStyleClass().add("txtField");
-            txtText.get(i).setFont(new Font("Arial", 15));
+            txtText.get(i).setFont(new Font("Arial", 20));
             txtText.get(i).setPrefWidth(100);
-            txtText.get(i).textProperty().addListener(new InvalidationListener() {
-
-            @Override
-            public void invalidated(Observable o) {
+            txtText.get(i).textProperty().addListener((Observable o) -> {
                 lib.textAnimation a = new lib.textAnimation();
                 a.setAnimation(500, ()->{
                     updateFilteredData();
                     a.getTimeline().stop();
                 });
-            }
-        });
+            });
             main.add(txtText.get(i),i,0);
         }
        
@@ -146,39 +125,15 @@ public class frPlayer extends frManager{
         // button list
         Button btnDelete = new Button("Xóa");
         btnDelete.getStyleClass().add("btnNor");
-        btnDelete.setPrefSize(90, 30);
+        btnDelete.setPrefSize(150, 30);
         main.add(btnDelete,6,0);
 
         Button btnUpdate = new Button("Cập nhật");
         btnUpdate.getStyleClass().add("btnNor");
-        btnUpdate.setPrefSize(90, 30);
+        btnUpdate.setPrefSize(150, 30);
         main.add(btnUpdate,6,1);
 
-        Button btnPrint = new Button("Thống kê");
-        btnPrint.getStyleClass().add("btnNor");
-        btnPrint.setPrefSize(90, 30);
-        main.add(btnPrint,6,2);
-
-        root.getChildren().add(main);
-        
-        btnPrint.setOnAction((ActionEvent t) -> {
-            if (MyConnect.checkData()) {
-                try {
-                    Connection cn = new DBModel.MyConnect().getConnect();
-                    jd = JRXmlLoader.load(".\\src\\ui\\reportPlayer.jrxml");
-                    String sql = "SELECT  userName, email, YEAR(getdate()) - year as 'age', money, totalTime FROM tb_Player where userID <> 1 ORDER BY money DESC, totalTime ASC";
-                    JRDesignQuery newQuery = new JRDesignQuery();
-                    newQuery.setText(sql);
-                    jd.setQuery(newQuery);
-                    JasperReport jr = JasperCompileManager.compileReport(jd);
-                    JasperPrint jp = JasperFillManager.fillReport(jr, null, cn);
-                    JasperViewer.viewReport(jp, false);
-                    JasperExportManager.exportReportToPdfFile(jp,System.getProperty("user.home") + "\\Desktop\\reportPlayer.pdf");
-                } catch (JRException ex) {
-                    Logger.getLogger(frPlayer.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }  
-        });
+        content.getChildren().add(main);
         
         btnUpdate.setOnAction((ActionEvent t) -> {
             if (table.getSelectionModel().isEmpty()) {
@@ -191,55 +146,53 @@ public class frPlayer extends frManager{
                 return;
             }
             Player childPlayer = (Player) table.getSelectionModel().getSelectedItem();
-            new frPlayerUpdate(root, childPlayer, rootPlayer);
+            new frPlayerUpdate(root,content, childPlayer, rootPlayer);
         });
 
         // Khi ấn nút delete
-        btnDelete.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (table.getSelectionModel().isEmpty()) {
-                    new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
-
-                        @Override
-                        public void processResult() {
-                        }
-                    };
-                    return;
-                }
-                Player playerObject = (Player) table.getSelectionModel().getSelectedItem();
-                if (player.getUserID()!=1 && playerObject.isAdmin()) {
-                    new AlertGame("Lỗi", "Bạn không có quyền để xóa người chơi này!", AlertType.WARNING) {
-
-                        @Override
-                        public void processResult() {
-                        }
-                    };
-                    return;
-                }
-                new AlertGame("Xóa đối tượng", "Bạn chắc chắn muốn xóa?", AlertType.CONFIRMATION) {
+        btnDelete.setOnMouseClicked((MouseEvent event) -> {
+            if (table.getSelectionModel().isEmpty()) {
+                new AlertGame("Lỗi", "Bạn chưa chọn đối tượng trong bảng!", AlertType.WARNING) {
+                    
                     @Override
                     public void processResult() {
-                        if(getResult().get()==ButtonType.OK){
-                            String textStatus;
-                            if (playerObject.delete()){
-                                getMasterDataPlayer().clear();
-                                getMasterDataPlayer().addAll(new Player().getData());
-                                textStatus = "Thành công";
-                            }
-                            else{
-                                textStatus = "Thất bại";
-                            }
-                            new AlertGame("Trạng thái", "Xóa "+textStatus, AlertType.INFORMATION) {
-
-                                @Override
-                                public void processResult() {
-                                }
-                            };
-                        }
                     }
                 };
+                return;
             }
+            Player playerObject = (Player) table.getSelectionModel().getSelectedItem();
+            if (rootPlayer.getUserID()!=1 && playerObject.isAdmin()) {
+                new AlertGame("Lỗi", "Bạn không có quyền để xóa tài khoản này!", AlertType.WARNING) {
+                    
+                    @Override
+                    public void processResult() {
+                    }
+                };
+                return;
+            }
+            new AlertGame("Xóa đối tượng", "Bạn chắc chắn muốn xóa?", AlertType.CONFIRMATION) {
+                @Override
+                public void processResult() {
+                    if(getResult().get()==ButtonType.OK){
+                        String textStatus;
+                        if (playerObject.delete()){
+                            masterDataPlayer.clear();
+                            masterDataPlayer.addAll(new Player().getData());
+                            new frManager(root, rootPlayer);
+                            textStatus = "Thành công";
+                        }
+                        else{
+                            textStatus = "Thất bại";
+                        }
+                        new AlertGame("Trạng thái", "Xóa "+textStatus, AlertType.INFORMATION) {
+                            
+                            @Override
+                            public void processResult() {
+                            }
+                        };
+                    }
+                }
+            };
         });
 }
     private void initializeTable() {

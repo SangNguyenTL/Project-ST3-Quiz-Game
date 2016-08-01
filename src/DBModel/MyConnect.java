@@ -34,7 +34,7 @@ public class MyConnect {
         portP="port";
         dbNameP="database";
         severP="sever";
-        fname="data.dat";
+        fname="data.properties";
         
     }
     
@@ -169,14 +169,13 @@ public class MyConnect {
     public static void saveData() {
         FileOutputStream fos = null;        
         try {
-            System.out.println(user);
             setProperty(username, user);
             setProperty(password, pass);
             setProperty(dbNameP, dbName);
             setProperty(portP, port);
             setProperty(severP, server);
             fos = new FileOutputStream(fname);
-            p.store(fos, "===Cấu hình server ST3 Quiz===");
+            p.store(fos, "===Cấu hình game ST3 Quiz===");
             fos.close();
         } catch (IOException ex) {
                 new AlertGame("Lỗi", "Không thể lưu kết nối... Xin thử lại sau!", Alert.AlertType.ERROR) {

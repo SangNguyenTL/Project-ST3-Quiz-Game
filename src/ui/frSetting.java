@@ -14,20 +14,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -57,20 +56,23 @@ class frSetting{
     private Label lbUser;
     private Label lbPassword;
     private Label lbResolution;
+    private Label lbIsMute;
     private TextField txtServer;
     private TextField txtPort;
     private TextField txtDatabase;
     private TextField txtUser;
     private TextField txtPass;
     private ComboBox<String> cbbResolution;
+    private CheckBox cbMute;
     private String fileName;
     private ArrayList<TextField> listTextFeild;
     private ArrayList<Label> listLabel;
     private Button btnSubmit;
+    private Properties saveFile;
     public frSetting(Pane root) {
         
         this.root = root;
-        this.fileName = "resolution.ini";
+        this.fileName = "data.properties";
         this.width = root.getWidth();
         this.height = root.getHeight();
         root.getChildren().clear();
@@ -86,12 +88,14 @@ class frSetting{
         ds.setOffsetY(3.0f);
         ds.setColor(Color.web("#00A1FF"));
         
-        lbServer = new Label("Server name");
+        lbServer = new Label("Địa chỉ server");
         lbPort = new Label("Port");
-        lbDatabse = new Label("Database name");
-        lbUser = new Label("User name");
-        lbPassword = new Label("Password");
-        lbResolution = new Label("Resolution");
+        lbDatabse = new Label("Tên cơ sở dữ liệu");
+        lbUser = new Label("Tên tài khoản");
+        lbPassword = new Label("Mật khẩu");
+        lbResolution = new Label("Độ phân giải");
+        lbIsMute = new Label("Tắt Âm thanh");
+        
         listLabel = new ArrayList<Label>();
         listLabel.add(lbServer);
         listLabel.add(lbPort);
@@ -99,10 +103,11 @@ class frSetting{
         listLabel.add(lbUser);
         listLabel.add(lbPassword);
         listLabel.add(lbResolution);
+        listLabel.add(lbIsMute);
         for(int i = 0; i < listLabel.size(); i++){
             listLabel.get(i).setEffect(ds);
             listLabel.get(i).setTextFill(Color.WHITE);
-            listLabel.get(i).setFont(new Font("Arial",width*0.0146));
+            listLabel.get(i).setFont(new Font("Arial",20));
             grid.add(listLabel.get(i),0, i);
         }
         
@@ -120,7 +125,7 @@ class frSetting{
         for(int i = 0; i < listTextFeild.size(); i++){
             listTextFeild.get(i).getStyleClass().add("txtField");
             listTextFeild.get(i).setPromptText(listLabel.get(i).getText());
-            listTextFeild.get(i).setFont(new Font("Arial",width*0.0146));
+            listTextFeild.get(i).setFont(new Font("Arial", 20));
             grid.add(listTextFeild.get(i),1, i);
         }
         
@@ -133,13 +138,17 @@ class frSetting{
         );
         grid.add(cbbResolution, 1, 5);
         
+        cbMute = new CheckBox();
+        grid.add(cbMute, 1, 6);
+        
         btnSubmit = new Button("Áp dụng");
         btnSubmit.getStyleClass().add("btnNor");
         HBox boxBtnSubmit = new HBox(btnSubmit);
         boxBtnSubmit.setMaxHeight(Double.MAX_VALUE);
         boxBtnSubmit.setAlignment(Pos.CENTER);
-        grid.add(boxBtnSubmit, 0, 6, 2, 1);
+        grid.add(boxBtnSubmit, 0, 7, 2, 1);
         
+        loadData();
         
         
         //Quay lai
@@ -166,7 +175,7 @@ class frSetting{
                     }
                 };
         });
-        loadData();
+        
         btnSubmit.setOnAction((ActionEvent t) -> {
             saveData();
             if(DBModel.MyConnect.checkData()){
@@ -206,6 +215,9 @@ class frSetting{
     
     private void loadData(){
         MyConnect m = new MyConnect();
+        loadSaveFile();
+        cbbResolution.getSelectionModel().select(saveFile.getProperty("width","1056"));
+        cbMute.setSelected(Boolean.valueOf(saveFile.getProperty("isMute", "false")));
         if(MyConnect.loadData()){
             txtServer.setText(MyConnect.getServer());
             txtPort.setText(MyConnect.getPort());
@@ -213,7 +225,6 @@ class frSetting{
             txtUser.setText(MyConnect.getUser());
             txtPass.setText(MyConnect.getPass());
         }
-        if(!loadResolution()) cbbResolution.getSelectionModel().selectLast();
     }
     private boolean checkFeild(){
         SimpleStringProperty strError = new SimpleStringProperty();
@@ -240,14 +251,28 @@ class frSetting{
         }
         return true;
     }
+
+    private boolean loadSaveFile(){
+        FileInputStream fIs;
+        saveFile = new Properties();
+        try{
+            fIs = new FileInputStream(fileName);
+            saveFile.load(fIs);
+            fIs.close();
+        }catch(FileNotFoundException e){
+            return false;
+        }catch(IOException e){
+            return false;
+        }
+        return true;
+    }
     private boolean saveResolution(String resolution){
         FileOutputStream fOs;
-        ObjectOutputStream oOs;
         try{
             fOs = new FileOutputStream(fileName);
-            oOs = new ObjectOutputStream(fOs);
-            oOs.writeObject(resolution);
-            oOs.close();
+            saveFile.put("width", resolution);
+            saveFile.put("isMute", Boolean.toString(cbMute.isSelected()));
+            saveFile.store(fOs, "====");
             fOs.close();
         }catch(FileNotFoundException e){
             return false;
@@ -256,26 +281,6 @@ class frSetting{
         }
         return true;
     }
-    private boolean loadResolution(){
-        FileInputStream fIs;
-        ObjectInputStream oIs;
-        try{
-            fIs = new FileInputStream(fileName);
-            oIs = new ObjectInputStream(fIs);
-            String i = oIs.readObject().toString();
-            cbbResolution.getSelectionModel().select(i);
-            oIs.close();
-            fIs.close();
-        }catch(ClassNotFoundException e){
-            return false;
-        }catch(FileNotFoundException e){
-            return false;
-        }catch(IOException e){
-            return false;
-        }
-        return true;
-    }
-    
     private void saveData(){
         if(!checkFeild()) return;
         MyConnect m = new MyConnect();
@@ -285,6 +290,7 @@ class frSetting{
         MyConnect.setUser(txtUser.getText().trim());
         MyConnect.setPass((txtPass.getText().trim()));
         MyConnect.saveData();
+        loadSaveFile();
         if(!saveResolution(cbbResolution.getSelectionModel().getSelectedItem().toString())){
             new AlertGame("Lỗi", "Không thể lưu độ phân giải", Alert.AlertType.NONE) {
                 
@@ -294,6 +300,7 @@ class frSetting{
                 }
             };
         }
+        
     }
     
 }

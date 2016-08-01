@@ -69,8 +69,7 @@ public class listButtonLogged extends ui.frLogin{
         btnPlay.setOnMouseClicked((MouseEvent t) -> {
             root.getChildren().clear();
             frPlaygame playGame = new frPlaygame(root);
-            
-            lib.openVideo introGame = new lib.openVideo("video/intro.mp4", root.getWidth(), root.getHeight());
+            lib.openVideo introGame = new lib.openVideo("video/intro.mp4", Window.getPrimaryStage().getWidth(), Window.getPrimaryStage().getHeight());
             
             Button backGame = new Button("Bỏ qua");
             backGame.setLayoutX(root.getWidth()*0.85);
@@ -95,7 +94,6 @@ public class listButtonLogged extends ui.frLogin{
                 try {
                      root.getChildren().clear();
                      root.getChildren().add(playGame.getBorder());
-                     playGame.setPlaySoundGame();
                      playGame.setStatusGame(2);
                 } catch (Exception ex) {
                     

@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Properties;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,6 +35,7 @@ public class Window extends Application {
     private static Stage pStage;
     private static MediaView mediaView;
     private static lib.openVideo opening;
+    private static Properties saveFile;
     public static Stage getPrimaryStage() {
         return pStage;
     }
@@ -66,16 +68,12 @@ public class Window extends Application {
     }
     private boolean loadResolution(){
         FileInputStream fIs;
-        ObjectInputStream oIs;
+        saveFile = new Properties();
         try{
-            fIs = new FileInputStream("resolution.ini");
-            oIs = new ObjectInputStream(fIs);
-            String i = oIs.readObject().toString();
-            width = Double.parseDouble(i);
-            oIs.close();
+            fIs = new FileInputStream("data.properties");
+            saveFile.load(fIs);
+            width = Double.valueOf(saveFile.getProperty("width","1056"));
             fIs.close();
-        }catch(ClassNotFoundException e){
-            return false;
         }catch(FileNotFoundException e){
             return false;
         }catch(IOException e){

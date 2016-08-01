@@ -79,7 +79,7 @@ public class frRegistration extends frLogin {
         userName.setFont(new Font("Arial", 20));
 
         txtplayer = new TextField();
-        txtplayer.setPromptText("Tên người chơi.");
+        txtplayer.setPromptText("Tên người chơi");
         txtemail = new TextField();
         txtemail.setPromptText("Email");
         txtyear = new TextField();
@@ -145,8 +145,10 @@ public class frRegistration extends frLogin {
                 playerSign.setUserName(txtplayer.getText());
                 playerSign.setPasword(txtpass.getText());
                 playerSign.setYear(Integer.parseInt(txtyear.getText()));
+                playerSign.setMoney(0);
+                playerSign.setTotalTime(0);
                 if (playerSign.insert()){
-                    new AlertGame("Thành công", "Đăng ký thành công, bạn có thể đăng nhập\n Tên tài khoản của bạn là:\n\t "+playerSign.getEmail()+"!", Alert.AlertType.INFORMATION) {
+                    new AlertGame("Thành công", "Đăng ký thành công, bạn có thể đăng nhập\n Tên tài khoản của bạn là:\n\t "+playerSign.getEmail(), Alert.AlertType.INFORMATION) {
                         
                         @Override
                         public void processResult() {
@@ -194,7 +196,7 @@ public class frRegistration extends frLogin {
         root.getChildren().add(hbback);
         back.setOnAction((ActionEvent t) -> {
             root.getChildren().clear();
-            new listButtonOpen(root);
+            new frLogin(root);
         });
     }
 
@@ -227,7 +229,7 @@ public class frRegistration extends frLogin {
         }
         
         if(playerSign.getData(playerSign.getEmail()).getUserID() != 0){
-            strError.set("Email đã tồn tại xin bạn nhập mới");
+            strError.set("Địa chỉ email bạn cung cấp đã được đăng ký, xin nhập lại");
             txtemail.requestFocus();
             return false;
         }
@@ -261,7 +263,7 @@ public class frRegistration extends frLogin {
         }
 
         if (!txtpass.getText().equals(txtpass1.getText())) {
-            strError.set("Mật khẩu bạn nhập không giống nhau, xin nhập lại");
+            strError.set("Mật khẩu nhập lại không khớp, xin nhập lại");
             txtpass1.requestFocus();
             return false;
         }

@@ -15,6 +15,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -43,9 +44,9 @@ import ui.listButtonLogged;
  */
 public class frManager extends frLogin{
   
-    protected HBox content;
+    static protected HBox content;
     protected ObservableList<DBModel.Question> masterDataQuestion;
-    protected ObservableList<DBModel.Player> masterDataPlayer;
+    static protected ObservableList<DBModel.Player> masterDataPlayer;
     protected SimpleIntegerProperty countPlayer, countQuestion;
     protected Label lblCountQ, lblCountP;
     protected DBModel.Player rootPlayer;
@@ -56,6 +57,11 @@ public class frManager extends frLogin{
     protected void setRootPlayer(Player player){
         this.rootPlayer = player;
     }
+
+    public static ObservableList<Player> getMasterDataPlayer() {
+        return masterDataPlayer;
+    }
+    
     
     protected void installBoxCount(){
         countPlayer = new SimpleIntegerProperty(masterDataPlayer.size());
@@ -80,9 +86,10 @@ public class frManager extends frLogin{
         
     }
     protected void setContent(){
-        content = new HBox();
-        content.setPrefSize(root.getWidth()*0.8,root.getHeight()-100);
-        content.setAlignment(Pos.CENTER);
+        if(frManager.content==null)
+            frManager.content = new HBox();
+        frManager.content.setPrefSize(root.getWidth()*0.8,root.getHeight()-100);
+        frManager.content.setAlignment(Pos.CENTER);
     }
     public void init(DBModel.Player player) {
         root.getChildren().clear();
@@ -133,11 +140,13 @@ public class frManager extends frLogin{
         Button btnQuest = new Button("Câu hỏi");
         Button btnMoney = new Button("Tiền thưởng");
         Button btnInfo = new Button("Thông tin ID");
+        Button btnReport = new Button("Thống kê");
         Button btnExit = new Button("Quay lại");
         if(player.isAdmin()){
             btnGroup.add(btnUsers);
             btnGroup.add(btnQuest);
             btnGroup.add(btnMoney);
+            btnGroup.add(btnReport);
         }
         btnGroup.add(btnInfo);
         btnGroup.add(btnExit);
@@ -164,44 +173,25 @@ public class frManager extends frLogin{
             }
         });
         }
-        btnUsers.setOnMouseClicked(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent event) {
-               new frPlayer(content,rootPlayer,masterDataPlayer);
-            }
-            
+        btnUsers.setOnMouseClicked((MouseEvent event) -> {
+            new frPlayer(root,content,rootPlayer,masterDataPlayer);
         });
-        btnExit.setOnMouseClicked(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent event) {
-               new listButtonLogged(root,rootPlayer);
-            }
-            
+        btnExit.setOnMouseClicked((MouseEvent event) -> {
+            new listButtonLogged(root,rootPlayer);
         });
-        btnQuest.setOnMouseClicked(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent event) {
-                new frQuestion(content,rootPlayer,masterDataQuestion);
-            }
-            
+        btnQuest.setOnMouseClicked((MouseEvent event) -> {
+            new frQuestion(root,content,rootPlayer,masterDataQuestion);
         });
-        btnInfo.setOnMouseClicked(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent event) {
-                content.getChildren().clear();
-                new frPlayerUpdate(content,rootPlayer,rootPlayer);
-            }
-        
+        btnInfo.setOnMouseClicked((MouseEvent event) -> {
+            content.getChildren().clear();
+            new frPlayerUpdate(root,content,rootPlayer,rootPlayer);
         });
-        btnMoney.setOnMouseClicked(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent event) {
-                content.getChildren().clear();
-                new frPrizeMoney(content,rootPlayer);
-            }
-            
+        btnMoney.setOnMouseClicked((MouseEvent event) -> {
+            content.getChildren().clear();
+            new frPrizeMoney(content);
+        });
+        btnReport.setOnAction((ActionEvent event)->{
+            new frReport(root, content);
         });
         root.getChildren().add(border);
         
@@ -217,20 +207,20 @@ public class frManager extends frLogin{
         boxCount.setAlignment(Pos.BOTTOM_CENTER);     
         boxCount.getChildren().addAll(lblCountQ,lblCountP);
         
-        boxCount.setVisible(player.isAdmin());
+        boxCount.setVisible(rootPlayer.isAdmin());
 
         slideBar.getChildren().addAll(boxTitle,listButton,boxCount);
         border.setTop(banner);
         border.setLeft(slideBar);
         border.setRight(content);
-        border.setAlignment(banner,Pos.CENTER);
-        border.setAlignment(content,Pos.CENTER);
-        border.setAlignment(slideBar,Pos.CENTER);
+        BorderPane.setAlignment(banner,Pos.CENTER);
+        BorderPane.setAlignment(content,Pos.CENTER);
+        BorderPane.setAlignment(slideBar,Pos.CENTER);
     }
 
     protected void setMasterDataPlayer(ObservableList<Player> masterDataPlayer) {
-        this.masterDataPlayer = FXCollections.observableArrayList();
-        this.masterDataPlayer.addAll(masterDataPlayer);
+        frManager.masterDataPlayer = FXCollections.observableArrayList();
+        frManager.masterDataPlayer.addAll(masterDataPlayer);
     }
 
     protected void setMasterDataQuestion(ObservableList<Question> masterDataQuestion) {

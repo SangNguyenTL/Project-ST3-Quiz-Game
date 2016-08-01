@@ -8,7 +8,6 @@ package ui.manager;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
@@ -19,7 +18,7 @@ import lib.AlertGame;
  *
  * @author nhats
  */
-public class frPlayerUpdate extends frManager {
+public class frPlayerUpdate extends frPlayer{
 
     private javafx.scene.control.TextField txtName;
     private javafx.scene.control.TextField txtEmail;
@@ -35,17 +34,15 @@ public class frPlayerUpdate extends frManager {
     private javafx.scene.control.Label lbRePass;
     private java.util.TreeMap<Integer, javafx.scene.control.TextField> listTxtFeild;
     private java.util.TreeMap<Integer, javafx.scene.control.Label> listLabel;
-    protected DBModel.Player player;
-
-    public frPlayerUpdate(javafx.scene.layout.Pane root, DBModel.Player player, DBModel.Player rootPlayer) {
-        super(root, rootPlayer);
+    private DBModel.Player objectPlayer;
+    public frPlayerUpdate(javafx.scene.layout.Pane root, javafx.scene.layout.HBox content, DBModel.Player player, DBModel.Player rootPlayer) {
+        super(root,content, rootPlayer, frManager.getMasterDataPlayer());
         init(player, rootPlayer);
     }
 
     public final void init(DBModel.Player player, DBModel.Player rootPlayer) {
-        root.getChildren().clear();
-        this.player = player;
-        super.setRootPlayer(rootPlayer);
+        content.getChildren().clear();
+        objectPlayer = player;
         javafx.scene.layout.GridPane main = new javafx.scene.layout.GridPane();
         main.setHgap(10);
         main.setVgap(10);
@@ -107,13 +104,13 @@ public class frPlayerUpdate extends frManager {
         if ( super.rootPlayer.getUserID() != 1) {
             cbAdmin.setDisable(true);
         }
-        if (player.getUserID() == 1) {
+        if (objectPlayer.getUserID() == 1) {
             cbAdmin.setDisable(true);
         }
 
         javafx.scene.control.Button btnSubmit = new javafx.scene.control.Button("Xác nhận");
         btnSubmit.getStyleClass().add("btnNor");
-        btnSubmit.setPrefSize(90, 30);
+        btnSubmit.setPrefSize(150, 30);
 
         main.add(btnSubmit, 1, 6);
 
@@ -128,9 +125,9 @@ public class frPlayerUpdate extends frManager {
 
         btnSubmit.setOnAction((ActionEvent t) -> {
             boolean per = true;
-            if (super.rootPlayer.getUserID() == player.getUserID()) {
+            if (super.rootPlayer.getUserID() == objectPlayer.getUserID()) {
                 per = true;
-            } else if (super.rootPlayer.getUserID() != 1 && player.isAdmin()) {
+            } else if (super.rootPlayer.getUserID() != 1 && objectPlayer.isAdmin()) {
                 new AlertGame("Lỗi", "Bạn không có quyền thay đổi thông tin của tài khoản này!", Alert.AlertType.WARNING) {
 
                     @Override
@@ -142,11 +139,11 @@ public class frPlayerUpdate extends frManager {
 
             if (per) {
                 if (checkData()) {
-                    player.setUserName(txtName.getText());
-                    player.setPasword(txtPass.getText());
-                    player.setYear(Integer.parseInt(txtYear.getText()));
-                    player.setIsAdmin(cbAdmin.isSelected());
-                    if (player.update()) {
+                    objectPlayer.setUserName(txtName.getText());
+                    objectPlayer.setPasword(txtPass.getText());
+                    objectPlayer.setYear(Integer.parseInt(txtYear.getText()));
+                    objectPlayer.setIsAdmin(cbAdmin.isSelected());
+                    if (objectPlayer.update()) {
                         new AlertGame("Thành công", "Cập nhật thành công", Alert.AlertType.INFORMATION) {
 
                             @Override
@@ -165,25 +162,21 @@ public class frPlayerUpdate extends frManager {
             }
         });
 
-        root.getChildren().add(main);
+        content.getChildren().add(main);
     }
 
     public boolean checkData() {
         SimpleStringProperty strError = new SimpleStringProperty("");
-        strError.addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                if (t1.equals("")) {
-                    return;
-                }
-                new AlertGame("Lỗi", t1, Alert.AlertType.WARNING) {
-
-                    @Override
-                    public void processResult() {
-                    }
-                };
+        strError.addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            if (t1.equals("")) {
+                return;
             }
+            new AlertGame("Lỗi", t1, Alert.AlertType.WARNING) {
+                
+                @Override
+                public void processResult() {
+                }
+            };
         });
 
         for (int i = 0; i < listTxtFeild.size(); i++) {
@@ -217,7 +210,7 @@ public class frPlayerUpdate extends frManager {
         }
 
         if (!txtPass.getText().equals(reTxtPass.getText())) {
-            strError.set("Mật khẩu bạn nhập không giống nhau, xin nhập lại");
+            strError.set("Mật khẩu nhập lại không khớp, xin nhập lại");
             txtPass.requestFocus();
             return false;
         }

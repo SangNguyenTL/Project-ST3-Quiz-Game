@@ -44,7 +44,6 @@ public class frResult extends frLogin {
     }
 
     public void init(DBModel.statusGame newGame) {
-        root.getChildren().clear();
         grid = new GridPane();
         grid.setPrefSize(root.getWidth(), root.getHeight());
         root.getChildren().add(grid);
@@ -89,8 +88,15 @@ public class frResult extends frLogin {
         back.setCancelButton(true);
         back.setOnAction((ActionEvent t) -> {
             root.getChildren().clear();
+            frPlaygame.getVideoWinner().stop();
+            new listButtonLogged(root,player);
+            
+        });
+        frPlaygame.getVideoWinner().getMediaPlayer().setOnEndOfMedia(()->{
+            root.getChildren().clear();
             new listButtonLogged(root,player);
         });
+        
     }
     
 }

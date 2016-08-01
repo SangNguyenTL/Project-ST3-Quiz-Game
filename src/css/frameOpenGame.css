@@ -33,6 +33,7 @@ and open the template in the editor.
 }
 
 .btnCus:hover, .btnCus:disabled{
+    -fx-background-color: transparent;
     -fx-background-image: url("../images/buttonHover.png");
     -fx-text-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, #FBFF00 50%);
     -fx-text-stroke: #002aff;
@@ -40,6 +41,7 @@ and open the template in the editor.
 }
 
 .btnCus.flag:hover, .btnCus.flag:disabled{
+    -fx-background-color: transparent;
     -fx-background-image: url("../images/buttonHover-flag.png");
     -fx-text-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, #FBFF00 50%);
     -fx-text-stroke: #002aff;
@@ -102,13 +104,14 @@ and open the template in the editor.
      -fx-text-fill: #FFF;
 }
 
+#btnC:hover,#btnC.clickAns{
+     -fx-background-image: url("../images/btnC-Active.png");
+}
+
 #btnC.trans {
     -fx-background-image: url("../images/btnC-Trans.gif");
 }
 
-#btnC:hover,#btnC.clickAns{
-     -fx-background-image: url("../images/btnC-Active.png");
-}
 
 #btnC.trueAns{
      -fx-background-image: url("../images/btnC-Success.png");
@@ -142,22 +145,27 @@ and open the template in the editor.
 }
 
 .btnNor{
-    -fx-effect: innershadow(three-pass-box, #002aff, 12 , 0.5, 1, 1);
     -fx-background-color: rgba(255, 255, 255, 0.35);
-    -fx-text-fill: #FFF;
+    -fx-font: 18px Tahoma;
+    -fx-text-fill: black;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
 }
 .btnNor:hover{
     -fx-effect: dropshadow(three-pass-box, #fff, 12 , 0.5, 1, 1);;
     -fx-background-color: rgba(255, 255, 255, 0.35);
-    -fx-text-fill: #000;
+    -fx-text-fill: #002aff;
 }
 .txtField{
     -fx-background-color: rgba(255, 255, 255, 0.35);
-    -fx-text-fill: #000;
-}    
-.txtField:hover,.txtField:focused,.txtField:focused:hover{
-    -fx-effect: dropshadow(three-pass-box, #002aff, 12 , 0.5, 1, 1);
+    -fx-text-fill: #002aff;
+}
+.txtField:hover{
+    -fx-text-effect: dropshadow(three-pass-box, #FFF, 12 , 0.5, 1, 1);
     -fx-text-fill: #FFF;
+}.txtField:focused,.txtField:focused:hover{
+    -fx-text-effect: dropshadow(three-pass-box, #002aff, 12 , 0.5, 1, 1);
+    -fx-text-fill: #002aff;
 } 
 
 #btnchangeQuiz{

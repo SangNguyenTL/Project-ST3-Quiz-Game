@@ -175,7 +175,7 @@ public class Player {
             try {
                 Connection con = MyConnect.getConnect();
                 Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("select * from tb_Player");
+                ResultSet rs = st.executeQuery("select * from tb_Player where userID <> 1");
                 while (rs.next()) {
                     Player q = new Player();
                     q.setUserID( rs.getInt(1));
@@ -204,7 +204,7 @@ public class Player {
             try {
                 Connection con = MyConnect.getConnect();
                 Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("select top 10 * from tb_Player ORDER BY money DESC, totalTime ASC");
+                ResultSet rs = st.executeQuery("select top 10 * from tb_Player where userID <> 1 ORDER BY money DESC, totalTime ASC");
                 while (rs.next()) {
                     Player q = new Player();
                     q.userID = rs.getInt(1);
@@ -258,7 +258,7 @@ public class Player {
         try {
             if (MyConnect.checkData()) {
                 Connection con = MyConnect.getConnect();
-                PreparedStatement pst = con.prepareStatement("insert tb_Player values (?,?,?,?,NULL,NULL,?)");
+                PreparedStatement pst = con.prepareStatement("insert tb_Player values (?,?,?,?,0,0,?)");
                 pst.setString(1, userName);
                 pst.setString(2, email);
                 pst.setString(3, password);

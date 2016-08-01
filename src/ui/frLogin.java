@@ -9,12 +9,12 @@ package ui;
 import DBModel.Player;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -57,7 +57,7 @@ public class frLogin{
 
     public frLogin(Pane root, Player player) {
         this.root = root;
-        this.player = player;
+        frLogin.player = player;
     }
 
     public static Player getPlayer() {
@@ -108,7 +108,6 @@ public class frLogin{
         txtPassowrd.getStyleClass().add("txtField");
         txtPassowrd.setFont(new Font("Arial",width*0.0146));
         grid.add(txtPassowrd, 1, 2);
-        loadIdPass();
         
         Button btnSinIn = new Button("Đăng nhập");
         btnSinIn.getStyleClass().add("btnNor");
@@ -125,13 +124,14 @@ public class frLogin{
         saveLabel.setFont(new Font("Arial",width*0.0146));
         
         saveId = new CheckBox();
-        saveId.setSelected(Boolean.valueOf(saveFile.getProperty("checkSave")));
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(saveLabel);
         hbBtn.getChildren().add(saveId);
         hbBtn.getChildren().add(btnSignUp);
         hbBtn.getChildren().add(btnSinIn);
+        
+        loadIdPass();
         
         grid.add(hbBtn, 1, 4);
         
@@ -193,18 +193,13 @@ public class frLogin{
             new listButtonOpen(root);
         });
         //Registration
-        btnSignUp.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                new frRegistration(root,player);
-            }
+        btnSignUp.setOnAction((ActionEvent t) -> {
+            new frRegistration(root,player);
         });
     }
     private Properties saveFile;
     private void saveIdPass(String email, String password) {
         FileOutputStream fOs;
-        Properties saveFile = new Properties();
         saveFile.put("email", email);
         saveFile.put("password",password);
         saveFile.put("checkSave", Boolean.toString( saveId.isSelected()));
@@ -212,21 +207,24 @@ public class frLogin{
             fOs = new FileOutputStream("data.properties");
             saveFile.store(fOs, "InforId");
             fOs.close();
-        }catch(Exception e){
+        }catch(IOException e){
             e.printStackTrace();
         }
     }
     
     private boolean loadIdPass(){
         FileInputStream fIs;
+        saveFile = new Properties();
         try{
             fIs = new FileInputStream("data.properties");
-            saveFile = new Properties();
             saveFile.load(fIs);
-            txtUserName.setText(saveFile.getProperty("email"));
-            txtPassowrd.setText(new DBModel.Player().getPasword(saveFile.getProperty("password")));
+            saveId.setSelected(Boolean.valueOf(saveFile.getProperty("checkSave","false")));
+            if(Boolean.valueOf(saveFile.getProperty("checkSave"))== true){
+                txtUserName.setText(saveFile.getProperty("email"));
+                txtPassowrd.setText(new DBModel.Player().getPasword(saveFile.getProperty("password"))); 
+            }
             fIs.close();
-        }catch(Exception e){
+        }catch(IOException e){
             return false;
         }
         return true;

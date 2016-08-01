@@ -5,13 +5,13 @@
  */
 package ui;
 
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -72,10 +72,10 @@ public class frHelp {
         GridPane grid = new GridPane();
         grid.setPrefSize(root.getWidth(), root.getHeight());
         root.getChildren().add(grid);
-        grid.setAlignment(Pos.CENTER_LEFT);
+        grid.setAlignment(Pos.TOP_LEFT);
         grid.setHgap(width*0.0073);
         grid.setVgap(width*0.0073);
-        grid.setPadding(new Insets(width*0.018));
+        grid.setPadding(new Insets(85,0,20,20));
 
         DropShadow ds = new DropShadow();
         ds.setOffsetY(3.0f);
@@ -117,6 +117,20 @@ public class frHelp {
         ND6.setFill(Color.WHITE);
         grid.add(ND6, 0, 7);
         ND6.setFont(new Font("Arial", width*0.02));
+        
+        Text ND7 = new Text("\t\t\t\t-Câu hỏi hiện tại-\n\t\t\t\tMức thưởng mà bạn sẽ nhận được nếu trả lời đúng");
+        ND7.setFont(Font.font("Tahoma", FontWeight.NORMAL, width*0.0146));
+        ND7.setEffect(ds);
+        ND7.setFill(Color.WHITE);
+        grid.add(ND7, 0, 8);
+        ND7.setFont(new Font("Arial", width*0.02));
+        
+        Text ND8 = new Text("\t100$");
+        ND8.setFont(Font.font("Tahoma", FontWeight.NORMAL, width*0.0146));
+        ND8.setEffect(ds);
+        ND8.setFill(Color.WHITE);
+        grid.add(ND8, 0, 8);
+        ND8.setFont(new Font("Arial", width*0.0292));
 
         //Quay lai
         Button back = new Button("Quay lại");
@@ -129,8 +143,7 @@ public class frHelp {
         root.getChildren().add(hbback);
         final Text actiontarget = new Text();
         grid.add(actiontarget, 1, 6);
-        back.setCancelButton(true);
-        back.setOnAction((ActionEvent t) -> {
+        back.setOnMouseClicked((MouseEvent t) -> {
             root.getChildren().clear();
             new listButtonOpen(root);
         });

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dc89d0af-ed66-4c6b-831c-7866893acee4">
+	<property name="ireport.zoom" value="1.1000000000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT A.ansContent as N'Câu trả lời', Q.quesContent as N'Nội dung câu hỏi', C.catName N'Chuyên mục', A.isCorrect as N'Tính đúng sai', Q.level as N'Cấp độ' from tb_Answer as A left join tb_Question as Q on A.quesID = Q.quesID LEFT JOIN tb_Category as C on C.catID = Q.catID order by C.catName ASC, Q.level ASC]]>
+	</queryString>
+	<field name="Câu trả lời" class="java.lang.String"/>
+	<field name="Nội dung câu hỏi" class="java.lang.String"/>
+	<field name="Chuyên mục" class="java.lang.String"/>
+	<field name="Tính đúng sai" class="java.lang.Boolean"/>
+	<field name="Cấp độ" class="java.lang.Integer"/>
+	<group name="Chuyên mục">
+		<groupExpression><![CDATA[$F{Chuyên mục}]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="100" height="32" forecolor="#666666" backcolor="#E6E6E6" uuid="1b578008-644d-49ca-a14f-580fa8dadc84"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[Chuyên mục]]></text>
+				</staticText>
+				<textField>
+					<reportElement mode="Opaque" x="100" y="0" width="455" height="32" forecolor="#006699" backcolor="#E6E6E6" uuid="c134ff36-12d7-49fe-81d6-ec9c599d6cc2"/>
+					<textElement>
+						<font size="24" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Chuyên mục}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="-20" y="32" width="595" height="1" forecolor="#666666" uuid="076d05bb-055c-4c11-ab78-6576fdeb07ad"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="Cấp độ">
+		<groupExpression><![CDATA[$F{Cấp độ}]]></groupExpression>
+		<groupHeader>
+			<band height="32">
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="20" forecolor="#666666" uuid="fa9b9996-9de4-4e4a-91c5-7b364a68face"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[Cấp độ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="99" y="0" width="455" height="32" forecolor="#006699" uuid="1221c5c2-907b-4b8c-ad0d-4186604c55b5"/>
+					<textElement>
+						<font size="22" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Cấp độ}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="Nội dung câu hỏi">
+		<groupExpression><![CDATA[$F{Nội dung câu hỏi}]]></groupExpression>
+		<groupHeader>
+			<band height="32">
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" mode="Transparent" x="0" y="0" width="554" height="0" forecolor="#006699" uuid="f8cd2fd9-1664-4a32-8d3b-7522816aac62"/>
+					<textElement>
+						<font size="20" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Nội dung câu hỏi}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="75a17a13-15ab-46bc-a7fb-fa0fb81e5c6e"/>
+				<staticText>
+					<reportElement x="20" y="20" width="332" height="43" forecolor="#FFFFFF" uuid="c7479dde-9479-4ebc-b72c-5d8286e87f5a"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Danh sách câu hỏi]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="395" y="43" width="180" height="20" forecolor="#FFFFFF" uuid="4622739f-0472-446e-bcbc-dffe59514a50"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Theo chuyên mục]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="cedb6d6b-4f4c-4149-a6a7-607d577c6a4e"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="277" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="5d315148-322c-4021-864c-4198b7974a77"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Câu trả lời]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="277" y="0" width="277" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="65293c9f-b86e-461f-b034-7f71af7f8c86"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tính đúng sai]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="f141a86b-ed49-4d9b-877d-b6c79e035949"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="277" height="0" uuid="ca15a0b3-3261-49a1-b124-37b99e05afbe"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Câu trả lời}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="277" y="0" width="277" height="20" uuid="72a6f3f2-2117-42f4-9c8f-55d62f0ff7ca"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Tính đúng sai}.toString().replace("true","Đúng").replace("false","Sai")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="f38fcb8f-a5fa-4dc7-adcc-d2b8e2f01e1d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Trang "+$V{PAGE_NUMBER}+" trong"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="8e6bb45f-7089-4acf-9054-79f5e7e5d088"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="f693e4a3-f94a-4498-9a28-288ae0d9ea02"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

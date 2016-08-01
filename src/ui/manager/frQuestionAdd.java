@@ -28,21 +28,24 @@ import javafx.scene.text.Font;
  *
  * @author Mattias
  */
-public class frQuestionAdd extends ui.manager.frManager{
+public class frQuestionAdd{
 
     protected TextArea txtQues;
     protected Question ques;
     protected Label lbCount;
+    protected HBox content;
+    protected Pane root;
+    protected DBModel.Player player;
     protected Boolean type; //Add false, update true
-    public frQuestionAdd(Pane root, DBModel.Player player) {
-        super(root, player);
+    public frQuestionAdd(Pane root, HBox content, DBModel.Player player) {
+        this.root = root;
+        this.content = content;
+        this.player = player;
         init();
     }
-    
-    @Override
     public void init() {
         type = false;
-        root.getChildren().clear();
+        content.getChildren().clear();
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.TOP_CENTER);
         grid.setVgap(10);
@@ -78,24 +81,24 @@ public class frQuestionAdd extends ui.manager.frManager{
         
         Button btnCheck = new Button("Thêm câu trả lời");
         HBox.setHgrow(hbbtn, Priority.ALWAYS);
-        btnCheck.setMaxWidth(100);
+        btnCheck.setMaxWidth(150);
         btnCheck.getStyleClass().add("btnNor");
         btnCheck.setAlignment(Pos.BOTTOM_LEFT);
 
         Button btnReset = new Button("Xóa trắng");
         HBox.setHgrow(hbbtn, Priority.ALWAYS);
-        btnReset.setMaxWidth(100);
+        btnReset.setMaxWidth(150);
         btnReset.getStyleClass().add("btnNor");
         btnReset.setAlignment(Pos.BOTTOM_RIGHT);
 
         hbbtn.getChildren().addAll(btnCheck, btnReset);
         grid.add(hbbtn, 0, 2 , 2, 1);
 
-        root.getChildren().add(grid);
+        content.getChildren().add(grid);
         ques = new Question();
         btnCheck.setOnMouseClicked((MouseEvent event) -> {
             if (checkQuestion()) {
-                new frQuestionAddAnswer(root,player, ques, false);
+                new frQuestionAddAnswer(root,content,player, ques, false);
             }
         });
 
@@ -134,7 +137,6 @@ public class frQuestionAdd extends ui.manager.frManager{
 
         Pattern p2 = Pattern.compile("^\\S.{9,269}\\?$");
         Matcher m2 = p2.matcher(txtQues.getText().toString());
-        System.out.println(txtQues.getText());
         if (m2.matches() == false) {
             new AlertGame("Lỗi", "Câu hỏi phải có dấu hỏi khi kết thúc câu và có từ 10 đến 270 ký tự", Alert.AlertType.WARNING) {
 

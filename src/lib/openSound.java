@@ -6,6 +6,10 @@
 package lib;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
@@ -22,8 +26,25 @@ public class openSound {
 
     Media hit;
     MediaPlayer mediaPlayer;
-
+    Properties saveFile;
+    boolean isMute;
+    private boolean loadResolution(){
+        FileInputStream fIs;
+        saveFile = new Properties();
+        try{
+            fIs = new FileInputStream("data.properties");
+            saveFile.load(fIs);
+            isMute = Boolean.valueOf(saveFile.getProperty("isMute","false"));
+            fIs.close();
+        }catch(FileNotFoundException e){
+            return false;
+        }catch(IOException e){
+            return false;
+        }
+        return true;
+    }
     public openSound(String path) {
+        loadResolution();
         try {
             this.hit = new Media(getClass().getResource("/" + path).toURI().toString());
             if (hit.getError() == null) {
@@ -34,6 +55,7 @@ public class openSound {
                 });
                 try {
                     mediaPlayer = new MediaPlayer(hit);
+                    mediaPlayer.setMute(isMute);
                     if (mediaPlayer.getError() == null) {
                         mediaPlayer.setOnError(new Runnable() {
                             public void run() {

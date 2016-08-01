@@ -35,7 +35,6 @@ public class EditingCell extends TableCell<DBModel.PrizeMoney, String> {
         @Override
         public void cancelEdit() {
             super.cancelEdit();
- 
             setText((String) getItem());
             setGraphic(null);
         }
@@ -43,7 +42,6 @@ public class EditingCell extends TableCell<DBModel.PrizeMoney, String> {
         @Override
         public void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
- 
             if (empty) {
                 setText(null);
                 setGraphic(null);
@@ -60,7 +58,6 @@ public class EditingCell extends TableCell<DBModel.PrizeMoney, String> {
                 }
             }
         }
- 
         private void createTextField() {
             textField = new TextField(getString());
             textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
@@ -70,6 +67,7 @@ public class EditingCell extends TableCell<DBModel.PrizeMoney, String> {
                     Boolean arg1, Boolean arg2) {
                         if (!arg2) {
                             commitEdit(textField.getText());
+                            
                         }
                 }
             });
