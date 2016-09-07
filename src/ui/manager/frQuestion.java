@@ -209,6 +209,7 @@ public class frQuestion{
                             masterDataQuestion.clear();
                             masterDataQuestion.addAll(new Question().getData());
                             textStatus = "Thành công";
+                            new frManager(root,player);
                         }
                         else{
                             textStatus = "Thất bại";

@@ -11,8 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -39,7 +37,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 import lib.AlertGame;
 
 /**
@@ -177,7 +174,7 @@ class frSetting{
         });
         
         btnSubmit.setOnAction((ActionEvent t) -> {
-            saveData();
+            if(saveData())
             if(DBModel.MyConnect.checkData()){
                 new AlertGame("Thành công", "Kết nối với cơ sở dữ liệu đã được thiết lập.", Alert.AlertType.ERROR) {
                     
@@ -199,10 +196,7 @@ class frSetting{
                         }
                     }
                 };
-            }
-                
-                
-            else
+            }else
                 new AlertGame("Lỗi", "Kết nối với cơ sở dữ liệu thất bại, xin đặt lại cấu hình.", Alert.AlertType.ERROR) {
                     
                     @Override
@@ -281,8 +275,8 @@ class frSetting{
         }
         return true;
     }
-    private void saveData(){
-        if(!checkFeild()) return;
+    private boolean saveData(){
+        if(!checkFeild()) return false;
         MyConnect m = new MyConnect();
         MyConnect.setServer(txtServer.getText().trim());
         MyConnect.setPort(txtPort.getText().trim());
@@ -299,8 +293,9 @@ class frSetting{
                     
                 }
             };
+            return false;
         }
-        
+        return true;
     }
     
 }

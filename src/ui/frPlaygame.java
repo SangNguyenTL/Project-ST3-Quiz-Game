@@ -147,6 +147,7 @@ public class frPlaygame {
         soundIsCorrect.getMediaPlayer().setOnEndOfMedia(() -> {
             if(newGame.getLevelQuestion() == 14){
                 mess.set("Chúc mừng bạn đã vượt qua 15 câu hỏi. Và bạn đã là người chiến thắng.");
+                newGame.setLevelQuestion(newGame.getLevelQuestion() + 1);
                 statusGame.set(3);
             }else{
                 mess.set("Chúc mừng bạn đã trả lời chình xác. Hãy chuẩn bị để sang câu tiếp theo");
@@ -243,8 +244,10 @@ public class frPlaygame {
                     soundWaitResult.getMediaPlayer().setStopTime(Duration.millis(5000));
                 }
                 if(newGame.getLevelQuestion() > 9){
-                    soundGame.stopSound();
-                    soundGame.getMediaPlayer().dispose();
+                    if(soundGame != null){
+                        soundGame.stopSound();
+                        soundGame.getMediaPlayer().dispose();
+                    }
                     soundWaitResult.getMediaPlayer().setStopTime(Duration.millis(4000));
                     soundGame = new openSound("sounds/questLast.mp3");
                     soundGame.stopSound();
@@ -252,8 +255,10 @@ public class frPlaygame {
                     soundGame.play();
                     
                 }else if (newGame.getLevelQuestion() > 4) {
-                    soundGame.stopSound();
-                    soundGame.getMediaPlayer().dispose();
+                    if(soundGame != null){
+                        soundGame.stopSound();
+                        soundGame.getMediaPlayer().dispose();
+                    }
                     soundGame = new openSound("sounds/questMidle.mp3");
                     soundGame.getMediaPlayer().setCycleCount(MediaPlayer.INDEFINITE);
                     soundGame.play();
@@ -331,7 +336,7 @@ public class frPlaygame {
             }
             if (t1.intValue() == 3) {
                 soundGame.stopSound();
-                if(newGame.getLevelQuestion()!=14){
+                if(newGame.getLevelQuestion()!=15){
                     soundWinner = new lib.openSound("sounds/fail.mp3");
                     soundWinner.play();
                     root.getChildren().clear();
@@ -361,6 +366,14 @@ public class frPlaygame {
                         mess.set("Bạn còn một quyền trợ giúp duy nhất là \"Bỏ đi hai phương án sai\". Hãy cân nhắc!");
                     }
                     break;
+                case 50: 
+                    if(newGame.getLevelQuestion()==4){
+                        mess.set("Trả lời đúng tại câu này bạn sẽ có 2 quyền trợ giúp và được bảo lưu mức thưởng tại mốc này.");
+                    }
+                    if(newGame.getLevelQuestion()==9){
+                        mess.set("Đây đã là câu số 10 bạn hãy cố gắng vượt qua để có thể bảo lưu mức thưởng mới. Cố lên!");
+                    }
+                    break;
                 case 45:
                     if (!btnPer.isDisable()) {
                         mess.set("Bỏ đi hai phương án sai sẽ giúp bạn tăng thêm cơ hội trả lời đúng. Từ 25% lên 50%, rất là hiệu quả.");
@@ -385,11 +398,11 @@ public class frPlaygame {
                     btnStop.setDisable(true);
                     btnChange.setDisable(true);
                     btnPer.setDisable(true);
-                    if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 9) {
-                        newGame.setMoney(getCurrentMoney(9));
-                        newGame.setTimeTotal(newGame.getTimeTotal4());
-                    } else if (newGame.getLevelQuestion() > 9) {
+                    if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 10) {
                         newGame.setMoney(getCurrentMoney(4));
+                        newGame.setTimeTotal(newGame.getTimeTotal4());
+                    } else if (newGame.getLevelQuestion() > 9  && newGame.getLevelQuestion() < 15) {
+                        newGame.setMoney(getCurrentMoney(9));
                         newGame.setTimeTotal(newGame.getTimeTotal9());
                     } else {
                         newGame.setMoney(0);
@@ -573,7 +586,7 @@ public class frPlaygame {
             processSound.play();
             a.setAnimation(5000, () -> {
                 processSound.stopSound();
-                if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 9) {
+                if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 11) {
                     listSorted.set(newGame.getLevelQuestion(), listQuestion.get(5));
                 } else {
                     listSorted.set(newGame.getLevelQuestion(), listQuestion.get(11));
@@ -603,15 +616,10 @@ public class frPlaygame {
 
     public int getCurrentMoney(int i) {
         int money = 0;
-        if (i < 15) {
-            Label onelv = (Label) boxListLevel.getChildren().get(i);
-            if (onelv.getId().equals("level-" + newGame.getLevelQuestion())) {
-                money = Integer.parseInt(onelv.getAccessibleText());
-            }
-        }
+        if(i == 15) i = newGame.getLevelQuestion();
         for (int k = boxListLevel.getChildren().size() - 1; k >= 0; k--) {
             Label onelv = (Label) boxListLevel.getChildren().get(k);
-            if (onelv.getId().equals("level-" + newGame.getLevelQuestion())) {
+            if (onelv.getId().equals("level-" + i)) {
                 money = Integer.parseInt(onelv.getAccessibleText());
                 break;
             }
@@ -666,11 +674,11 @@ public class frPlaygame {
                     btnPer.setDisable(true);
                     mess.set("Bạn đã đưa ra phương án sai. Rất tiếc cho bạn...");
                     soundIsNotCorrect.play();
-                    if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 9) {
-                        newGame.setMoney(getCurrentMoney(9));
-                        newGame.setTimeTotal(newGame.getTimeTotal4());
-                    } else if (newGame.getLevelQuestion() > 9) {
+                    if (newGame.getLevelQuestion() > 4 && newGame.getLevelQuestion() < 10) {
                         newGame.setMoney(getCurrentMoney(4));
+                        newGame.setTimeTotal(newGame.getTimeTotal4());
+                    } else if (newGame.getLevelQuestion() > 9  && newGame.getLevelQuestion() < 15) {
+                        newGame.setMoney(getCurrentMoney(9));
                         newGame.setTimeTotal(newGame.getTimeTotal9());
                     } else {
                         newGame.setMoney(0);

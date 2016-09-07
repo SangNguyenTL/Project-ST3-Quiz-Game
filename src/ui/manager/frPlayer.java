@@ -235,6 +235,7 @@ public class frPlayer{
     private void updateFilteredData() {
         filteredData.clear();
 
+        // lap tung dong table player
         for (Player p : masterDataPlayer) {
             if (matchesFilter(p)) {
                 filteredData.add(p);
@@ -253,9 +254,14 @@ public class frPlayer{
         String filterPrize = txtPrize.getText().toLowerCase();
         
         String filterTime = txtTime.getText().toLowerCase();
-        
+        // neu filter = false thi filterData k duoc add 
         Boolean filter = true;
+        
         if (filterString != null || !filterString.isEmpty()) {
+            // indexOf tra vi tri tìm thay
+            // k tim thay se tra ve -1
+            // toan tu && true + false = false
+            // kiem tra filterString(txt) co nam trong userName hay k
             filter = filter && (q.getUserName().toLowerCase().indexOf(filterString) != -1);
         }
         if (filterEmail != null || !filterEmail.isEmpty()) {

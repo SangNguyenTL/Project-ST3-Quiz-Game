@@ -139,13 +139,16 @@ public class MyConnect {
       public static boolean checkData() {
           MyConnect m = new MyConnect();
           if (MyConnect.loadData()){
-                 if (MyConnect.checkCon(
+                 if (MyConnect.checkCon(    
                     MyConnect.getProperty(MyConnect.username),
                     MyConnect.getProperty(MyConnect.password),
                     MyConnect.getProperty(MyConnect.portP),
                     MyConnect.getProperty(MyConnect.dbNameP),
                     MyConnect.getProperty(MyConnect.severP))) {
                        con = MyConnect.getConnect();
+                 }
+                 else{
+                     return false;
                  }
           } else {
             return false;
